@@ -113,7 +113,7 @@ knitid:
 - `redis`：多实例共享，Lua `INCRBY + TTL`，0 基；key 由 scope 决定（日切时含日期）；
 - 序列在生成 ID 前消耗；生成失败会留下空洞，业务单号通常可接受；
 - Redis 不可用时 BIZ 失败（不静默回退），避免重复；
-- `ttl` 默认 2d，需大于业务重放/对账窗口。
+- `ttl` 默认 2d，表示空闲过期；日切 scope 每次递增都会刷新 TTL，`reset=NEVER` 的 scope 不设置 TTL。
 
 ## 8. 健康与指标
 

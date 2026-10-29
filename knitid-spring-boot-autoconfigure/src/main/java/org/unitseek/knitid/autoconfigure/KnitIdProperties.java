@@ -55,7 +55,7 @@ public class KnitIdProperties {
     }
 
     public void setLimits(Limits limits) {
-        this.limits = limits;
+        this.limits = limits == null ? new Limits() : limits;
     }
 
     public Health getHealth() {
@@ -87,6 +87,9 @@ public class KnitIdProperties {
         }
 
         public void setCacheTtl(Duration cacheTtl) {
+            if (cacheTtl != null && cacheTtl.isNegative()) {
+                throw new IllegalArgumentException("knitid.health.cache-ttl must not be negative");
+            }
             this.cacheTtl = cacheTtl;
         }
 
@@ -95,6 +98,9 @@ public class KnitIdProperties {
         }
 
         public void setBackwardsDownCount(int backwardsDownCount) {
+            if (backwardsDownCount < 0) {
+                throw new IllegalArgumentException("knitid.health.backwards-down-count must be >= 0");
+            }
             this.backwardsDownCount = backwardsDownCount;
         }
 
@@ -103,6 +109,9 @@ public class KnitIdProperties {
         }
 
         public void setBackwardsDownWindow(Duration backwardsDownWindow) {
+            if (backwardsDownWindow != null && (backwardsDownWindow.isNegative() || backwardsDownWindow.isZero())) {
+                throw new IllegalArgumentException("knitid.health.backwards-down-window must be positive");
+            }
             this.backwardsDownWindow = backwardsDownWindow;
         }
     }
@@ -116,6 +125,9 @@ public class KnitIdProperties {
         }
 
         public void setMaxBatchSize(int maxBatchSize) {
+            if (maxBatchSize <= 0) {
+                throw new IllegalArgumentException("knitid.limits.max-batch-size must be > 0");
+            }
             this.maxBatchSize = maxBatchSize;
         }
     }

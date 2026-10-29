@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
 
+import org.unitseek.knitid.core.api.IdGeneratorConstants;
 import org.unitseek.knitid.core.exception.IdErrorCodes;
 import org.unitseek.knitid.core.exception.SequenceUnavailableException;
 import org.unitseek.knitid.core.spi.SequenceProvider;
@@ -42,15 +43,26 @@ public final class RedisSequenceProvider implements SequenceProvider {
 
     @Override
     public long next(String scope) {
-        return increment(scope, 1) - 1;
+        return next(scope, false);
+    }
+
+    @Override
+    public long next(String scope, boolean persistent) {
+        return increment(scope, 1, persistent) - 1;
     }
 
     @Override
     public long[] next(String scope, int count) {
+        return next(scope, count, false);
+    }
+
+    @Override
+    public long[] next(String scope, int count, boolean persistent) {
         if (count <= 0) {
             throw new IllegalArgumentException("count must be > 0: " + count);
         }
-        long end = increment(scope, count);
+        IdGeneratorConstants.checkBatchSize(count);
+        long end = increment(scope, count, persistent);
         long start = end - count;
         long[] values = new long[count];
         for (int i = 0; i < count; i++) {
@@ -59,13 +71,14 @@ public final class RedisSequenceProvider implements SequenceProvider {
         return values;
     }
 
-    private long increment(String scope, long delta) {
+    private long increment(String scope, long delta, boolean persistent) {
         if (scope == null || scope.isBlank()) {
             throw new IllegalArgumentException("scope must not be blank");
         }
         String key = keyPrefix + ":" + scope;
+        Duration effectiveTtl = persistent ? Duration.ZERO : ttl;
         try {
-            return store.increment(key, delta, ttl);
+            return store.increment(key, delta, effectiveTtl);
         }
         catch (RuntimeException ex) {
             throw new SequenceUnavailableException(

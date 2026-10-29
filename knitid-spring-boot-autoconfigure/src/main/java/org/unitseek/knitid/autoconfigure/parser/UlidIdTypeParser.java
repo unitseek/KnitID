@@ -26,6 +26,9 @@ final class UlidIdTypeParser implements IdTypeParser {
         if (raw == null || raw.length() != 26) {
             return Optional.empty();
         }
+        if (!raw.chars().allMatch(ch -> ch < 128)) {
+            return Optional.empty();
+        }
         long value = 0;
         for (int i = 0; i < 10; i++) {
             int digit = ALPHABET.indexOf(Character.toUpperCase(raw.charAt(i)));

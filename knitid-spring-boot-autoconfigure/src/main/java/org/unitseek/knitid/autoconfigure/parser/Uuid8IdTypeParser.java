@@ -22,7 +22,7 @@ final class Uuid8IdTypeParser implements IdTypeParser {
     @Override
     public Optional<IdInfo> tryParse(String raw) {
         UUID uuid = Uuid7IdTypeParser.parseUuid(raw);
-        if (uuid == null || uuid.version() != 8) {
+        if (uuid == null || uuid.version() != 8 || uuid.variant() != 2) {
             return Optional.empty();
         }
         return Optional.of(new IdInfo(IdType.UUID8, raw, null, 8, null, null, null, Map.of()));

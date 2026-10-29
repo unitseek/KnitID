@@ -37,19 +37,35 @@ public final class KnitIdGaugeBinder implements SmartInitializingSingleton {
         }
         for (Map.Entry<String, IdGenerator> entry : registry.asMap().entrySet()) {
             IdGenerator generator = entry.getValue();
-            if (generator instanceof IdGeneratorHealth health
-                    && health.health(window).details().get("workerId") instanceof Number) {
-                Gauge.builder("knitid.id.worker.id", () -> workerId(health))
-                        .tag("name", entry.getKey())
-                        .description("Current KSID WorkerId")
-                        .register(meterRegistry);
+            if (!(generator instanceof IdGeneratorHealth health)) {
+                continue;
+            }
+            try {
+                IdGeneratorHealthSnapshot snapshot = health.health(window);
+                if (snapshot != null && snapshot.details().containsKey("workerId")) {
+                    Gauge.builder("knitid.id.worker.id", () -> workerId(health))
+                            .tag("name", entry.getKey())
+                            .description("Current KSID WorkerId")
+                            .register(meterRegistry);
+                }
+            }
+            catch (RuntimeException ex) {
+                // A faulty health implementation must not break application startup.
             }
         }
     }
 
     private double workerId(IdGeneratorHealth health) {
-        IdGeneratorHealthSnapshot snapshot = health.health(window);
-        Object value = snapshot.details().get("workerId");
-        return value instanceof Number number ? number.doubleValue() : Double.NaN;
+        try {
+            IdGeneratorHealthSnapshot snapshot = health.health(window);
+            if (snapshot == null) {
+                return Double.NaN;
+            }
+            Object value = snapshot.details().get("workerId");
+            return value instanceof Number number ? number.doubleValue() : Double.NaN;
+        }
+        catch (RuntimeException ex) {
+            return Double.NaN;
+        }
     }
 }

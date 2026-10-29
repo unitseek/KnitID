@@ -28,11 +28,16 @@ public record Uuid8Config(Uuid8Preset preset, int datacenterId, int workerId) {
     }
 
     public static Uuid8Config from(GeneratorConfig config) {
-        return new Uuid8Config(
-                parseEnum(Uuid8Preset.class, config.getString("uuid8.preset", Uuid8Preset.TIME_RANDOM.name()),
-                        "uuid8.preset"),
-                config.getInt("uuid8.datacenter-id", 0),
-                config.getInt("uuid8.worker-id", 0));
+        try {
+            return new Uuid8Config(
+                    parseEnum(Uuid8Preset.class, config.getString("uuid8.preset", Uuid8Preset.TIME_RANDOM.name()),
+                            "uuid8.preset"),
+                    config.getInt("uuid8.datacenter-id", 0),
+                    config.getInt("uuid8.worker-id", 0));
+        }
+        catch (NumberFormatException ex) {
+            throw invalid("Invalid numeric UUID8 configuration: " + ex.getMessage());
+        }
     }
 
     private static <E extends Enum<E>> E parseEnum(Class<E> type, String value, String key) {

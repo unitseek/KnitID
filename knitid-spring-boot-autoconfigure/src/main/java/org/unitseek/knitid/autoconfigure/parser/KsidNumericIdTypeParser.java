@@ -24,6 +24,9 @@ final class KsidNumericIdTypeParser implements IdTypeParser {
         if (raw == null || raw.isEmpty() || raw.length() > 19) {
             return Optional.empty();
         }
+        if (raw.length() > 1 && raw.charAt(0) == '0') {
+            return Optional.empty();
+        }
         for (int i = 0; i < raw.length(); i++) {
             char ch = raw.charAt(i);
             if (ch < '0' || ch > '9') {
@@ -31,10 +34,7 @@ final class KsidNumericIdTypeParser implements IdTypeParser {
             }
         }
         try {
-            long value = Long.parseLong(raw);
-            if (value < 0) {
-                return Optional.empty();
-            }
+            Long.parseLong(raw);
             return Optional.of(new IdInfo(IdType.KSID, raw, null, null, null, null, null, Map.of()));
         }
         catch (NumberFormatException ex) {

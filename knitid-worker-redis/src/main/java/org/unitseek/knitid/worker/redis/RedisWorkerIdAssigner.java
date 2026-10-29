@@ -90,7 +90,8 @@ final class RedisWorkerIdAssigner implements WorkerIdAssigner {
         }
         String key = key(current.datacenterId(), current.workerId());
         try {
-            if (!store.renew(key, leaseTtl)) {
+            if (!store.renew(key, token, leaseTtl)) {
+                workerId = null;
                 throw new WorkerIdUnavailableException(
                         IdErrorCodes.WORKER_LEASE_LOST,
                         "Redis WorkerId lease expired or was lost: " + key);
@@ -100,6 +101,7 @@ final class RedisWorkerIdAssigner implements WorkerIdAssigner {
             throw ex;
         }
         catch (RuntimeException ex) {
+            workerId = null;
             throw new WorkerIdUnavailableException(
                     IdErrorCodes.WORKER_LEASE_LOST, "Failed to renew Redis WorkerId lease: " + key, ex);
         }
@@ -110,11 +112,11 @@ final class RedisWorkerIdAssigner implements WorkerIdAssigner {
         if (released == null) {
             return;
         }
-        store.release(key(released.datacenterId(), released.workerId()));
-        WorkerId current = workerId;
-        if (released.equals(current)) {
-            workerId = null;
+        if (workerId != null && !released.equals(workerId)) {
+            return;
         }
+        store.release(key(released.datacenterId(), released.workerId()), token);
+        workerId = null;
     }
 
     private String key(int datacenter, int worker) {

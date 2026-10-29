@@ -91,8 +91,7 @@ final class IdGeneratorRegistryBuilder {
             }
             IdGeneratorFactory factory = requireFactory(factoriesByType, type);
             IdGenerator implicit = decorate(factory.create(new MapGeneratorConfig("default", type, Map.of())), "default");
-            generators.put("default", implicit);
-            return implicit;
+            return registerImplicitDefault(generators, implicit);
         }
 
         if (generators.size() == 1) {
@@ -106,8 +105,7 @@ final class IdGeneratorRegistryBuilder {
                 Map.Entry<IdType, IdGeneratorFactory> entry = factoriesByType.entrySet().iterator().next();
                 IdGenerator implicit = decorate(entry.getValue()
                         .create(new MapGeneratorConfig("default", entry.getKey(), Map.of())), "default");
-                generators.put("default", implicit);
-                return implicit;
+                return registerImplicitDefault(generators, implicit);
             }
         }
         throw new IdConfigurationException(
@@ -149,6 +147,16 @@ final class IdGeneratorRegistryBuilder {
     private static boolean isDisabled(Map<String, Object> raw) {
         Object enabled = raw.get("enabled");
         return enabled != null && !Boolean.parseBoolean(String.valueOf(enabled));
+    }
+
+    private IdGenerator registerImplicitDefault(Map<String, IdGenerator> generators, IdGenerator implicit) {
+        IdGenerator existing = generators.putIfAbsent("default", implicit);
+        if (existing != null) {
+            throw new IdConfigurationException(
+                    IdErrorCodes.CONFIG_CONFLICT,
+                    "Implicit default generator name 'default' conflicts with an explicitly configured generator");
+        }
+        return implicit;
     }
 
     private IdGenerator decorate(IdGenerator generator, String name) {

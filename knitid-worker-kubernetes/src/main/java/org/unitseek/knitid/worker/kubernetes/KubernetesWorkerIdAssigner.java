@@ -20,6 +20,11 @@ final class KubernetesWorkerIdAssigner implements WorkerIdAssigner {
     private final String podName;
 
     KubernetesWorkerIdAssigner(int datacenterId, int workerId, String podName) {
+        if (datacenterId < 0 || workerId < 0) {
+            throw new org.unitseek.knitid.core.exception.WorkerIdUnavailableException(
+                    IdErrorCodes.WORKER_UNAVAILABLE,
+                    "Invalid Kubernetes WorkerId: datacenter=" + datacenterId + ", worker=" + workerId);
+        }
         this.datacenterId = datacenterId;
         this.workerId = workerId;
         this.podName = podName;

@@ -13,7 +13,7 @@ final class StringRedisTemplateSequenceStore implements RedisSequenceStore {
 
     private static final String SCRIPT_TEXT = """
             local value = redis.call('INCRBY', KEYS[1], ARGV[1])
-            if value == tonumber(ARGV[1]) then
+            if tonumber(ARGV[2]) > 0 then
               redis.call('PEXPIRE', KEYS[1], ARGV[2])
             end
             return value

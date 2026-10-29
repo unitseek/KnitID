@@ -10,7 +10,7 @@
 
 ## 状态
 
-1.0 候选（v0.3.0-SNAPSHOT）：五类 ID 算法（UUIDv7、UUIDv8、ULID、KSID、BIZ）、IdParser、Redis/ZooKeeper/Kubernetes WorkerId 分配器、Redis 序列模块、Actuator 端点/健康检查/指标、JMH 基准、示例工程、Spring Boot 自动配置与契约测试均已完成。
+1.0.0 发布候选：五类 ID 算法（UUIDv7、UUIDv8、ULID、KSID、BIZ）、IdParser、Redis/ZooKeeper/Kubernetes WorkerId 分配器、Redis 序列模块、Actuator 端点/健康检查/指标、JMH 基准、示例工程、Spring Boot 自动配置与契约测试均已完成。
 
 ## 快速开始
 
@@ -20,7 +20,7 @@
 <dependency>
   <groupId>org.unitseek.knitid</groupId>
   <artifactId>knitid-spring-boot-starter</artifactId>
-  <version>0.3.0-SNAPSHOT</version>
+  <version>1.0.0</version>
 </dependency>
 <dependency>
   <groupId>org.unitseek.knitid</groupId>
@@ -88,7 +88,7 @@ mvn clean verify
 | `knitid-generator-biz` | 已完成实现 + 测试（模板、序列、日切、校验位、上下文） |
 | `knitid-generator-ksid` | 已完成实现 + 测试（位分配校验、回拨策略、序列溢出、WorkerId 租约、健康快照） |
 | `knitid-worker-redis` | 已完成实现 + 单测 + Testcontainers 集成测试（SET NX/TTL 租约、续约、释放、槽位扫描、断连） |
-| `knitid-worker-zookeeper` | 已完成实现 + 测试 + Testcontainers 集成测试（临时节点会话租约、槽位扫描、续约检查、释放、断连） |
+| `knitid-worker-zookeeper` | 已完成实现 + 测试 + Testcontainers 集成测试（临时节点会话租约、ownership/release 校验、槽位扫描、续约检查、断连） |
 | `knitid-worker-kubernetes` | 已完成实现 + 测试（StatefulSet ordinal / Downward API） |
 | `knitid-spring-boot-autoconfigure` | 已完成骨架（配置/注册中心/默认选择/自动配置矩阵/健康检查/生命周期关闭/IdParser/Actuator 端点/指标） |
 | `knitid-spring-boot-starter` | 已完成 |
@@ -97,19 +97,19 @@ mvn clean verify
 
 ## 测试
 
-当前共 160 个测试，全部通过（`mvn verify`；Testcontainers 用例在无 Docker 时自动跳过）：
+当前共 173 个测试，全部通过（`mvn verify`；Testcontainers 用例在无 Docker 时自动跳过）：
 
-- `knitid-core`：IdType 规范化契约（3）；
-- `knitid-generator-uuid7`：RFC 9562 附录 A.6 向量、属性测试、边界与溢出策略（11）；
+- `knitid-core`：IdType 规范化契约 + DurationParser 边界（5）；
+- `knitid-generator-uuid7`：RFC 9562 附录 A.6 向量、属性测试、边界、溢出与回拨策略（12）；
 - `knitid-generator-uuid8`：三种预设布局、版本/变体位、计数溢出、节点字段、随机预设（10）；
 - `knitid-generator-ulid`：ULID 规范示例向量、Crockford Base32、单调递增、溢出策略、属性测试（15）；
-- `knitid-generator-biz`：模板编译、序列日切/永不重置、校验位（MOD37_36/MOD11_2/LUHN）、前缀/业务日期上下文、并发唯一（16）；
+- `knitid-generator-biz`：模板编译、序列日切/永不重置、校验位（MOD37_36/MOD11_2/LUHN）、前缀/业务日期上下文、并发唯一（17）；
 - `knitid-generator-ksid`：位分配校验、回拨 `WAIT`/`THROW`/`BORROW_FUTURE`、序列溢出、WorkerId 越界、租约生命周期、健康快照（23）；
-- `knitid-sequence-redis`：原子 INCRBY、TTL、批量区间、跨实例共享、失败映射、自动配置（5 + 4 Testcontainers + 2），含两个 BIZ 生成器共享序列的集成测试；
-- `knitid-worker-redis`：槽位占用/冲突、租约续约失败、释放、provider 配置校验、自动配置（9），以及 Testcontainers 真实 Redis 的 SET NX/TTL/续约/释放/断连（5）；
-- `knitid-worker-zookeeper`：临时节点分配、重新占用、续约、配置校验、自动配置（6），以及 Testcontainers 真实 ZooKeeper 的分配/释放与断连（2）；
+- `knitid-sequence-redis`：原子 INCRBY、TTL/持久 scope、批量区间、跨实例共享、失败映射、自动配置（7 + 5 Testcontainers + 2），含两个 BIZ 生成器共享序列的集成测试；
+- `knitid-worker-redis`：槽位占用/冲突、token fencing、租约续约失败、释放、provider 配置校验、自动配置（9），以及 Testcontainers 真实 Redis 的 SET NX/TTL/续约/释放/断连（8）；
+- `knitid-worker-zookeeper`：临时节点分配、重新占用、续约、配置校验、自动配置（6），以及 Testcontainers 真实 ZooKeeper 的分配/释放、foreign release 与断连（3）；
 - `knitid-worker-kubernetes`：StatefulSet ordinal、Downward API、越界/非法 pod 名、配置校验、自动配置（9）；
-- `knitid-spring-boot-autoconfigure`：12 个启动行为矩阵场景 + 7 个健康检查场景 + 7 个 IdParser 场景 + 7 个端点/指标场景 + 1 个禁用场景（34）；
+- `knitid-spring-boot-autoconfigure`：12 个启动行为矩阵场景 + 7 个健康检查场景 + 7 个 IdParser 场景 + 7 个端点/指标场景 + 1 个禁用场景 + 2 个默认/批大小场景（36）；
 - `knitid-samples`：UUIDv7/UUID8/ULID/KSID/BIZ + Actuator 集成启动测试（6）。
 
 ## 业务 ID 快速配置

@@ -1,6 +1,6 @@
 # KnitID 配置参考
 
-本文覆盖 v0.3.0 全部配置项。所有属性前缀为 `knitid`；未知属性会导致启动失败（快速失败）。
+本文覆盖 v1.0.0 全部配置项。所有属性前缀为 `knitid`；未知属性会导致启动失败（快速失败）。
 
 ## 1. 依赖
 
@@ -8,7 +8,7 @@
 <dependency>
   <groupId>org.unitseek.knitid</groupId>
   <artifactId>knitid-spring-boot-starter</artifactId>
-  <version>0.3.0-SNAPSHOT</version>
+  <version>1.0.0</version>
 </dependency>
 <!-- 按需引入算法模块 -->
 <dependency>
@@ -119,7 +119,7 @@ knitid:
 | --- | --- | --- |
 | `knitid.sequence.redis.enabled` | `true` | 开关 |
 | `knitid.sequence.redis.key-prefix` | `knitid:seq` | key 前缀 |
-| `knitid.sequence.redis.ttl` | `2d` | 序列 key TTL |
+| `knitid.sequence.redis.ttl` | `2d` | 序列 key 的空闲 TTL；`biz.reset=NEVER` 的 scope 不设置 TTL |
 
 Bean 名称：`redis` 或 `redisSequenceProvider`。
 

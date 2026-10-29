@@ -27,6 +27,8 @@ public class KnitIdAutoConfiguration {
     public IdGeneratorRegistry idGeneratorRegistry(KnitIdProperties properties,
             ObjectProvider<IdGeneratorFactory> factories,
             ObjectProvider<IdGeneratorDecorator> decorators) {
+        org.unitseek.knitid.core.api.IdGeneratorConstants.configureMaxBatchSize(
+                properties.getLimits().getMaxBatchSize());
         return new IdGeneratorRegistryBuilder(properties, factories, decorators.orderedStream().toList()).build();
     }
 
@@ -40,7 +42,11 @@ public class KnitIdAutoConfiguration {
     @Bean
     public DisposableBean knitIdGeneratorCloser(IdGeneratorRegistry registry) {
         return () -> {
-            for (IdGenerator generator : registry.asMap().values()) {
+            // Only close generators created by this auto-configuration, not a user-supplied registry.
+            if (!(registry instanceof SimpleIdGeneratorRegistry)) {
+                return;
+            }
+            for (IdGenerator generator : java.util.List.copyOf(registry.asMap().values())) {
                 if (generator instanceof AutoCloseable closeable) {
                     try {
                         closeable.close();

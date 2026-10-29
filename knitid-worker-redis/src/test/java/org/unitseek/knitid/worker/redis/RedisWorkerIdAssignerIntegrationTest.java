@@ -116,6 +116,20 @@ class RedisWorkerIdAssignerIntegrationTest {
     }
 
     @Test
+    void renewFailsWhenLeaseIsOwnedByAnotherToken() {
+        String prefix = prefix();
+        RedisWorkerIdAssigner assigner = assigner(prefix, Duration.ofSeconds(30), 15, "token-a");
+        assigner.assign();
+        String key = prefix + ":1:0";
+        template.opsForValue().set(key, "token-b", Duration.ofSeconds(30));
+
+        assertThatThrownBy(assigner::renew)
+                .isInstanceOf(WorkerIdUnavailableException.class)
+                .hasMessageContaining("KNITID-2007");
+        assertThat(template.opsForValue().get(key)).isEqualTo("token-b");
+    }
+
+    @Test
     void releaseDeletesTheLeaseAndAllowsReuse() {
         String prefix = prefix();
         RedisWorkerIdAssigner first = assigner(prefix, Duration.ofSeconds(60), 15, "token");

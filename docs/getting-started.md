@@ -9,7 +9,7 @@
 | JDK | 21+ |
 | Maven | 3.9+ |
 | Spring Boot | 4.0.x / 4.1.x |
-| KnitID | 0.3.0-SNAPSHOT（1.0 发布后改为 1.0.0） |
+| KnitID | 1.0.0 |
 
 > Spring Boot 3.x 不支持。非 Spring 工程见 [非 Spring 用法](non-spring.md)。
 
@@ -21,12 +21,12 @@ Starter 只包含自动配置，不包含任何算法。按需引入生成器：
 <dependency>
   <groupId>org.unitseek.knitid</groupId>
   <artifactId>knitid-spring-boot-starter</artifactId>
-  <version>0.3.0-SNAPSHOT</version>
+  <version>1.0.0</version>
 </dependency>
 <dependency>
   <groupId>org.unitseek.knitid</groupId>
   <artifactId>knitid-generator-uuid7</artifactId>
-  <version>0.3.0-SNAPSHOT</version>
+  <version>1.0.0</version>
 </dependency>
 ```
 
@@ -38,7 +38,7 @@ Starter 只包含自动配置，不包含任何算法。按需引入生成器：
     <dependency>
       <groupId>org.unitseek.knitid</groupId>
       <artifactId>knitid-bom</artifactId>
-      <version>0.3.0-SNAPSHOT</version>
+      <version>1.0.0</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>

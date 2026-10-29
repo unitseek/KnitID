@@ -32,8 +32,9 @@ public final class BizIdGeneratorFactory implements IdGeneratorFactory {
     }
 
     public BizIdGeneratorFactory(Clock clock, SequenceProviderResolver sequenceProviderResolver) {
-        this.clock = clock;
-        this.sequenceProviderResolver = sequenceProviderResolver;
+        this.clock = java.util.Objects.requireNonNull(clock, "clock must not be null");
+        this.sequenceProviderResolver = java.util.Objects.requireNonNull(
+                sequenceProviderResolver, "sequenceProviderResolver must not be null");
     }
 
     @Override
@@ -43,6 +44,7 @@ public final class BizIdGeneratorFactory implements IdGeneratorFactory {
 
     @Override
     public IdGenerator create(GeneratorConfig config) {
+        java.util.Objects.requireNonNull(config, "config must not be null");
         BizConfig bizConfig = BizConfig.from(config);
         BizTemplate template = BizTemplate.compile(bizConfig);
         SequenceProvider sequenceProvider = sequenceProviderResolver.resolve(bizConfig.sequenceProviderName());

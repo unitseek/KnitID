@@ -59,7 +59,14 @@ public record BizConfig(
         String prefix = config.getString("biz.prefix", null);
         String zone = config.getString("biz.zone-id", null);
         Long nodeId = config.get("biz.node-id")
-                .map(value -> value instanceof Number number ? number.longValue() : Long.parseLong(String.valueOf(value)))
+                .map(value -> {
+                    try {
+                        return value instanceof Number number ? number.longValue() : Long.parseLong(String.valueOf(value).trim());
+                    }
+                    catch (NumberFormatException ex) {
+                        throw invalid("Invalid biz.node-id: " + value);
+                    }
+                })
                 .orElse(null);
         String provider = config.getString("biz.sequence-provider", "memory");
         SequenceReset reset = parseEnum(SequenceReset.class,
@@ -70,7 +77,7 @@ public record BizConfig(
         try {
             zoneId = zone == null || zone.isBlank() ? null : ZoneId.of(zone.trim());
         }
-        catch (DateTimeParseException ex) {
+        catch (java.time.DateTimeException ex) {
             throw invalid("Invalid biz.zone-id: " + zone);
         }
         return new BizConfig(template, prefix, zoneId, nodeId, provider, reset, algorithm);

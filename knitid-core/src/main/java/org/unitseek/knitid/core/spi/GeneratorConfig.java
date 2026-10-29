@@ -24,21 +24,47 @@ public interface GeneratorConfig {
     }
 
     default boolean getBoolean(String key, boolean defaultValue) {
-        return get(key).map(value -> value instanceof Boolean bool
-                ? bool
-                : Boolean.parseBoolean(String.valueOf(value))).orElse(defaultValue);
+        return get(key).map(value -> {
+            if (value instanceof Boolean bool) {
+                return bool;
+            }
+            String text = String.valueOf(value).trim();
+            if ("true".equalsIgnoreCase(text)) {
+                return true;
+            }
+            if ("false".equalsIgnoreCase(text)) {
+                return false;
+            }
+            throw new IllegalArgumentException("Invalid boolean for " + key + ": " + value);
+        }).orElse(defaultValue);
     }
 
     default int getInt(String key, int defaultValue) {
-        return get(key).map(value -> value instanceof Number number
-                ? number.intValue()
-                : Integer.parseInt(String.valueOf(value))).orElse(defaultValue);
+        return get(key).map(value -> {
+            try {
+                if (value instanceof Number number) {
+                    return Math.toIntExact(number.longValue());
+                }
+                return Integer.parseInt(String.valueOf(value).trim());
+            }
+            catch (ArithmeticException | NumberFormatException ex) {
+                throw new IllegalArgumentException("Invalid int for " + key + ": " + value, ex);
+            }
+        }).orElse(defaultValue);
     }
 
     default long getLong(String key, long defaultValue) {
-        return get(key).map(value -> value instanceof Number number
-                ? number.longValue()
-                : Long.parseLong(String.valueOf(value))).orElse(defaultValue);
+        return get(key).map(value -> {
+            try {
+                if (value instanceof Number number) {
+                    return number.longValue();
+                }
+                return Long.parseLong(String.valueOf(value).trim());
+            }
+            catch (NumberFormatException ex) {
+                throw new IllegalArgumentException("Invalid long for " + key + ": " + value, ex);
+            }
+        }).orElse(defaultValue);
     }
 
     default Duration getDuration(String key, Duration defaultValue) {

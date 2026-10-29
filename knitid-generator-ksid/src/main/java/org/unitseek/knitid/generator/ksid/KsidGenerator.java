@@ -129,7 +129,7 @@ public final class KsidGenerator implements NumericIdGenerator, IdGeneratorHealt
         return scheduler;
     }
 
-    private void renewLease() {
+    private synchronized void renewLease() {
         if (closed.get()) {
             return;
         }
@@ -337,10 +337,11 @@ public final class KsidGenerator implements NumericIdGenerator, IdGeneratorHealt
     }
 
     @Override
-    public void close() {
-        if (!closed.compareAndSet(false, true)) {
+    public synchronized void close() {
+        if (closed.get()) {
             return;
         }
+        closed.set(true);
         if (leaseScheduler != null) {
             leaseScheduler.shutdownNow();
         }

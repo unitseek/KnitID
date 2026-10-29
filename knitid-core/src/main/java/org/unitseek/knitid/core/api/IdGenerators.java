@@ -23,7 +23,7 @@ public final class IdGenerators {
     private IdGenerators() {
     }
 
-    public static void register(String name, IdGenerator generator) {
+    public static synchronized void register(String name, IdGenerator generator) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("name must not be blank");
         }
@@ -36,7 +36,7 @@ public final class IdGenerators {
         }
     }
 
-    public static void setDefault(String name) {
+    public static synchronized void setDefault(String name) {
         if (name == null || !GENERATORS.containsKey(name)) {
             throw new IdGeneratorNotFoundException(
                     IdErrorCodes.GENERATOR_NOT_FOUND, "Unknown default generator: " + name);
@@ -44,9 +44,12 @@ public final class IdGenerators {
         defaultName = name;
     }
 
-    public static void unregister(String name) {
+    public static synchronized void unregister(String name) {
+        if (name == null) {
+            return;
+        }
         GENERATORS.remove(name);
-        if (name != null && name.equals(defaultName)) {
+        if (name.equals(defaultName)) {
             defaultName = GENERATORS.keySet().stream().sorted().findFirst().orElse(null);
         }
     }
@@ -74,7 +77,7 @@ public final class IdGenerators {
         return Set.copyOf(GENERATORS.keySet());
     }
 
-    public static void reset() {
+    public static synchronized void reset() {
         GENERATORS.clear();
         defaultName = null;
     }

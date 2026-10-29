@@ -19,9 +19,10 @@ mvn -B -ntp -Prelease -DskipTests package   # 校验 javadoc/source/gpg 配置
 
 发布依赖：
 
-1. `~/.m2/settings.xml` 中配置 server id `central` 的 Sonatype Central 用户名/Token；
-2. GPG 私钥已导入，环境变量 `MAVEN_GPG_PASSPHRASE` 设置密码；
-3. 执行：
+1. GitHub Environment `release` 配置 required reviewers（发布需人工批准）；
+2. Secrets：`MAVEN_CENTRAL_USERNAME`、`MAVEN_CENTRAL_PASSWORD`、`GPG_PRIVATE_KEY`、`MAVEN_GPG_PASSPHRASE`；
+3. tag 必须等于 `v${project.version}`，且版本不得为 `SNAPSHOT`；
+4. 执行：
 
 ```bash
 mvn -B -ntp -Prelease clean deploy
@@ -38,7 +39,8 @@ mvn -B -ntp -Prelease clean deploy
 - `.github/workflows/ci.yml`：push/PR 构建，JDK 21，`mvn verify`（Ubuntu runner 提供 Docker）；
 - `.github/workflows/docs-check.yml`：PR/push 检查文档结构、链接与代码围栏；
 - `.github/workflows/release.yml`：推送 `v*` tag 时执行 `mvn -Prelease clean deploy`；
-  - Secrets：`MAVEN_CENTRAL_USERNAME`、`MAVEN_CENTRAL_PASSWORD`、`GPG_PRIVATE_KEY`、`MAVEN_GPG_PASSPHRASE`。
+  - Secrets：`MAVEN_CENTRAL_USERNAME`、`MAVEN_CENTRAL_PASSWORD`、`GPG_PRIVATE_KEY`、`MAVEN_GPG_PASSPHRASE`；
+  - `release` job 使用 GitHub Environment（建议 required reviewers），并校验 tag/version。
 
 ## 文档与 Javadoc 发布
 

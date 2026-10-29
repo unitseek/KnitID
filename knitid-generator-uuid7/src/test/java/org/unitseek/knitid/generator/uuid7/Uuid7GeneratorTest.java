@@ -84,6 +84,17 @@ class Uuid7GeneratorTest {
         assertThat(second).isGreaterThan(first);
     }
 
+    @Test
+    void nonMonotonicModeUsesCurrentTimestampAfterBackwardClockStep() {
+        MutableClock clock = new MutableClock(NOW);
+        Uuid7Generator generator = new Uuid7Generator(
+                clock, allZeroRandom(), false, MonotonicOverflow.WAIT);
+        generator.generate();
+        clock.setInstant(NOW.minus(Duration.ofSeconds(1)));
+        String second = generator.generate();
+        assertThat(timestampOf(second)).isEqualTo(NOW.minus(Duration.ofSeconds(1)).toEpochMilli());
+    }
+
     private static long timestampOf(String id) {
         String compact = id.replace("-", "");
         return Long.parseUnsignedLong(compact.substring(0, 12), 16);

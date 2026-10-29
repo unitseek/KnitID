@@ -14,6 +14,8 @@ import org.unitseek.knitid.core.parser.IdTypeParser;
  */
 public final class SimpleIdParser implements IdParser {
 
+    private static final System.Logger LOGGER = System.getLogger(SimpleIdParser.class.getName());
+
     private final List<IdTypeParser> parsers;
 
     public SimpleIdParser(List<IdTypeParser> parsers) {
@@ -33,7 +35,9 @@ public final class SimpleIdParser implements IdParser {
                 }
             }
             catch (RuntimeException ex) {
-                // A user parser must not break the whole parsing chain.
+                // A user parser must not break the whole parsing chain, but keep the failure observable.
+                LOGGER.log(System.Logger.Level.DEBUG,
+                        "IdTypeParser " + parser.type() + " failed; falling through", ex);
             }
         }
         return Optional.empty();

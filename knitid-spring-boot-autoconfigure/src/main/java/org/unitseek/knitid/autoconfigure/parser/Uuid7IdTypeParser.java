@@ -22,7 +22,7 @@ final class Uuid7IdTypeParser implements IdTypeParser {
     @Override
     public Optional<IdInfo> tryParse(String raw) {
         UUID uuid = parseUuid(raw);
-        if (uuid == null || uuid.version() != 7) {
+        if (uuid == null || uuid.version() != 7 || uuid.variant() != 2) {
             return Optional.empty();
         }
         long timestamp = uuid.getMostSignificantBits() >>> 16;
@@ -35,7 +35,9 @@ final class Uuid7IdTypeParser implements IdTypeParser {
             return null;
         }
         try {
-            return UUID.fromString(raw);
+            UUID uuid = UUID.fromString(raw);
+            // UUID.fromString accepts non-canonical group lengths; require canonical text.
+            return uuid.toString().equalsIgnoreCase(raw) ? uuid : null;
         }
         catch (IllegalArgumentException ex) {
             return null;

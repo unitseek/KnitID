@@ -84,6 +84,14 @@ class RedisSequenceProviderIntegrationTest {
     }
 
     @Test
+    void persistentScopeHasNoTtl() {
+        String prefix = prefix();
+        RedisSequenceProvider provider = new RedisSequenceProvider(template, prefix, Duration.ofSeconds(30));
+        assertThat(provider.next("ORD", true)).isZero();
+        assertThat(template.getExpire(prefix + ":ORD", TimeUnit.SECONDS)).isEqualTo(-1L);
+    }
+
+    @Test
     void firstIncrementSetsTtlAndScopesAreIndependent() {
         String prefix = prefix();
         RedisSequenceProvider provider = new RedisSequenceProvider(template, prefix, Duration.ofSeconds(30));

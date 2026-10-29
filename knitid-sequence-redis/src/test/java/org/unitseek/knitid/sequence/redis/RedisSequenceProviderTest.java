@@ -45,6 +45,22 @@ class RedisSequenceProviderTest {
     }
 
     @Test
+    void persistentScopeSkipsTtl() {
+        InMemoryStore store = new InMemoryStore();
+        RedisSequenceProvider provider = new RedisSequenceProvider(store, "knitid:seq", TTL);
+        provider.next("ORD", true);
+        assertThat(store.ttl).isZero();
+    }
+
+    @Test
+    void rejectsOversizedBatch() {
+        RedisSequenceProvider provider = new RedisSequenceProvider(new InMemoryStore(), "knitid:seq", TTL);
+        assertThatThrownBy(() -> provider.next("ORD", 10_001))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("batch size");
+    }
+
+    @Test
     void redisFailureMapsToSequenceUnavailable() {
         RedisSequenceProvider provider = new RedisSequenceProvider(
                 (key, delta, ttl) -> {

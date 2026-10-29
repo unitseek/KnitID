@@ -15,6 +15,21 @@ limitations under the License.
 
 This product includes software developed by the KnitID contributors.
 
-Optional runtime dependencies (Spring Boot, Spring Data Redis, Micrometer,
-Curator, ZooKeeper, Lettuce, Testcontainers, JMH) are licensed under their
-respective licenses; see the Maven dependency tree for details.
+Optional runtime dependencies:
+- Spring Boot / Spring Framework (Apache-2.0)
+- Spring Data Redis (Apache-2.0)
+- Micrometer (Apache-2.0)
+- Apache Curator (Apache-2.0)
+- Apache ZooKeeper (Apache-2.0)
+- Lettuce (Apache-2.0)
+
+Build, test and benchmark dependencies (not part of the runtime):
+- Testcontainers (MIT)
+- JUnit (EPL-2.0)
+- AssertJ (Apache-2.0)
+- Mockito (MIT)
+- JMH (GPL-2.0 with Classpath Exception)
+
+The complete dependency list and licenses are available via the Maven
+dependency tree of each released module. This NOTICE is not legal advice;
+downstream users should review the licenses of the dependencies they include.

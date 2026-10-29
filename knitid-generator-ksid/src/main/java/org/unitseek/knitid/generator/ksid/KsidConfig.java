@@ -60,7 +60,7 @@ public record KsidConfig(
         if (sequenceBits < 1 || sequenceBits > 62) {
             throw invalid("ksid.sequence-bits must be between 1 and 62: " + sequenceBits);
         }
-        int total = timestampBits + datacenterIdBits + workerIdBits + sequenceBits;
+        long total = (long) timestampBits + datacenterIdBits + workerIdBits + sequenceBits;
         if (total != TOTAL_BITS) {
             throw invalid("KSID bits must sum to " + TOTAL_BITS + " but were " + total
                     + " (timestamp=" + timestampBits + ", datacenter=" + datacenterIdBits

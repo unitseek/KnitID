@@ -75,6 +75,28 @@ class RedisWorkerIdAssignerTest {
     }
 
     @Test
+    void renewFailsWhenLeaseWasTakenOverByAnotherToken() {
+        InMemoryLeaseStore store = new InMemoryLeaseStore();
+        RedisWorkerIdAssigner assigner = assigner(store, 0, 15, "token-a");
+        assigner.assign();
+        store.leases.put("knitid:worker:0:0", "token-b");
+        assertThatThrownBy(assigner::renew)
+                .isInstanceOf(WorkerIdUnavailableException.class)
+                .hasMessageContaining("KNITID-2007");
+        assertThat(store.leases).containsEntry("knitid:worker:0:0", "token-b");
+    }
+
+    @Test
+    void releaseDoesNotDeleteAnotherOwnersLease() {
+        InMemoryLeaseStore store = new InMemoryLeaseStore();
+        RedisWorkerIdAssigner assigner = assigner(store, 0, 15, "token-a");
+        WorkerId worker = assigner.assign();
+        store.leases.put("knitid:worker:0:0", "token-b");
+        assigner.release(worker);
+        assertThat(store.leases).containsEntry("knitid:worker:0:0", "token-b");
+    }
+
+    @Test
     void providerRequiresRedisTemplateAndValidProperties() {
         RedisWorkerIdProperties properties = new RedisWorkerIdProperties();
         RedisWorkerIdAssignerProvider withoutTemplate = new RedisWorkerIdAssignerProvider(null, properties);
@@ -120,13 +142,13 @@ class RedisWorkerIdAssignerTest {
         }
 
         @Override
-        public boolean renew(String key, Duration ttl) {
-            return renewResult && leases.containsKey(key);
+        public boolean renew(String key, String token, Duration ttl) {
+            return renewResult && token.equals(leases.get(key));
         }
 
         @Override
-        public boolean release(String key) {
-            return leases.remove(key) != null;
+        public boolean release(String key, String token) {
+            return token.equals(leases.get(key)) && leases.remove(key) != null;
         }
     }
 }

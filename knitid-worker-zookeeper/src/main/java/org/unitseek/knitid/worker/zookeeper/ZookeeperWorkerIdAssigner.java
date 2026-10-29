@@ -95,10 +95,11 @@ final class ZookeeperWorkerIdAssigner implements WorkerIdAssigner, AutoCloseable
         }
         try {
             Stat stat = client.checkExists().forPath(path(current.workerId()));
-            if (stat == null) {
+            long sessionId = client.getZookeeperClient().getZooKeeper().getSessionId();
+            if (stat == null || stat.getEphemeralOwner() != sessionId) {
                 throw new WorkerIdUnavailableException(
                         IdErrorCodes.WORKER_LEASE_LOST,
-                        "ZooKeeper ephemeral node disappeared; WorkerId lease lost: " + current);
+                        "ZooKeeper ephemeral node no longer owned by this session; WorkerId lease lost: " + current);
             }
         }
         catch (WorkerIdUnavailableException ex) {
@@ -119,14 +120,17 @@ final class ZookeeperWorkerIdAssigner implements WorkerIdAssigner, AutoCloseable
 
     @Override
     public synchronized void release(WorkerId released) {
-        if (released == null) {
+        if (released == null || !released.equals(workerId)) {
             return;
         }
+        boolean deleted = false;
         try {
-            client.delete().guaranteed().forPath(path(released.workerId()));
+            client.delete().forPath(path(released.workerId()));
+            deleted = true;
         }
         catch (KeeperException.NoNodeException ex) {
             // Already gone; release is idempotent.
+            deleted = true;
         }
         catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
@@ -135,7 +139,7 @@ final class ZookeeperWorkerIdAssigner implements WorkerIdAssigner, AutoCloseable
             // Best-effort release; the ephemeral node will disappear with the session.
         }
         finally {
-            if (released.equals(workerId)) {
+            if (deleted) {
                 workerId = null;
             }
         }

@@ -21,8 +21,16 @@ public final class DurationParser {
         if (text.isEmpty()) {
             throw new IllegalArgumentException("duration must not be empty");
         }
-        if (text.startsWith("P") || text.startsWith("p")) {
-            return Duration.parse(text.toUpperCase(Locale.ROOT));
+        boolean signedIso = text.length() > 1
+                && (text.charAt(0) == '-' || text.charAt(0) == '+')
+                && Character.toUpperCase(text.charAt(1)) == 'P';
+        if (text.startsWith("P") || text.startsWith("p") || signedIso) {
+            try {
+                return Duration.parse(text);
+            }
+            catch (java.time.format.DateTimeParseException ex) {
+                throw new IllegalArgumentException("invalid ISO-8601 duration: " + value, ex);
+            }
         }
         int index = 0;
         while (index < text.length()) {
@@ -37,7 +45,13 @@ public final class DurationParser {
         if (index == 0 || index == text.length()) {
             throw new IllegalArgumentException("invalid duration: " + value);
         }
-        BigDecimal number = new BigDecimal(text.substring(0, index));
+        BigDecimal number;
+        try {
+            number = new BigDecimal(text.substring(0, index));
+        }
+        catch (NumberFormatException ex) {
+            throw new IllegalArgumentException("invalid duration number: " + value, ex);
+        }
         String unit = text.substring(index).trim().toLowerCase(Locale.ROOT);
         BigDecimal nanosPerUnit = switch (unit) {
             case "ns" -> BigDecimal.ONE;
@@ -49,6 +63,11 @@ public final class DurationParser {
             case "d" -> BigDecimal.valueOf(86_400_000_000_000L);
             default -> throw new IllegalArgumentException("unsupported duration unit: " + unit);
         };
-        return Duration.ofNanos(number.multiply(nanosPerUnit).longValueExact());
+        try {
+            return Duration.ofNanos(number.multiply(nanosPerUnit).longValueExact());
+        }
+        catch (ArithmeticException ex) {
+            throw new IllegalArgumentException("duration out of range: " + value, ex);
+        }
     }
 }

@@ -40,7 +40,7 @@ public class KnitIdEndpoint {
                     generator == defaultGenerator, generator.blocking()));
         }
         return new KnitIdEndpointInfo(defaultName,
-                defaultGenerator == null ? null : defaultGenerator.type().value(),
+                defaultName != null && defaultGenerator != null ? defaultGenerator.type().value() : null,
                 generators);
     }
 

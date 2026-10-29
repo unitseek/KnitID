@@ -80,6 +80,7 @@ public final class Uuid7Generator implements IdGenerator {
             }
         }
         else {
+            lastTimestamp = now;
             newRandom();
         }
         return format(lastTimestamp, randomA, randomB);

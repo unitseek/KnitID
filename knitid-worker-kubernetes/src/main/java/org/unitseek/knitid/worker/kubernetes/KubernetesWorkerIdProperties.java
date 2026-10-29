@@ -27,7 +27,7 @@ public class KubernetesWorkerIdProperties {
     }
 
     public void setMode(Mode mode) {
-        this.mode = mode;
+        this.mode = mode == null ? Mode.STATEFULSET_ORDINAL : mode;
     }
 
     public String getPodName() {

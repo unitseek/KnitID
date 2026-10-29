@@ -59,6 +59,9 @@ class SimpleIdParserTest {
         assertThat(parser.tryParse("not-an-id")).isEmpty();
         assertThat(parser.tryParse("919108f7-52d1-4320-9bac-f847db4148a8")).isEmpty();
         assertThat(parser.tryParse("01ARZ3NDEKTSV4RRFFQ69G5FAI")).isEmpty();
+        assertThat(parser.tryParse("00000000-0000-7000-0000-000000000001")).isEmpty();
+        assertThat(parser.tryParse("00000000-0000-8000-0000-000000000001")).isEmpty();
+        assertThat(parser.tryParse("000000000-0000-7000-0000-00000000001")).isEmpty();
         assertThatThrownBy(() -> parser.parse("not-an-id")).isInstanceOf(IdParseException.class);
     }
 

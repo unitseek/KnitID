@@ -64,6 +64,10 @@ public final class KsidIdGeneratorFactory implements IdGeneratorFactory {
                             "ksid.worker-id is required when ksid.worker-id-assigner=fixed");
                 }
                 int datacenter = config.getInt("ksid.datacenter-id", 0);
+                if (datacenter < 0) {
+                    throw new IdConfigurationException(
+                            IdErrorCodes.CONFIG_INVALID, "ksid.datacenter-id must be >= 0");
+                }
                 FixedWorkerIdAssigner fixed = new FixedWorkerIdAssigner(datacenter, worker);
                 assigner = fixed;
                 workerId = fixed.assign();

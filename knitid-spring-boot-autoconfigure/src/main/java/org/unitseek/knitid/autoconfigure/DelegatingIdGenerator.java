@@ -30,4 +30,19 @@ final class DelegatingIdGenerator implements IdGenerator {
     public String generate(IdContext context) {
         return registry.getDefault().generate(context);
     }
+
+    @Override
+    public boolean blocking() {
+        return registry.getDefault().blocking();
+    }
+
+    @Override
+    public java.util.List<String> generateBatch(int size) {
+        return registry.getDefault().generateBatch(size);
+    }
+
+    @Override
+    public java.util.List<String> generateBatch(int size, IdContext context) {
+        return registry.getDefault().generateBatch(size, context);
+    }
 }

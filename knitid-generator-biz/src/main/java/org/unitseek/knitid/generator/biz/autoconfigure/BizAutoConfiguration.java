@@ -1,6 +1,8 @@
 package org.unitseek.knitid.generator.biz.autoconfigure;
 
 import java.time.Clock;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -25,18 +27,22 @@ public class BizAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public BizIdGeneratorFactory bizIdGeneratorFactory(ListableBeanFactory beanFactory) {
+        Map<String, SequenceProvider> providers = new ConcurrentHashMap<>();
         return new BizIdGeneratorFactory(Clock.systemUTC(), name -> {
-            if ("memory".equalsIgnoreCase(name)) {
-                return new MemorySequenceProvider();
-            }
-            try {
-                return beanFactory.getBean(name, SequenceProvider.class);
-            }
-            catch (RuntimeException ex) {
+            if (name == null || name.isBlank()) {
                 throw new IdConfigurationException(
-                        IdErrorCodes.CONFIG_INVALID,
-                        "SequenceProvider bean not found: " + name + " (" + ex.getMessage() + ")");
+                        IdErrorCodes.CONFIG_INVALID, "biz.sequence-provider must not be blank");
             }
+            return providers.computeIfAbsent(name, key -> {
+                if (beanFactory.containsBean(key)) {
+                    return beanFactory.getBean(key, SequenceProvider.class);
+                }
+                if ("memory".equalsIgnoreCase(key)) {
+                    return new MemorySequenceProvider();
+                }
+                throw new IdConfigurationException(
+                        IdErrorCodes.CONFIG_INVALID, "SequenceProvider bean not found: " + key);
+            });
         });
     }
 }

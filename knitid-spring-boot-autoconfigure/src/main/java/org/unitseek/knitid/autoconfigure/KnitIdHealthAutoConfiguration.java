@@ -15,7 +15,7 @@ import org.unitseek.knitid.core.api.IdGeneratorRegistry;
  */
 @AutoConfiguration(after = KnitIdAutoConfiguration.class)
 @ConditionalOnClass(HealthIndicator.class)
-@ConditionalOnBean(IdGeneratorRegistry.class)
+@ConditionalOnBean({ IdGeneratorRegistry.class, KnitIdProperties.class })
 @ConditionalOnProperty(prefix = "management.health.knitid", name = "enabled", matchIfMissing = true)
 public class KnitIdHealthAutoConfiguration {
 

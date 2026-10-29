@@ -90,14 +90,31 @@ public final class ZookeeperWorkerIdAssignerProvider implements WorkerIdAssigner
                     IdErrorCodes.CONFIG_INVALID,
                     "knitid.worker.zookeeper.connection-timeout must be positive");
         }
+        if (properties.getSessionTimeout().toMillis() < 1
+                || properties.getSessionTimeout().toMillis() > Integer.MAX_VALUE) {
+            throw new IdConfigurationException(
+                    IdErrorCodes.CONFIG_INVALID,
+                    "knitid.worker.zookeeper.session-timeout must be between 1ms and Integer.MAX_VALUE ms");
+        }
+        if (properties.getConnectionTimeout().toMillis() < 1
+                || properties.getConnectionTimeout().toMillis() > Integer.MAX_VALUE) {
+            throw new IdConfigurationException(
+                    IdErrorCodes.CONFIG_INVALID,
+                    "knitid.worker.zookeeper.connection-timeout must be between 1ms and Integer.MAX_VALUE ms");
+        }
+    }
+
+    private static int millis(java.time.Duration duration) {
+        long millis = duration.toMillis();
+        return (int) Math.max(1L, Math.min(Integer.MAX_VALUE, millis));
     }
 
     private CuratorFramework buildClient() {
         return CuratorFrameworkFactory.builder()
                 .connectString(properties.getConnectString())
                 .namespace(properties.getNamespace())
-                .sessionTimeoutMs((int) properties.getSessionTimeout().toMillis())
-                .connectionTimeoutMs((int) properties.getConnectionTimeout().toMillis())
+                .sessionTimeoutMs(millis(properties.getSessionTimeout()))
+                .connectionTimeoutMs(millis(properties.getConnectionTimeout()))
                 .retryPolicy(new ExponentialBackoffRetry(1000, 3))
                 .build();
     }

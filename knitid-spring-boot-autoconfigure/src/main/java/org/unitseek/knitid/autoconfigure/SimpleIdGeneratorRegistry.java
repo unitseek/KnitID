@@ -23,6 +23,10 @@ final class SimpleIdGeneratorRegistry implements IdGeneratorRegistry {
     private final IdGenerator defaultGenerator;
 
     SimpleIdGeneratorRegistry(Map<String, IdGenerator> generators, IdGenerator defaultGenerator) {
+        java.util.Objects.requireNonNull(generators, "generators must not be null");
+        if (generators.entrySet().stream().anyMatch(e -> e.getKey() == null || e.getValue() == null)) {
+            throw new IllegalArgumentException("generator names and instances must not be null");
+        }
         this.generators = Collections.unmodifiableMap(new LinkedHashMap<>(generators));
         this.defaultGenerator = defaultGenerator;
     }

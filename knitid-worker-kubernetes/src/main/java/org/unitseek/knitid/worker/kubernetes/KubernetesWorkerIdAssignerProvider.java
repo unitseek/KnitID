@@ -53,6 +53,11 @@ public final class KubernetesWorkerIdAssignerProvider implements WorkerIdAssigne
         String podName = resolvePodName();
         int ordinal = parseOrdinal(podName);
         int maxWorkerId = (1 << workerIdBits) - 1;
+        if (ordinal < 0) {
+            throw new WorkerIdUnavailableException(
+                    IdErrorCodes.WORKER_UNAVAILABLE,
+                    "Kubernetes pod ordinal must be >= 0: " + ordinal);
+        }
         if (ordinal > maxWorkerId) {
             throw new WorkerIdUnavailableException(
                     IdErrorCodes.WORKER_UNAVAILABLE,

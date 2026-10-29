@@ -31,6 +31,24 @@ class ZookeeperWorkerIdAssignerIntegrationTest {
             .waitingFor(Wait.forListeningPort());
 
     @Test
+    void releaseIgnoresWorkerIdNotOwnedByThisAssigner() throws Exception {
+        ZookeeperWorkerIdAssignerProvider provider = provider();
+        WorkerIdAssigner first = provider.create(1, 5);
+        WorkerIdAssigner next = null;
+        try {
+            WorkerId owned = first.assign();
+            first.release(new WorkerId(1, 1));
+            assertThat(owned).isEqualTo(new WorkerId(1, 0));
+            next = provider.create(1, 5);
+            assertThat(next.assign()).isEqualTo(new WorkerId(1, 1));
+        }
+        finally {
+            close(first);
+            close(next);
+        }
+    }
+
+    @Test
     void assignsUniqueEphemeralNodesAndReleasesThem() throws Exception {
         ZookeeperWorkerIdAssignerProvider provider = provider();
         WorkerIdAssigner first = provider.create(1, 5);

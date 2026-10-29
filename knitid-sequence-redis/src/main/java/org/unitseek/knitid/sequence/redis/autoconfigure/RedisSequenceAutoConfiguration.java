@@ -4,6 +4,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -25,7 +26,8 @@ import org.unitseek.knitid.sequence.redis.RedisSequenceProvider;
 public class RedisSequenceAutoConfiguration {
 
     @Bean(name = { "redisSequenceProvider", "redis" })
-    @ConditionalOnMissingBean(name = "redisSequenceProvider")
+    @ConditionalOnMissingBean(name = { "redisSequenceProvider", "redis" })
+    @ConditionalOnSingleCandidate(StringRedisTemplate.class)
     public SequenceProvider redisSequenceProvider(ObjectProvider<StringRedisTemplate> templates,
             RedisSequenceProperties properties) {
         return new RedisSequenceProvider(templates.getIfAvailable(), properties.getKeyPrefix(), properties.getTtl());

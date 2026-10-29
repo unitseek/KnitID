@@ -16,7 +16,7 @@ import org.unitseek.knitid.core.api.NumericIdGenerator;
 /**
  * Instrumented {@link NumericIdGenerator}.
  */
-final class MeteredNumericIdGenerator implements NumericIdGenerator, IdGeneratorHealth {
+final class MeteredNumericIdGenerator implements NumericIdGenerator, IdGeneratorHealth, AutoCloseable {
 
     private final NumericIdGenerator delegate;
 
@@ -59,8 +59,8 @@ final class MeteredNumericIdGenerator implements NumericIdGenerator, IdGenerator
 
     @Override
     public List<String> generateBatch(int size) {
-        metrics.recordBatch(size);
         IdGeneratorConstants.checkBatchSize(size);
+        metrics.recordBatch(size);
         List<String> result = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             result.add(generate());
@@ -70,19 +70,19 @@ final class MeteredNumericIdGenerator implements NumericIdGenerator, IdGenerator
 
     @Override
     public List<String> generateBatch(int size, IdContext context) {
-        metrics.recordBatch(size);
         IdGeneratorConstants.checkBatchSize(size);
+        metrics.recordBatch(size);
         List<String> result = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
-            result.add(generate(context));
+            result.add(context == null ? generate() : generate(context));
         }
         return result;
     }
 
     @Override
     public long[] generateLongBatch(int size) {
-        metrics.recordBatch(size);
         IdGeneratorConstants.checkBatchSize(size);
+        metrics.recordBatch(size);
         long[] result = new long[size];
         for (int i = 0; i < size; i++) {
             result[i] = generateLong();
@@ -92,13 +92,20 @@ final class MeteredNumericIdGenerator implements NumericIdGenerator, IdGenerator
 
     @Override
     public long[] generateLongBatch(int size, IdContext context) {
-        metrics.recordBatch(size);
         IdGeneratorConstants.checkBatchSize(size);
+        metrics.recordBatch(size);
         long[] result = new long[size];
         for (int i = 0; i < size; i++) {
-            result[i] = generateLong(context);
+            result[i] = context == null ? generateLong() : generateLong(context);
         }
         return result;
+    }
+
+    @Override
+    public void close() throws Exception {
+        if (delegate instanceof AutoCloseable closeable) {
+            closeable.close();
+        }
     }
 
     @Override

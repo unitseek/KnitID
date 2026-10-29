@@ -21,6 +21,8 @@ public record IdInfo(
         Map<String, Object> attributes) {
 
     public IdInfo {
+        java.util.Objects.requireNonNull(type, "type must not be null");
+        java.util.Objects.requireNonNull(raw, "raw must not be null");
         if (attributes == null) {
             attributes = Map.of();
         }

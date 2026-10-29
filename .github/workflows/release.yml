@@ -8,13 +8,22 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: false
+
 jobs:
   publish:
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    environment:
+      name: release
     env:
       KNITID_TEST_REDIS_IMAGE: redis:8.10.3
       KNITID_TEST_ZOOKEEPER_IMAGE: zookeeper:3.9.6
+      MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+      MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+      MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -22,26 +31,21 @@ jobs:
           distribution: temurin
           java-version: "21"
           cache: maven
+          server-id: central
+          server-username: MAVEN_CENTRAL_USERNAME
+          server-password: MAVEN_CENTRAL_PASSWORD
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
-      - name: Configure Maven Central credentials
+      - name: Verify release version
         run: |
-          mkdir -p ~/.m2
-          cat > ~/.m2/settings.xml <<EOF
-          <settings>
-            <servers>
-              <server>
-                <id>central</id>
-                <username>${MAVEN_CENTRAL_USERNAME}</username>
-                <password>${MAVEN_CENTRAL_PASSWORD}</password>
-              </server>
-            </servers>
-          </settings>
-          EOF
-        env:
-          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
-          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          VERSION=$(mvn -B -q -DforceStdout help:evaluate -Dexpression=project.version)
+          if [[ "$VERSION" == *SNAPSHOT* ]]; then
+            echo "::error::Release version must not be a SNAPSHOT: $VERSION"
+            exit 1
+          fi
+          if [[ "v$VERSION" != "$GITHUB_REF_NAME" ]]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match project version v$VERSION"
+            exit 1
+          fi
       - name: Publish to Maven Central
         run: mvn -B -ntp -Prelease clean deploy
-        env:
-          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}

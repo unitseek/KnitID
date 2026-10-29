@@ -16,7 +16,7 @@ import org.unitseek.knitid.core.api.IdType;
 /**
  * Instrumented {@link IdGenerator}.
  */
-final class MeteredIdGenerator implements IdGenerator, IdGeneratorHealth {
+final class MeteredIdGenerator implements IdGenerator, IdGeneratorHealth, AutoCloseable {
 
     private final IdGenerator delegate;
 
@@ -49,8 +49,8 @@ final class MeteredIdGenerator implements IdGenerator, IdGeneratorHealth {
 
     @Override
     public List<String> generateBatch(int size) {
-        metrics.recordBatch(size);
         IdGeneratorConstants.checkBatchSize(size);
+        metrics.recordBatch(size);
         List<String> result = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             result.add(generate());
@@ -60,13 +60,20 @@ final class MeteredIdGenerator implements IdGenerator, IdGeneratorHealth {
 
     @Override
     public List<String> generateBatch(int size, IdContext context) {
-        metrics.recordBatch(size);
         IdGeneratorConstants.checkBatchSize(size);
+        metrics.recordBatch(size);
         List<String> result = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
-            result.add(generate(context));
+            result.add(context == null ? generate() : generate(context));
         }
         return result;
+    }
+
+    @Override
+    public void close() throws Exception {
+        if (delegate instanceof AutoCloseable closeable) {
+            closeable.close();
+        }
     }
 
     @Override

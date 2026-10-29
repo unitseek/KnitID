@@ -64,7 +64,7 @@ public final class BizIdGenerator implements IdGenerator {
         long sequence = 0L;
         if (template.usesSeq()) {
             String scope = sequenceScope(prefix, businessDate);
-            sequence = sequenceProvider.next(scope);
+            sequence = sequenceProvider.next(scope, config.reset() == SequenceReset.NEVER);
         }
         StringBuilder output = new StringBuilder(64);
         for (BizTemplate.Part part : template.parts()) {
@@ -85,9 +85,9 @@ public final class BizIdGenerator implements IdGenerator {
                 case SEQ -> output.append(padded(sequence, part.width()));
                 case RANDOM -> output.append(randomDigits(part.width()));
                 case WORKER -> {
-                    if (workerId == null) {
+                    if (workerId == null || workerId < 0) {
                         throw new IdGenerationException(
-                                IdErrorCodes.GENERATION_FAILED, "No worker id available for {worker}");
+                                IdErrorCodes.GENERATION_FAILED, "No valid worker id available for {worker}: " + workerId);
                     }
                     output.append(workerId);
                 }

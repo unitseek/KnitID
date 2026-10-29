@@ -108,6 +108,34 @@ class KnitIdAutoConfigurationTest {
     }
 
     @Test
+    void failsWhenImplicitDefaultWouldOverwriteConfiguredDefaultName() {
+        withUuid7.withUserConfiguration(FakeGeneratorConfiguration.class)
+                .withPropertyValues(
+                        "knitid.generators.default.type=UUID7",
+                        "knitid.default-type=FAKE")
+                .run(context -> {
+                    assertThat(context).hasFailed();
+                    assertThat(context.getStartupFailure()).hasStackTraceContaining("KNITID-1003");
+                });
+    }
+
+    @Test
+    void appliesConfiguredMaxBatchSize() {
+        try {
+            withUuid7.withPropertyValues("knitid.limits.max-batch-size=2").run(context -> {
+                assertThat(context).hasNotFailed();
+                IdGenerator generator = context.getBean(IdGenerator.class);
+                assertThatThrownBy(() -> generator.generateBatch(3))
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessageContaining("<= 2");
+            });
+        }
+        finally {
+            org.unitseek.knitid.core.api.IdGeneratorConstants.resetMaxBatchSize();
+        }
+    }
+
+    @Test
     void failsOnUnknownGeneratorProperty() {
         withUuid7.withPropertyValues(
                 "knitid.generators.order-id.type=UUID7",

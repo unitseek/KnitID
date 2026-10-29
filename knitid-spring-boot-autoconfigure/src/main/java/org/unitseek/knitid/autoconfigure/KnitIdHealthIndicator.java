@@ -33,11 +33,18 @@ public class KnitIdHealthIndicator implements HealthIndicator {
     }
 
     @Override
-    public Health health() {
+    public synchronized Health health() {
         long now = System.nanoTime();
         Health current = cached;
         Duration ttl = properties.getHealth().getCacheTtl();
-        if (current != null && ttl != null && now - cachedAtNanos < ttl.toNanos()) {
+        long ttlNanos;
+        try {
+            ttlNanos = ttl == null ? 0L : ttl.toNanos();
+        }
+        catch (ArithmeticException ex) {
+            ttlNanos = 0L;
+        }
+        if (current != null && ttlNanos > 0 && now - cachedAtNanos < ttlNanos) {
             return current;
         }
         Health computed = compute();
@@ -56,6 +63,9 @@ public class KnitIdHealthIndicator implements HealthIndicator {
                     .withDetail("reason", "No default generator configured")
                     .build();
         }
+        catch (RuntimeException ex) {
+            return Health.down().withException(ex).build();
+        }
         try {
             if (generator instanceof IdGeneratorHealth healthGenerator) {
                 IdGeneratorHealthSnapshot snapshot = healthGenerator.health(
@@ -68,7 +78,8 @@ public class KnitIdHealthIndicator implements HealthIndicator {
                     return Health.down().withDetails(details)
                             .withDetail("message", snapshot.message()).build();
                 }
-                if (backwards >= properties.getHealth().getBackwardsDownCount()) {
+                int threshold = properties.getHealth().getBackwardsDownCount();
+                if (threshold > 0 && backwards >= threshold) {
                     return Health.down().withDetails(details)
                             .withDetail("message", "Clock moved backwards " + backwards + " times in window")
                             .build();

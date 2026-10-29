@@ -32,6 +32,7 @@ public class KnitIdMetricsAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     @ConditionalOnBean(IdGeneratorRegistry.class)
     public KnitIdGaugeBinder knitIdGaugeBinder(IdGeneratorRegistry registry, KnitIdProperties properties,
             ObjectProvider<MeterRegistry> registries) {

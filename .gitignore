@@ -28,4 +28,5 @@ Thumbs.db
 *.local
 
 # Internal requirements/reviews (not part of the public repository)
-wiki/
+/wiki/
+/ocr-fix/
