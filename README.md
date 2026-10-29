@@ -4,7 +4,7 @@
 
 ## 状态
 
-M1/M2 进行中（v0.3.0-SNAPSHOT）：五类 ID 算法（UUIDv7、UUIDv8、ULID、KSID、BIZ）、IdParser、Redis/ZooKeeper/Kubernetes WorkerId 分配器、Actuator 端点/健康检查/指标、Spring Boot 自动配置与契约测试已完成；剩余 M2 项为 Redis 序列模块与基准/示例完善。
+M1/M2 进行中（v0.3.0-SNAPSHOT）：五类 ID 算法（UUIDv7、UUIDv8、ULID、KSID、BIZ）、IdParser、Redis/ZooKeeper/Kubernetes WorkerId 分配器、Redis 序列模块、Actuator 端点/健康检查/指标、Spring Boot 自动配置与契约测试已完成；剩余为基准/示例完善与 1.0 收尾。
 
 ## 文档
 
@@ -38,7 +38,7 @@ mvn clean verify
 
 ## 测试
 
-当前共 144 个测试，全部通过（`mvn verify`；Testcontainers 用例在无 Docker 时自动跳过）：
+当前共 155 个测试，全部通过（`mvn verify`；Testcontainers 用例在无 Docker 时自动跳过）：
 
 - `knitid-core`：IdType 规范化契约（3）；
 - `knitid-generator-uuid7`：RFC 9562 附录 A.6 向量、属性测试、边界与溢出策略（11）；
@@ -46,6 +46,7 @@ mvn clean verify
 - `knitid-generator-ulid`：ULID 规范示例向量、Crockford Base32、单调递增、溢出策略、属性测试（15）；
 - `knitid-generator-biz`：模板编译、序列日切/永不重置、校验位（MOD37_36/MOD11_2/LUHN）、前缀/业务日期上下文、并发唯一（16）；
 - `knitid-generator-ksid`：位分配校验、回拨 `WAIT`/`THROW`/`BORROW_FUTURE`、序列溢出、WorkerId 越界、租约生命周期、健康快照（23）；
+- `knitid-sequence-redis`：原子 INCRBY、TTL、批量区间、跨实例共享、失败映射、自动配置（5 + 4 Testcontainers + 2），含两个 BIZ 生成器共享序列的集成测试；
 - `knitid-worker-redis`：槽位占用/冲突、租约续约失败、释放、provider 配置校验、自动配置（9），以及 Testcontainers 真实 Redis 的 SET NX/TTL/续约/释放/断连（5）；
 - `knitid-worker-zookeeper`：临时节点分配、重新占用、续约、配置校验、自动配置（6），以及 Testcontainers 真实 ZooKeeper 的分配/释放与断连（2）；
 - `knitid-worker-kubernetes`：StatefulSet ordinal、Downward API、越界/非法 pod 名、配置校验、自动配置（9）；
@@ -64,7 +65,7 @@ knitid:
         prefix: ORD
         zone-id: Asia/Shanghai
         node-id: 1
-        sequence-provider: memory   # 或 Spring Bean 名称
+        sequence-provider: memory   # memory / redis（需 knitid-sequence-redis）/ 自定义 Bean
         reset: DAILY                # DAILY | NEVER
         check-algorithm: MOD37_36   # MOD37_36 | MOD11_2 | LUHN | NONE
 ```
