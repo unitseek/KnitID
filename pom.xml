@@ -19,6 +19,30 @@
   <description>Unified ID generation toolkit for Spring Boot: UUIDv7, UUIDv8, ULID, KSID, business IDs</description>
   <url>https://github.com/unitseek/knitid</url>
 
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>unitseek</id>
+      <name>UnitSeek</name>
+      <organization>UnitSeek</organization>
+      <organizationUrl>https://github.com/unitseek</organizationUrl>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:https://github.com/unitseek/knitid.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/unitseek/knitid.git</developerConnection>
+    <url>https://github.com/unitseek/knitid</url>
+    <tag>HEAD</tag>
+  </scm>
+
   <properties>
     <java.version>21</java.version>
     <maven.compiler.release>21</maven.compiler.release>

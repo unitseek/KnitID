@@ -1,0 +1,44 @@
+name: Feature request
+description: Suggest an idea for KnitID
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / use case
+      description: What problem are you trying to solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Generator
+        - WorkerId assigner
+        - Sequence provider
+        - Parser / validation
+        - Spring Boot / Actuator
+        - Documentation
+        - Build / release
+        - Other
+    validations:
+      required: true
+  - type: checkboxes
+    id: compatibility
+    attributes:
+      label: Compatibility
+      options:
+        - label: This proposal may require a breaking change
+        - label: I can help implement it

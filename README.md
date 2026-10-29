@@ -1,19 +1,68 @@
 # KnitID
 
+[![CI](https://github.com/unitseek/knitid/actions/workflows/ci.yml/badge.svg)](https://github.com/unitseek/knitid/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Java 21](https://img.shields.io/badge/Java-21+-blue.svg)](https://adoptium.net/)
+[![Spring Boot 4](https://img.shields.io/badge/Spring%20Boot-4.0%20%7C%204.1-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Javadoc](https://img.shields.io/badge/javadoc-site-blue)](https://unitseek.github.io/knitid/)
+
 统一、模块化的 Spring Boot ID 生成工具库：UUIDv7、UUIDv8、ULID、KSID（Snowflake 算法）、业务 ID。
 
 ## 状态
 
 1.0 候选（v0.3.0-SNAPSHOT）：五类 ID 算法（UUIDv7、UUIDv8、ULID、KSID、BIZ）、IdParser、Redis/ZooKeeper/Kubernetes WorkerId 分配器、Redis 序列模块、Actuator 端点/健康检查/指标、JMH 基准、示例工程、Spring Boot 自动配置与契约测试均已完成。
 
+## 快速开始
+
+要求 JDK 21+、Spring Boot 4.0/4.1。引入 Starter 与 UUIDv7 模块：
+
+```xml
+<dependency>
+  <groupId>org.unitseek.knitid</groupId>
+  <artifactId>knitid-spring-boot-starter</artifactId>
+  <version>0.3.0-SNAPSHOT</version>
+</dependency>
+<dependency>
+  <groupId>org.unitseek.knitid</groupId>
+  <artifactId>knitid-generator-uuid7</artifactId>
+</dependency>
+```
+
+```yaml
+knitid:
+  default-type: UUID7
+```
+
+```java
+@Service
+class OrderService {
+    private final IdGenerator ids;
+
+    OrderService(IdGenerator ids) {
+        this.ids = ids;
+    }
+
+    String newOrderId() {
+        return ids.generate();
+    }
+}
+```
+
+完整步骤见 [快速开始](docs/getting-started.md)，配置见 [配置参考](docs/configuration.md)。
+
 ## 文档
 
-- [功能需求文档 v0.3](<wiki/ID 生成工具库功能需求文档（FRD）.md>)
-- [FRD 评审意见](<wiki/ID 生成工具库 FRD 评审意见.md>)
+- [文档索引](docs/index.md)
 - [配置参考](docs/configuration.md)
+- [兼容性与版本策略](docs/compatibility.md)
+- [迁移指南](docs/migration.md)
 - [基准报告](docs/benchmark-report.md)
 - [发布流程](docs/release.md)
 - [CHANGELOG](CHANGELOG.md)
+- [贡献指南](CONTRIBUTING.md)
+- [支持渠道](SUPPORT.md)
+- [安全策略](SECURITY.md)
+- [行为准则](CODE_OF_CONDUCT.md)
 
 ## 构建
 
@@ -142,3 +191,7 @@ knitid:
       lease-ttl: 60s
       renew-interval: 20s
 ```
+
+## 贡献
+
+欢迎提交 Issue/PR，请先阅读 [贡献指南](CONTRIBUTING.md) 与 [行为准则](CODE_OF_CONDUCT.md)。安全问题请按 [SECURITY.md](SECURITY.md) 私密报告。

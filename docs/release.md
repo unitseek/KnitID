@@ -39,6 +39,13 @@ mvn -B -ntp -Prelease clean deploy
 - `.github/workflows/release.yml`：推送 `v*` tag 时执行 `mvn -Prelease clean deploy`；
   - Secrets：`MAVEN_CENTRAL_USERNAME`、`MAVEN_CENTRAL_PASSWORD`、`GPG_PRIVATE_KEY`、`MAVEN_GPG_PASSPHRASE`。
 
+## 文档与 Javadoc 发布
+
+- `docs.yml` 在 `main` 推送时执行 `mvn -DskipTests javadoc:aggregate`，并发布到 GitHub Pages；
+- 聚合输出目录：`target/reports/apidocs`；
+- 仓库 Settings → Pages 的 Source 选择 **GitHub Actions**；
+- 页面地址：https://unitseek.github.io/knitid/（以实际仓库为准）。
+
 ## 发布检查清单
 
 - [ ] 所有测试通过（含 Testcontainers）
