@@ -27,7 +27,7 @@ mvn clean verify
 | `knitid-generator-uuid7` | 已完成实现 + 契约/属性测试 |
 | `knitid-generator-ksid` | 已完成实现 + 测试（位分配校验、回拨策略、序列溢出、WorkerId 租约、健康快照） |
 | `knitid-worker-redis` | 已完成实现 + 单测 + Testcontainers 集成测试（SET NX/TTL 租约、续约、释放、槽位扫描、断连） |
-| `knitid-worker-zookeeper` | 已完成实现 + 测试（临时节点会话租约、槽位扫描、续约检查、释放） |
+| `knitid-worker-zookeeper` | 已完成实现 + 测试 + Testcontainers 集成测试（临时节点会话租约、槽位扫描、续约检查、释放、断连） |
 | `knitid-worker-kubernetes` | 已完成实现 + 测试（StatefulSet ordinal / Downward API） |
 | `knitid-spring-boot-autoconfigure` | 已完成骨架（配置/注册中心/默认选择/自动配置矩阵/健康检查/生命周期关闭） |
 | `knitid-spring-boot-starter` | 已完成 |
@@ -35,26 +35,32 @@ mvn clean verify
 
 ## 测试
 
-当前共 87 个测试，全部通过（`mvn verify`；Testcontainers 用例在无 Docker 时自动跳过）：
+当前共 89 个测试，全部通过（`mvn verify`；Testcontainers 用例在无 Docker 时自动跳过）：
 
 - `knitid-core`：IdType 规范化契约（3）；
 - `knitid-generator-uuid7`：RFC 9562 附录 A.6 向量、属性测试、边界与溢出策略（11）；
 - `knitid-generator-ksid`：位分配校验、回拨 `WAIT`/`THROW`/`BORROW_FUTURE`、序列溢出、WorkerId 越界、租约生命周期、健康快照（23）；
 - `knitid-worker-redis`：槽位占用/冲突、租约续约失败、释放、provider 配置校验、自动配置（9），以及 Testcontainers 真实 Redis 的 SET NX/TTL/续约/释放/断连（5）；
-- `knitid-worker-zookeeper`：临时节点分配、重新占用、续约、配置校验、自动配置（6）；
+- `knitid-worker-zookeeper`：临时节点分配、重新占用、续约、配置校验、自动配置（6），以及 Testcontainers 真实 ZooKeeper 的分配/释放与断连（2）；
 - `knitid-worker-kubernetes`：StatefulSet ordinal、Downward API、越界/非法 pod 名、配置校验、自动配置（9）；
 - `knitid-spring-boot-autoconfigure`：12 个启动行为矩阵场景 + 7 个健康检查场景（19）；
 - `knitid-samples`：Starter + UUIDv7/KSID 集成启动测试（2）。
 
 ### Testcontainers 集成测试
 
-`knitid-worker-redis` 使用 Testcontainers 对真实 Redis 验证 SET NX、TTL、续约、释放与断连行为：
+以下集成测试使用 Testcontainers：
+
+- `knitid-worker-redis`：真实 Redis 的 SET NX、TTL、续约、释放与断连；
+- `knitid-worker-zookeeper`：真实 ZooKeeper 的临时节点分配/释放与容器停止后的租约丢失/连接失败。
 
 - 需要 Docker；无 Docker 时测试通过 `@Testcontainers(disabledWithoutDocker = true)` 自动跳过；
-- 默认镜像 `redis:8.10.3`（真实 Redis，固定版本保证可复现），网络受限时可用环境变量覆盖：
+- 默认镜像：`redis:8.10.3`、`zookeeper:3.9.6`（固定版本保证可复现）；
+- 网络受限或需要私有镜像时可用环境变量覆盖：
 
 ```bash
-KNITID_TEST_REDIS_IMAGE=your-registry/redis:8.10.3 mvn -pl knitid-worker-redis -am test
+KNITID_TEST_REDIS_IMAGE=your-registry/redis:8.10.3 \
+KNITID_TEST_ZOOKEEPER_IMAGE=your-registry/zookeeper:3.9.6 \
+mvn -pl knitid-worker-redis,knitid-worker-zookeeper -am test
 ```
 
 ## Redis WorkerId 快速配置
