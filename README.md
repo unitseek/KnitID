@@ -26,21 +26,32 @@ mvn clean verify
 | `knitid-core` | 已完成骨架（API/SPI/异常/静态门面/DurationParser/健康快照） |
 | `knitid-generator-uuid7` | 已完成实现 + 契约/属性测试 |
 | `knitid-generator-ksid` | 已完成实现 + 测试（位分配校验、回拨策略、序列溢出、WorkerId 租约、健康快照） |
-| `knitid-worker-redis` | 已完成实现 + 测试（SET NX/TTL 租约、续约、释放、槽位扫描） |
+| `knitid-worker-redis` | 已完成实现 + 单测 + Testcontainers 集成测试（SET NX/TTL 租约、续约、释放、槽位扫描、断连） |
 | `knitid-spring-boot-autoconfigure` | 已完成骨架（配置/注册中心/默认选择/自动配置矩阵/健康检查/生命周期关闭） |
 | `knitid-spring-boot-starter` | 已完成 |
 | 其余算法/集成模块 | 占位模块（M1/M2 实现） |
 
 ## 测试
 
-当前共 67 个测试，全部通过（`mvn verify`）：
+当前共 72 个测试，全部通过（`mvn verify`；Testcontainers 用例在无 Docker 时自动跳过）：
 
 - `knitid-core`：IdType 规范化契约（3）；
 - `knitid-generator-uuid7`：RFC 9562 附录 A.6 向量、属性测试、边界与溢出策略（11）；
 - `knitid-generator-ksid`：位分配校验、回拨 `WAIT`/`THROW`/`BORROW_FUTURE`、序列溢出、WorkerId 越界、租约生命周期、健康快照（23）；
-- `knitid-worker-redis`：槽位占用/冲突、租约续约失败、释放、provider 配置校验、自动配置（9）；
+- `knitid-worker-redis`：槽位占用/冲突、租约续约失败、释放、provider 配置校验、自动配置（9），以及 Testcontainers 真实 Redis 的 SET NX/TTL/续约/释放/断连（5）；
 - `knitid-spring-boot-autoconfigure`：12 个启动行为矩阵场景 + 7 个健康检查场景（19）；
 - `knitid-samples`：Starter + UUIDv7/KSID 集成启动测试（2）。
+
+### Testcontainers 集成测试
+
+`knitid-worker-redis` 使用 Testcontainers 对真实 Redis 验证 SET NX、TTL、续约、释放与断连行为：
+
+- 需要 Docker；无 Docker 时测试通过 `@Testcontainers(disabledWithoutDocker = true)` 自动跳过；
+- 默认镜像 `redis:7.4-alpine`，网络受限时可用环境变量覆盖：
+
+```bash
+KNITID_TEST_REDIS_IMAGE=your-registry/redis:7.4 mvn -pl knitid-worker-redis -am test
+```
 
 ## Redis WorkerId 快速配置
 
