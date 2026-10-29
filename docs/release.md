@@ -15,6 +15,42 @@ mvn -B -ntp -Prelease -DskipTests package   # 校验 javadoc/source/gpg 配置
 
 需要 Docker（Testcontainers 的 Redis/ZooKeeper 用例）。
 
+## 本地 Nexus Snapshot 发布
+
+当前开发版本为 `1.0.0-SNAPSHOT`，根 POM 已配置：
+
+- 部署：`${nexus.url}/repository/maven-snapshots/`
+- 仓库：`${nexus.url}/repository/maven-public/`
+
+默认 `nexus.url=http://172.26.87.240:8081`，可通过 `-Dnexus.url=...` 覆盖。首次使用前在 `~/.m2/settings.xml` 配置 server id `nexus`：
+
+```xml
+<servers>
+  <server>
+    <id>nexus</id>
+    <username>YOUR_USER</username>
+    <password>YOUR_PASSWORD</password>
+  </server>
+</servers>
+```
+
+部署：
+
+```bash
+mvn -B -ntp -DskipTests deploy
+# 或指定地址
+mvn -B -ntp -DskipTests -Dnexus.url=http://172.26.87.240:8081 deploy
+```
+
+只在本机运行示例时，也可以不部署到 Nexus，先安装本地模块：
+
+```bash
+mvn -B -ntp -DskipTests install
+mvn -pl knitid-samples spring-boot:run
+```
+
+如果直接执行 `mvn -pl knitid-samples spring-boot:run`，必须确保内部模块已安装到本地仓库或已发布到 Nexus，否则会从 Maven Central 查找不存在的 `1.0.0-SNAPSHOT` 并失败。
+
 ## Maven Central 发布
 
 发布依赖：

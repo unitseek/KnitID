@@ -10,7 +10,7 @@
 
 ## 状态
 
-1.0.0 发布候选：五类 ID 算法（UUIDv7、UUIDv8、ULID、KSID、BIZ）、IdParser、Redis/ZooKeeper/Kubernetes WorkerId 分配器、Redis 序列模块、Actuator 端点/健康检查/指标、JMH 基准、示例工程、Spring Boot 自动配置与契约测试均已完成。
+1.0.0-SNAPSHOT 开发版（本地 Nexus）：五类 ID 算法（UUIDv7、UUIDv8、ULID、KSID、BIZ）、IdParser、Redis/ZooKeeper/Kubernetes WorkerId 分配器、Redis 序列模块、Actuator 端点/健康检查/指标、JMH 基准、示例工程、Spring Boot 自动配置与契约测试均已完成。
 
 ## 快速开始
 
@@ -20,7 +20,7 @@
 <dependency>
   <groupId>org.unitseek.knitid</groupId>
   <artifactId>knitid-spring-boot-starter</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.0-SNAPSHOT</version>
 </dependency>
 <dependency>
   <groupId>org.unitseek.knitid</groupId>
@@ -145,6 +145,8 @@ knitid:
 `knitid-samples` 配置了 UUIDv7、UUIDv8、ULID、KSID、BIZ 五个生成器，并提供一个 `CommandLineRunner`，启动时在控制台输出五类 ID：
 
 ```bash
+# 首次运行：先把本地模块安装到 ~/.m2
+mvn -B -ntp -DskipTests install
 mvn -pl knitid-samples spring-boot:run
 # 或在 IDEA 直接运行 SampleApplication
 ```

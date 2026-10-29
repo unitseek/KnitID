@@ -57,7 +57,7 @@ knitid-samples / knitid-benchmarks
     <dependency>
       <groupId>org.unitseek.knitid</groupId>
       <artifactId>knitid-bom</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.0-SNAPSHOT</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>

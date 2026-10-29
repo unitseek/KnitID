@@ -1,6 +1,6 @@
 # KnitID JMH 基准报告
 
-**版本**：1.0.0
+**版本**：1.0.0-SNAPSHOT
 **日期**：2026-10-29
 **JMH**：1.37
 **运行方式**：单 fork、单线程、3 × 1s warmup、5 × 1s measurement，返回 `String`（KSID 返回 `long`）
