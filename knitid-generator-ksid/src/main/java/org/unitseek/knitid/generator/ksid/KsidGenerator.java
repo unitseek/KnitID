@@ -156,7 +156,8 @@ public final class KsidGenerator implements NumericIdGenerator, IdGeneratorHealt
 
     @Override
     public boolean blocking() {
-        return config.clockBackwardsStrategy() == ClockBackwardsStrategy.WAIT;
+        return config.clockBackwardsStrategy() == ClockBackwardsStrategy.WAIT
+                || config.sequenceOverflowStrategy() == SequenceOverflowStrategy.WAIT;
     }
 
     @Override

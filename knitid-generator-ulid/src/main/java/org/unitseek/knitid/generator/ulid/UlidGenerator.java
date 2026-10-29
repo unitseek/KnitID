@@ -26,6 +26,8 @@ public final class UlidGenerator implements IdGenerator {
 
     private static final long MAX_64_BITS = -1L;
 
+    private static final long MAX_OVERFLOW_WAIT_NANOS = java.time.Duration.ofSeconds(5).toNanos();
+
     private final Clock clock;
 
     private final RandomProvider random;
@@ -113,8 +115,14 @@ public final class UlidGenerator implements IdGenerator {
                     IdErrorCodes.GENERATION_FAILED,
                     "ULID monotonic random space exhausted within millisecond " + lastTimestamp);
         }
-        long deadline = lastTimestamp + 1;
-        while (clock.millis() < deadline) {
+        long target = lastTimestamp + 1;
+        long deadline = System.nanoTime() + MAX_OVERFLOW_WAIT_NANOS;
+        while (clock.millis() < target) {
+            if (System.nanoTime() >= deadline) {
+                throw new IdGenerationException(
+                        IdErrorCodes.GENERATION_FAILED,
+                        "Clock did not advance after ULID overflow within timeout: " + lastTimestamp);
+            }
             LockSupport.parkNanos(100_000L);
         }
         lastTimestamp = clock.millis();

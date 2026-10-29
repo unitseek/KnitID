@@ -35,9 +35,10 @@ public final class SimpleIdParser implements IdParser {
                 }
             }
             catch (RuntimeException ex) {
-                // A user parser must not break the whole parsing chain, but keep the failure observable.
-                LOGGER.log(System.Logger.Level.DEBUG,
-                        "IdTypeParser " + parser.type() + " failed; falling through", ex);
+                // A parser failure means "cannot parse safely"; do not fall through to a less specific parser.
+                LOGGER.log(System.Logger.Level.WARNING,
+                        "IdTypeParser failed; refusing to guess a different type", ex);
+                return Optional.empty();
             }
         }
         return Optional.empty();

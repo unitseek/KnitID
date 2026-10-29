@@ -31,6 +31,9 @@ final class GenerationMetrics {
 
     private final DistributionSummary batchSize;
 
+    private final java.util.concurrent.ConcurrentMap<String, Counter> errorCounters =
+            new java.util.concurrent.ConcurrentHashMap<>();
+
     GenerationMetrics(MeterRegistry registry, String name, IdType type) {
         this.registry = registry;
         this.type = type.value().toLowerCase(Locale.ROOT);
@@ -49,16 +52,21 @@ final class GenerationMetrics {
 
     <T> T record(Supplier<T> call) {
         long start = System.nanoTime();
+        long elapsed = 0L;
         try {
-            return call.get();
+            T result = call.get();
+            elapsed = System.nanoTime() - start;
+            return result;
         }
         catch (RuntimeException ex) {
-            registry.counter("knitid.id.generation.errors",
-                    "type", type, "name", name, "reason", reason(ex)).increment();
+            elapsed = System.nanoTime() - start;
+            String reason = reason(ex);
+            errorCounters.computeIfAbsent(reason, key -> registry.counter("knitid.id.generation.errors",
+                    "type", type, "name", name, "reason", key)).increment();
             throw ex;
         }
         finally {
-            timer.record(System.nanoTime() - start, java.util.concurrent.TimeUnit.NANOSECONDS);
+            timer.record(elapsed, java.util.concurrent.TimeUnit.NANOSECONDS);
         }
     }
 

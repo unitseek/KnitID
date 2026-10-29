@@ -58,7 +58,17 @@ public final class BizIdGenerator implements IdGenerator {
         LocalDate businessDate = context != null && context.businessDate() != null
                 ? context.businessDate()
                 : now.toLocalDate();
-        LocalDateTime effective = LocalDateTime.of(businessDate, now.toLocalTime());
+        LocalDateTime effective;
+        if (context != null && context.businessDateTime() != null) {
+            effective = context.businessDateTime();
+            businessDate = effective.toLocalDate();
+        }
+        else if (context != null && context.businessDate() != null) {
+            effective = context.businessDate().atStartOfDay();
+        }
+        else {
+            effective = now;
+        }
         String prefix = resolvePrefix(context);
         Long workerId = context != null && context.nodeId() != null ? context.nodeId() : config.nodeId();
         long sequence = 0L;

@@ -7,7 +7,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 
 /**
- * Atomic INCRBY + TTL-on-first-increment Redis store.
+ * Atomic INCRBY with sliding TTL (or no TTL when the supplied duration is zero).
  */
 final class StringRedisTemplateSequenceStore implements RedisSequenceStore {
 

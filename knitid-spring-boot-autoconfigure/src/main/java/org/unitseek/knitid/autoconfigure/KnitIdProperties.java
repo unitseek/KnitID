@@ -87,8 +87,8 @@ public class KnitIdProperties {
         }
 
         public void setCacheTtl(Duration cacheTtl) {
-            if (cacheTtl != null && cacheTtl.isNegative()) {
-                throw new IllegalArgumentException("knitid.health.cache-ttl must not be negative");
+            if (cacheTtl == null || cacheTtl.isNegative() || cacheTtl.isZero()) {
+                throw new IllegalArgumentException("knitid.health.cache-ttl must be positive");
             }
             this.cacheTtl = cacheTtl;
         }

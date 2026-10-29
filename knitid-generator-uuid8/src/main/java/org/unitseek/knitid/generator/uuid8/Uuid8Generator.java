@@ -26,6 +26,8 @@ public final class Uuid8Generator implements IdGenerator {
 
     private static final int MAX_COUNTER = 0x0FFF;
 
+    private static final long MAX_OVERFLOW_WAIT_NANOS = java.time.Duration.ofSeconds(5).toNanos();
+
     private final Clock clock;
 
     private final Uuid8Config config;
@@ -94,7 +96,13 @@ public final class Uuid8Generator implements IdGenerator {
 
     private void waitNextMillisecond() {
         long target = lastTimestamp + 1;
+        long deadline = System.nanoTime() + MAX_OVERFLOW_WAIT_NANOS;
         while (clock.millis() < target) {
+            if (System.nanoTime() >= deadline) {
+                throw new IdGenerationException(
+                        IdErrorCodes.GENERATION_FAILED,
+                        "Clock did not advance after UUIDv8 counter overflow within timeout: " + lastTimestamp);
+            }
             LockSupport.parkNanos(100_000L);
         }
     }

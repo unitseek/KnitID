@@ -43,7 +43,7 @@ public interface GeneratorConfig {
         return get(key).map(value -> {
             try {
                 if (value instanceof Number number) {
-                    return Math.toIntExact(number.longValue());
+                    return new java.math.BigDecimal(number.toString()).intValueExact();
                 }
                 return Integer.parseInt(String.valueOf(value).trim());
             }
@@ -57,7 +57,7 @@ public interface GeneratorConfig {
         return get(key).map(value -> {
             try {
                 if (value instanceof Number number) {
-                    return number.longValue();
+                    return new java.math.BigDecimal(number.toString()).longValueExact();
                 }
                 return Long.parseLong(String.valueOf(value).trim());
             }

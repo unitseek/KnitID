@@ -1,6 +1,8 @@
 package org.unitseek.knitid.generator.biz;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.unitseek.knitid.core.spi.SequenceProvider;
@@ -11,13 +13,23 @@ import org.unitseek.knitid.core.spi.SequenceProvider;
  */
 public final class MemorySequenceProvider implements SequenceProvider {
 
-    private final ConcurrentHashMap<String, AtomicLong> sequences = new ConcurrentHashMap<>();
+    private static final int MAX_SCOPES = 10_000;
+
+    private final Map<String, AtomicLong> sequences = Collections.synchronizedMap(
+            new LinkedHashMap<>(16, 0.75f, true) {
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<String, AtomicLong> eldest) {
+                    return size() > MAX_SCOPES;
+                }
+            });
 
     @Override
     public long next(String scope) {
         if (scope == null) {
             throw new IllegalArgumentException("scope must not be null");
         }
-        return sequences.computeIfAbsent(scope, key -> new AtomicLong()).getAndIncrement();
+        synchronized (sequences) {
+            return sequences.computeIfAbsent(scope, key -> new AtomicLong()).getAndIncrement();
+        }
     }
 }

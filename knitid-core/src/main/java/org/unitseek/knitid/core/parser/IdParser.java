@@ -21,6 +21,6 @@ public interface IdParser {
         if (raw == null) {
             return "null";
         }
-        return raw.length() <= 8 ? raw : raw.substring(0, 8) + "...";
+        return "***";
     }
 }

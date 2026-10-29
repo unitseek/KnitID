@@ -103,7 +103,9 @@ knitid:
 | `biz.reset` | `DAILY` | `DAILY`/`NEVER` |
 | `biz.check-algorithm` | `MOD37_36` | `MOD37_36`/`MOD11_2`/`LUHN`/`NONE` |
 
-模板占位符：`{prefix}`、`{yyyy}`、`{MM}`、`{dd}`、`{HH}`、`{mm}`、`{ss}`、`{yyyyMMdd}`、`{yyyyMMddHHmmss}`、`{seq:n}`、`{random:n}`、`{worker}`、`{check}`；转义 `{{`/`}}`。
+模板占位符：`{prefix}`、`{yyyy}`、`{MM}`、`{dd}`、`{HH}`、`{mm}`、`{ss}`、`{yyyyMMdd}`、`{yyyyMMddHHmmss}`、`{seq:n}`、`{random:n}`、`{worker}`、`{check}`（`random` 为 0-9A-Z）；转义 `{{`/`}}`。
+
+上下文覆盖：`IdContext.businessDateTime` 可指定完整业务时间；仅指定 `businessDate` 时时间部分使用 00:00:00，避免“旧日期 + 当前时间”的歧义。
 
 ## 9. WorkerId 分配
 

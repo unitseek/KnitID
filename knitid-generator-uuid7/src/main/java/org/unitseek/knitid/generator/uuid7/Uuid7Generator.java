@@ -1,8 +1,10 @@
 package org.unitseek.knitid.generator.uuid7;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.util.HexFormat;
 import java.util.Locale;
+import java.util.concurrent.locks.LockSupport;
 
 import org.unitseek.knitid.core.api.IdContext;
 import org.unitseek.knitid.core.api.IdGenerator;
@@ -26,6 +28,8 @@ public final class Uuid7Generator implements IdGenerator {
     static final long MAX_62_BITS = 0x3FFF_FFFF_FFFF_FFFFL;
 
     static final int MAX_12_BITS = 0x0FFF;
+
+    private static final long MAX_OVERFLOW_WAIT_NANOS = Duration.ofSeconds(5).toNanos();
 
     private final Clock clock;
 
@@ -116,9 +120,15 @@ public final class Uuid7Generator implements IdGenerator {
                     IdErrorCodes.GENERATION_FAILED,
                     "UUIDv7 monotonic random space exhausted within millisecond " + lastTimestamp);
         }
-        long deadline = lastTimestamp + 1;
-        while (clock.millis() < deadline) {
-            Thread.onSpinWait();
+        long target = lastTimestamp + 1;
+        long deadline = System.nanoTime() + MAX_OVERFLOW_WAIT_NANOS;
+        while (clock.millis() < target) {
+            if (System.nanoTime() >= deadline) {
+                throw new IdGenerationException(
+                        IdErrorCodes.GENERATION_FAILED,
+                        "Clock did not advance after UUIDv7 overflow within timeout: " + lastTimestamp);
+            }
+            LockSupport.parkNanos(100_000L);
         }
         lastTimestamp = clock.millis();
         newRandom();

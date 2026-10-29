@@ -125,6 +125,11 @@ final class ZookeeperWorkerIdAssigner implements WorkerIdAssigner, AutoCloseable
         }
         boolean deleted = false;
         try {
+            org.apache.zookeeper.data.Stat stat = client.checkExists().forPath(path(released.workerId()));
+            long sessionId = client.getZookeeperClient().getZooKeeper().getSessionId();
+            if (stat != null && stat.getEphemeralOwner() != sessionId) {
+                return;
+            }
             client.delete().forPath(path(released.workerId()));
             deleted = true;
         }

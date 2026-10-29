@@ -14,8 +14,9 @@ import org.unitseek.knitid.core.spi.SequenceProvider;
  * Redis backed sequence provider for multi-instance business identifiers.
  *
  * <p>Each scope maps to one Redis key. INCRBY is atomic, so multiple
- * application instances share the same sequence. The first increment sets the
- * configured TTL, allowing daily scoped keys to expire automatically.</p>
+ * application instances share the same sequence. Daily scopes refresh the
+ * configured TTL on every increment; persistent scopes (for example
+ * {@code reset=NEVER}) do not set a TTL.</p>
  */
 public final class RedisSequenceProvider implements SequenceProvider {
 

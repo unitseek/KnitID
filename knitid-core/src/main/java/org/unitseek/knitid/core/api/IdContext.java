@@ -1,6 +1,7 @@
 package org.unitseek.knitid.core.api;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -17,6 +18,7 @@ public final class IdContext {
     private final String tenantId;
     private final Long nodeId;
     private final LocalDate businessDate;
+    private final LocalDateTime businessDateTime;
     private final Map<String, Object> attributes;
 
     private IdContext(Builder builder) {
@@ -25,6 +27,7 @@ public final class IdContext {
         this.tenantId = builder.tenantId;
         this.nodeId = builder.nodeId;
         this.businessDate = builder.businessDate;
+        this.businessDateTime = builder.businessDateTime;
         this.attributes = builder.attributes == null
                 ? Map.of()
                 : Collections.unmodifiableMap(new LinkedHashMap<>(builder.attributes));
@@ -58,6 +61,10 @@ public final class IdContext {
         return businessDate;
     }
 
+    public LocalDateTime businessDateTime() {
+        return businessDateTime;
+    }
+
     public Map<String, Object> attributes() {
         return attributes;
     }
@@ -69,6 +76,7 @@ public final class IdContext {
         private String tenantId;
         private Long nodeId;
         private LocalDate businessDate;
+        private LocalDateTime businessDateTime;
         private Map<String, Object> attributes;
 
         private Builder() {
@@ -96,6 +104,11 @@ public final class IdContext {
 
         public Builder businessDate(LocalDate businessDate) {
             this.businessDate = businessDate;
+            return this;
+        }
+
+        public Builder businessDateTime(LocalDateTime businessDateTime) {
+            this.businessDateTime = businessDateTime;
             return this;
         }
 

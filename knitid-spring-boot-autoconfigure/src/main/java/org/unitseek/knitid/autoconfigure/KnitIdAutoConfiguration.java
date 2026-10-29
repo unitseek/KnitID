@@ -40,6 +40,11 @@ public class KnitIdAutoConfiguration {
     }
 
     @Bean
+    public DisposableBean knitIdBatchSizeRestorer() {
+        return org.unitseek.knitid.core.api.IdGeneratorConstants::resetMaxBatchSize;
+    }
+
+    @Bean
     public DisposableBean knitIdGeneratorCloser(IdGeneratorRegistry registry) {
         return () -> {
             // Only close generators created by this auto-configuration, not a user-supplied registry.

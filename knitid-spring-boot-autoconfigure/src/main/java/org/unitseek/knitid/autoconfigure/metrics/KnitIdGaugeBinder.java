@@ -10,6 +10,7 @@ import org.springframework.beans.factory.SmartInitializingSingleton;
 
 import org.unitseek.knitid.core.api.IdGenerator;
 import org.unitseek.knitid.core.api.IdGeneratorHealth;
+import org.unitseek.knitid.core.api.IdType;
 import org.unitseek.knitid.core.api.IdGeneratorHealthSnapshot;
 import org.unitseek.knitid.core.api.IdGeneratorRegistry;
 
@@ -40,17 +41,21 @@ public final class KnitIdGaugeBinder implements SmartInitializingSingleton {
             if (!(generator instanceof IdGeneratorHealth health)) {
                 continue;
             }
-            try {
-                IdGeneratorHealthSnapshot snapshot = health.health(window);
-                if (snapshot != null && snapshot.details().containsKey("workerId")) {
-                    Gauge.builder("knitid.id.worker.id", () -> workerId(health))
-                            .tag("name", entry.getKey())
-                            .description("Current KSID WorkerId")
-                            .register(meterRegistry);
+            boolean register = generator.type().equals(IdType.KSID);
+            if (!register) {
+                try {
+                    IdGeneratorHealthSnapshot snapshot = health.health(window);
+                    register = snapshot != null && snapshot.details().containsKey("workerId");
+                }
+                catch (RuntimeException ex) {
+                    // A faulty health implementation must not break application startup.
                 }
             }
-            catch (RuntimeException ex) {
-                // A faulty health implementation must not break application startup.
+            if (register) {
+                Gauge.builder("knitid.id.worker.id", () -> workerId(health))
+                        .tag("name", entry.getKey())
+                        .description("Current KSID WorkerId")
+                        .register(meterRegistry);
             }
         }
     }

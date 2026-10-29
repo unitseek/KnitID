@@ -23,9 +23,10 @@ public class KnitIdHealthIndicator implements HealthIndicator {
 
     private final KnitIdProperties properties;
 
-    private volatile Health cached;
+    private record CachedHealth(Health health, long atNanos) {
+    }
 
-    private volatile long cachedAtNanos;
+    private volatile CachedHealth cached;
 
     public KnitIdHealthIndicator(IdGeneratorRegistry registry, KnitIdProperties properties) {
         this.registry = registry;
@@ -33,9 +34,9 @@ public class KnitIdHealthIndicator implements HealthIndicator {
     }
 
     @Override
-    public synchronized Health health() {
+    public Health health() {
         long now = System.nanoTime();
-        Health current = cached;
+        CachedHealth current = cached;
         Duration ttl = properties.getHealth().getCacheTtl();
         long ttlNanos;
         try {
@@ -44,12 +45,11 @@ public class KnitIdHealthIndicator implements HealthIndicator {
         catch (ArithmeticException ex) {
             ttlNanos = 0L;
         }
-        if (current != null && ttlNanos > 0 && now - cachedAtNanos < ttlNanos) {
-            return current;
+        if (current != null && ttlNanos > 0 && now - current.atNanos() < ttlNanos) {
+            return current.health();
         }
         Health computed = compute();
-        cached = computed;
-        cachedAtNanos = System.nanoTime();
+        cached = new CachedHealth(computed, System.nanoTime());
         return computed;
     }
 

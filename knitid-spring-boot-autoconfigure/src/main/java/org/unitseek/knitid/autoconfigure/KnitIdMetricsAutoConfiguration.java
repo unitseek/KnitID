@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.context.annotation.Bean;
 
 import org.unitseek.knitid.autoconfigure.metrics.IdGeneratorMetrics;
@@ -23,6 +24,7 @@ public class KnitIdMetricsAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "knitIdMetricsDecorator")
+    @ConditionalOnSingleCandidate(MeterRegistry.class)
     public IdGeneratorDecorator knitIdMetricsDecorator(ObjectProvider<MeterRegistry> registries) {
         MeterRegistry registry = registries.getIfAvailable();
         if (registry == null) {
@@ -34,6 +36,7 @@ public class KnitIdMetricsAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnBean(IdGeneratorRegistry.class)
+    @ConditionalOnSingleCandidate(MeterRegistry.class)
     public KnitIdGaugeBinder knitIdGaugeBinder(IdGeneratorRegistry registry, KnitIdProperties properties,
             ObjectProvider<MeterRegistry> registries) {
         return new KnitIdGaugeBinder(registry, registries.getIfAvailable(),
