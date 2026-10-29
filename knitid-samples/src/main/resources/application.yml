@@ -1,2 +1,27 @@
 knitid:
   default-type: UUID7
+  generators:
+    uuid7:
+      type: UUID7
+    uuid8:
+      type: UUID8
+      uuid8:
+        preset: TIME_NODE_RANDOM
+        datacenter-id: 1
+        worker-id: 1
+    ulid:
+      type: ULID
+    ksid:
+      type: KSID
+      ksid:
+        datacenter-id: 0
+        worker-id: 0
+    biz:
+      type: BIZ
+      biz:
+        template: "{prefix}-{yyyyMMdd}-{seq:6}-{check}"
+        prefix: SAMPLE
+        zone-id: Asia/Shanghai
+        sequence-provider: memory
+        reset: DAILY
+        check-algorithm: MOD37_36

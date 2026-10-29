@@ -140,6 +140,28 @@ knitid:
 - BIZ 或需要解析 KSID 时间戳/节点/序列时，注册自己的 `IdTypeParser` Bean，用户 Bean 优先于内置解析器；
 - `parse` 失败抛 `IdParseException`，`tryParse` 返回 `Optional.empty()`。
 
+## 示例工程
+
+`knitid-samples` 配置了 UUIDv7、UUIDv8、ULID、KSID、BIZ 五个生成器，并提供一个 `CommandLineRunner`，启动时在控制台输出五类 ID：
+
+```bash
+mvn -pl knitid-samples spring-boot:run
+# 或在 IDEA 直接运行 SampleApplication
+```
+
+输出结构：
+
+```text
+KnitID sample IDs (one per generator)
+-------------------------------------
+uuid7  UUID7 ...
+uuid8  UUID8 ...
+ulid   ULID  ...
+ksid   KSID  ...
+biz    BIZ   ...
+-------------------------------------
+```
+
 ## JMH 基准测试
 
 ```bash
