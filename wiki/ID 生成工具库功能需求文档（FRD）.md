@@ -196,7 +196,7 @@
 | `knitid-generator-biz` | 业务 ID 实现与生成器工厂 | 按需 | core；spring-boot-autoconfigure（provided） |
 | `knitid-sequence-redis` | Redis 序列号提供者（业务 ID） | 按需 | core、spring-data-redis（optional） |
 | `knitid-worker-redis` | Redis WorkerId 分配实现 | 按需 | core、spring-data-redis（optional） |
-| `knitid-worker-zookeeper` | ZooKeeper WorkerId 分配实现 | 按需 | core、Curator（optional） |
+| `knitid-worker-zookeeper` | ZooKeeper WorkerId 分配实现（临时节点会话租约） | 按需 | core、Curator、ZooKeeper |
 | `knitid-worker-kubernetes` | K8s WorkerId 分配实现（StatefulSet ordinal / Downward API） | 按需 | core |
 | `knitid-test` | 测试工具：`MutableClock`、测试向量、断言工具 | 否（test scope） | core、JUnit 5 |
 | `knitid-benchmarks` | JMH 基准，不发布 | 否 | 各算法模块 |
@@ -599,13 +599,13 @@ knitid:
 | `zookeeper` | worker-zookeeper | Curator 临时节点/临时顺序节点 | 启动，会话维持 | 有 |
 | `kubernetes` | worker-kubernetes | StatefulSet 序号（`HOSTNAME` 后缀）或 Downward API | 启动 | 依赖编排唯一性 |
 
-- 交付节奏：`fixed`/`environment` 于 M1 交付；`redis` 租约分配器已实现（M2 提前）；`zookeeper`/`kubernetes` 于 M2 交付（见 13.2）。
+- 交付节奏：`fixed`/`environment` 于 M1 交付；`redis`/`zookeeper`/`kubernetes` 已完成（M2）；五种分配器均已实现。
 - 选择顺序：显式 `worker-id-assigner` > 配置了 `worker-id` 则用 `fixed` > 失败并提示可选项。
 - 契约：`WorkerId assign()` 可阻塞；失败抛 `WorkerIdUnavailableException` 并终止启动；`renew()` 周期续约；`release(WorkerId)` 优雅释放。
 - 租约模块后台续约；连续续约失败 ≥ 3 次 → 健康检查 `DOWN`，后续生成请求抛 `IdGenerationException`（错误码 `KNITID-2007`），不静默降级。
 - 配置：
   - Redis：`knitid.worker.redis.key-prefix`（默认 `knitid:worker`）、`lease-ttl`（默认 `60s`）、`renew-interval`（默认 `20s`）。
-  - ZooKeeper：`knitid.worker.zookeeper.connect-string`、`namespace`（默认 `knitid`）、`session-timeout`（默认 `10s`）。
+  - ZooKeeper：`knitid.worker.zookeeper.connect-string`、`namespace`（默认 `knitid`）、`session-timeout`（默认 `10s`）、`connection-timeout`（默认 `10s`）。
   - Kubernetes：`knitid.worker.kubernetes.mode`（`STATEFULSET_ORDINAL` 默认 / `DOWNWARD_API`）、`pod-name`（默认读取环境变量 `HOSTNAME`）。
 - 验收：固定/环境变量；Redis、ZooKeeper 以 Testcontainers 测试抢占、续约、释放；Kubernetes 以模拟环境变量测试；越界/缺失启动失败。
 
@@ -1186,6 +1186,7 @@ IdException (RuntimeException)
 | `knitid.worker.zookeeper.connect-string` | String | 无 | 条件 | 使用 ZK 分配时必填 |
 | `knitid.worker.zookeeper.namespace` | String | `knitid` | 否 | 节点命名空间 |
 | `knitid.worker.zookeeper.session-timeout` | Duration | `10s` | 否 | 会话超时 |
+| `knitid.worker.zookeeper.connection-timeout` | Duration | `10s` | 否 | 连接超时 |
 | `knitid.worker.kubernetes.mode` | enum | `STATEFULSET_ORDINAL` | 否 | `STATEFULSET_ORDINAL`/`DOWNWARD_API` |
 | `knitid.worker.kubernetes.pod-name` | String | 无 | 否 | 默认读取环境变量 `HOSTNAME` |
 

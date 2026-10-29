@@ -347,6 +347,15 @@ public final class KsidGenerator implements NumericIdGenerator, IdGeneratorHealt
                 LOGGER.log(System.Logger.Level.WARNING,
                         "Failed to release KSID WorkerId " + workerId, ex);
             }
+            if (assigner instanceof AutoCloseable closeable) {
+                try {
+                    closeable.close();
+                }
+                catch (Exception ex) {
+                    LOGGER.log(System.Logger.Level.WARNING,
+                            "Failed to close KSID WorkerId assigner " + assigner, ex);
+                }
+            }
         }
     }
 }
