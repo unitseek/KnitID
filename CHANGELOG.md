@@ -13,4 +13,4 @@
 - Spring Boot 4 自动配置、严格配置校验、FailureAnalyzer；
 - Actuator 端点、健康检查、Micrometer 指标；
 - JMH 基准、示例工程、配置参考与发布流水线；
-- 159 个测试（含 Redis/ZooKeeper Testcontainers）。
+- 160 个测试（含 Redis/ZooKeeper Testcontainers）。

@@ -2,6 +2,7 @@ package org.unitseek.knitid.autoconfigure;
 
 import org.springframework.boot.health.contributor.HealthIndicator;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -14,6 +15,7 @@ import org.unitseek.knitid.core.api.IdGeneratorRegistry;
  */
 @AutoConfiguration(after = KnitIdAutoConfiguration.class)
 @ConditionalOnClass(HealthIndicator.class)
+@ConditionalOnBean(IdGeneratorRegistry.class)
 @ConditionalOnProperty(prefix = "management.health.knitid", name = "enabled", matchIfMissing = true)
 public class KnitIdHealthAutoConfiguration {
 

@@ -92,7 +92,7 @@ mvn clean verify
 
 ## 测试
 
-当前共 159 个测试，全部通过（`mvn verify`；Testcontainers 用例在无 Docker 时自动跳过）：
+当前共 160 个测试，全部通过（`mvn verify`；Testcontainers 用例在无 Docker 时自动跳过）：
 
 - `knitid-core`：IdType 规范化契约（3）；
 - `knitid-generator-uuid7`：RFC 9562 附录 A.6 向量、属性测试、边界与溢出策略（11）；
@@ -104,7 +104,7 @@ mvn clean verify
 - `knitid-worker-redis`：槽位占用/冲突、租约续约失败、释放、provider 配置校验、自动配置（9），以及 Testcontainers 真实 Redis 的 SET NX/TTL/续约/释放/断连（5）；
 - `knitid-worker-zookeeper`：临时节点分配、重新占用、续约、配置校验、自动配置（6），以及 Testcontainers 真实 ZooKeeper 的分配/释放与断连（2）；
 - `knitid-worker-kubernetes`：StatefulSet ordinal、Downward API、越界/非法 pod 名、配置校验、自动配置（9）；
-- `knitid-spring-boot-autoconfigure`：12 个启动行为矩阵场景 + 7 个健康检查场景 + 7 个 IdParser 场景 + 7 个端点/指标场景（33）；
+- `knitid-spring-boot-autoconfigure`：12 个启动行为矩阵场景 + 7 个健康检查场景 + 7 个 IdParser 场景 + 7 个端点/指标场景 + 1 个禁用场景（34）；
 - `knitid-samples`：UUIDv7/UUID8/ULID/KSID/BIZ + Actuator 集成启动测试（6）。
 
 ## 业务 ID 快速配置

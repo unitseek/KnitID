@@ -31,7 +31,6 @@
 | `knitid.health.cache-ttl` | Duration | `5s` | 健康检查缓存 |
 | `knitid.health.backwards-down-count` | int | `5` | 窗口内回拨次数达到即 DOWN |
 | `knitid.health.backwards-down-window` | Duration | `1m` | 回拨窗口 |
-| `knitid.actuator.show-worker-id` | boolean | `false` | 端点是否展示 WorkerId |
 
 ## 3. 生成器通用属性
 
