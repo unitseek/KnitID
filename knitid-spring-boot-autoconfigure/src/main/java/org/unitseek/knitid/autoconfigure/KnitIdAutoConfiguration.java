@@ -1,5 +1,6 @@
 package org.unitseek.knitid.autoconfigure;
 
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -32,5 +33,21 @@ public class KnitIdAutoConfiguration {
     @ConditionalOnMissingBean(IdGenerator.class)
     public IdGenerator knitidDefaultIdGenerator(IdGeneratorRegistry registry) {
         return new DelegatingIdGenerator(registry);
+    }
+
+    @Bean
+    public DisposableBean knitIdGeneratorCloser(IdGeneratorRegistry registry) {
+        return () -> {
+            for (IdGenerator generator : registry.asMap().values()) {
+                if (generator instanceof AutoCloseable closeable) {
+                    try {
+                        closeable.close();
+                    }
+                    catch (Exception ex) {
+                        // Best-effort shutdown; a failed close must not prevent other generators from closing.
+                    }
+                }
+            }
+        };
     }
 }

@@ -44,6 +44,7 @@ public interface GeneratorConfig {
     default Duration getDuration(String key, Duration defaultValue) {
         return get(key).map(value -> value instanceof Duration duration
                 ? duration
-                : Duration.parse(String.valueOf(value))).orElse(defaultValue);
+                : org.unitseek.knitid.core.util.DurationParser.parse(String.valueOf(value)))
+                .orElse(defaultValue);
     }
 }

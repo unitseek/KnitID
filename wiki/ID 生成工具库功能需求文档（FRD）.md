@@ -283,7 +283,7 @@ public interface NumericIdGenerator extends IdGenerator {
 
 ### FR-API-04 ID 类型（P0）
 
-- `IdType` 为不可变值对象，预置常量：`UUID7`、`UUID8`、`ULID`、`SNOWFLAKE`、`BIZ`。
+- `IdType` 为不可变值对象，预置常量：`UUID7`、`UUID8`、`ULID`、`KSID`、`BIZ`。
 - 支持 `IdType.of("CUSTOM_TYPE")` 供第三方/自定义生成器扩展。
 - 字符串规范化：去首尾空白、转大写、忽略 `-` 与 `_`（如 `uuid-7` → `UUID7`）；合法值匹配 `[A-Z0-9][A-Z0-9_-]{0,63}`。
 - `equals`/`hashCode` 基于规范化值；提供 `value()`、`toString()`。
@@ -401,7 +401,7 @@ knitid:
     max-batch-size: 10000
   generators:
     order-id:
-      type: SNOWFLAKE
+      type: KSID
       ksid:
         epoch: 2024-01-01T00:00:00Z
 ```
@@ -621,7 +621,7 @@ knitid:
 knitid:
   generators:
     order-id:
-      type: SNOWFLAKE
+      type: KSID
       ksid:
         epoch: 2024-01-01T00:00:00Z
         timestamp-bits: 41
@@ -636,6 +636,8 @@ knitid:
           max-wait: 5s
         sequence-overflow: WAIT
         allow-borrow-future: false
+        lease-renew-interval: 20s
+        lease-max-renew-failures: 3
 ```
 
 - 验收：全属性绑定/校验/元数据；非法组合启动失败。
@@ -1137,7 +1139,7 @@ IdException (RuntimeException)
 | 属性 | 类型 | 默认值 | 必填 | 说明 |
 | --- | --- | --- | --- | --- |
 | `enabled` | boolean | `true` | 否 | 是否创建该生成器 |
-| `type` | String | 无 | 是 | `UUID7`/`UUID8`/`ULID`/`SNOWFLAKE`/`BIZ` 或自定义类型 |
+| `type` | String | 无 | 是 | `UUID7`/`UUID8`/`ULID`/`KSID`/`BIZ` 或自定义类型 |
 
 ### A.3 各类型属性
 
@@ -1161,6 +1163,8 @@ IdException (RuntimeException)
 | `...ksid.clock-backwards.max-wait` | Duration | `5s` | 否 | `WAIT` 上限 |
 | `...ksid.sequence-overflow` | enum | `WAIT` | 否 | `WAIT`/`THROW` |
 | `...ksid.allow-borrow-future` | boolean | `false` | 否 | 启用 `BORROW_FUTURE` 的显式开关 |
+| `...ksid.lease-renew-interval` | Duration | `20s` | 否 | WorkerId 租约续约周期（仅 renewable 分配器） |
+| `...ksid.lease-max-renew-failures` | int | `3` | 否 | 连续续约失败多少次后判定租约丢失 |
 | `...biz.template` | String | 无 | 是 | 模板，≤ 128 字符 |
 | `...biz.prefix` | String | 无 | 条件 | 模板含 `{prefix}` 时必填 |
 | `...biz.zone-id` | String | 无 | 是 | 如 `Asia/Shanghai` |

@@ -11,6 +11,14 @@ public interface WorkerIdAssigner {
      */
     WorkerId assign();
 
+    /**
+     * Whether this assigner holds a renewable lease that must be renewed
+     * periodically and released on shutdown.
+     */
+    default boolean renewable() {
+        return false;
+    }
+
     default void renew() {
     }
 
