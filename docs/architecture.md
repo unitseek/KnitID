@@ -92,14 +92,14 @@
 
 - KSID 健康快照含 `workerId`、`leaseValid`、`clockBackwardsCount`、策略、epoch；
 - `KnitIdHealthIndicator` 缓存 `5s`，DOWN 条件：快照 DOWN 或窗口内回拨次数 ≥ 阈值；
-- 指标装饰器记录 duration/errors/batch，WorkerId gauge 仅对有 `workerId` 详情的生成器注册；
+- 指标装饰器记录 duration/errors/batch；KSID 生成器始终注册 WorkerId gauge，其他生成器仅在健康快照含 `workerId` 时注册；
 - Actuator 端点只读，受 `management.endpoint.knitid.enabled` 控制。
 
 ## 8. 线程模型
 
 - 生成器实例线程安全；KSID/ULID/UUIDv7 在同毫秒内使用同步递增；
 - 租约续约由 KSID 单线程 daemon scheduler 执行；
-- 关闭时 `KnitIdAutoConfiguration` 的 disposable closer 关闭生成器，释放 WorkerId；
+- 关闭时 `KnitIdAutoConfiguration` 的 disposable closer 仅关闭自动创建的注册中心中的生成器并释放 WorkerId，不关闭用户提供的 registry；
 - 任何可能阻塞的生成器通过 `blocking()` 暴露。
 
 ## 9. 扩展点

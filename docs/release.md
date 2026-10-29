@@ -2,7 +2,7 @@
 
 ## 版本与分支
 
-- 采用 SemVer；0.x 阶段允许破坏性变更，1.0 后遵循 SemVer。
+- 采用 SemVer；1.0.0 起公共 API/SPI/配置键/输出格式遵循兼容承诺。
 - 发布前从 `main` 创建发布分支（或直接在 `main` 打 tag），执行 `mvn versions:set -DnewVersion=1.0.0` 并提交。
 - 打 tag：`git tag v1.0.0 && git push origin v1.0.0`。
 

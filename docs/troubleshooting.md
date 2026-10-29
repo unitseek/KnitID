@@ -15,7 +15,7 @@
 | `KNITID-2006` | 模板过长 | BIZ 输出超过 128 字符 | 缩短模板/前缀 |
 | `KNITID-2007` | Worker 租约丢失 | 续约连续失败、ZK 会话过期 | 检查 Redis/ZK；实例恢复后重新分配 |
 | `KNITID-3001` | 解析失败 | 输入不是已注册格式 | 检查 parser/格式 |
-| `KNITID-3002` | 校验失败 | BIZ 校验位/内容不匹配 | 检查模板、算法、输入 |
+| `KNITID-3002` | 预留校验码 | 当前版本未发射（保留给 IdValidator 扩展） | 不要依赖该错误码做业务判断 |
 | `KNITID-4001` | 生成器不存在 | 名称拼写错误、未配置 | 检查 `knitid.generators` 与名称 |
 
 错误码定义见 `org.unitseek.knitid.core.exception.IdErrorCodes`，属于稳定公共契约。

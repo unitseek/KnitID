@@ -120,6 +120,8 @@ knitid:
 
 要求：`next(scope, count)` 必须原子；返回值从 0 开始或连续，不能重复；失败抛 `SequenceUnavailableException`。
 
+KnitID 1.0 还提供持久化提示：`SequenceProvider.next(scope, true)` / `next(scope, count, true)` 表示长生命周期 scope。默认实现忽略该提示；Redis 提供者据此不设置 TTL。
+
 ## 4. 自定义解析器
 
 ```java

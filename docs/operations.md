@@ -42,7 +42,7 @@ knitid:
       renew-interval: 20s
 ```
 
-- Key：`<prefix>:<datacenter>:<worker>`，使用 `SET NX + TTL` 原子占用；
+- Key：`<prefix>:<datacenter>:<worker>`，使用 `SET NX + TTL` 原子占用；续约/释放使用 token compare-and-set/delete，避免旧实例操作新持有者的 lease；
 - 启动时从 worker 0 开始扫描空槽，槽满抛 `KNITID-2003`；
 - KSID 每 `renew-interval` 续约；连续失败达到 `ksid.lease-max-renew-failures` 后健康 DOWN、生成抛 `KNITID-2007`；
 - 应用关闭时释放 lease；
@@ -73,7 +73,7 @@ knitid:
 
 - 每个槽位是临时节点 `/workers/<datacenter>/<worker>`（在 namespace 下）；
 - 会话断开后 ZooKeeper 自动删除临时节点，即 lease 释放；
-- 续约时检查连接与节点存在；
+- 续约时检查连接、节点存在以及临时节点 owner 是否为当前 session；release 同样只删除本 session 的节点；
 - 需要 Curator/ZooKeeper 依赖与可达的 ensemble；
 - 适合已有 ZooKeeper 的团队；否则优先 Redis 或 Kubernetes。
 
@@ -164,7 +164,7 @@ knitid:
 | 现象 | 检查 | 处理 |
 | --- | --- | --- |
 | 启动报 `KNITID-1002` | 是否引入生成器模块 | 加依赖 |
-| 启动报 `KNITID-1003` | 多个 factory/默认未指定 | 设置 `default-type/`default-generator` |
+| 启动报 `KNITID-1003` | 多个 factory/默认未指定 | 设置 `default-type` 或 `default-generator` |
 | `KNITID-2003` | Redis/ZK 连接、槽位 | 扩容 WorkerId 位数/清理失效 lease |
 | `KNITID-2007` | 续约失败、网络 | 恢复 Redis/ZK；实例会停止生成 |
 | `KNITID-2002` | NTP/时钟跳变 | 修复时钟；调整策略 |

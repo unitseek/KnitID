@@ -92,4 +92,4 @@ WorkerId 本身不是密钥，但泄露部署拓扑/容量信息；限制 Actuat
 
 ### 生成器是线程安全的吗？
 
-是。`IdGenerator` 实现必须线程安全；KSID/ULID/UUIDv7 在同毫秒内同步递增。阻塞行为见 `blocking()`。
+是。`IdGenerator` 实现必须线程安全；KSID/ULID/UUIDv7 在同毫秒内同步递增。KSID 在回拨 WAIT 或序列溢出 WAIT 时 `blocking()` 为 true；阻塞行为见 `blocking()`。

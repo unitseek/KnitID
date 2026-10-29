@@ -81,16 +81,18 @@ mvn clean verify
 
 | 模块 | 状态 |
 | --- | --- |
-| `knitid-core` | 已完成骨架（API/SPI/异常/静态门面/DurationParser/健康快照） |
+| `knitid-bom` | 已完成（Spring Boot 依赖 + 模块版本管理） |
+| `knitid-core` | 已完成（API/SPI/异常/静态门面/DurationParser/健康快照） |
 | `knitid-generator-uuid7` | 已完成实现 + 契约/属性测试 |
 | `knitid-generator-uuid8` | 已完成实现 + 测试（TIME_RANDOM/TIME_NODE_RANDOM/RANDOM 预设、版本/变体） |
 | `knitid-generator-ulid` | 已完成实现 + 契约/属性测试（ULID 规范向量、Crockford Base32、单调/溢出） |
 | `knitid-generator-biz` | 已完成实现 + 测试（模板、序列、日切、校验位、上下文） |
 | `knitid-generator-ksid` | 已完成实现 + 测试（位分配校验、回拨策略、序列溢出、WorkerId 租约、健康快照） |
-| `knitid-worker-redis` | 已完成实现 + 单测 + Testcontainers 集成测试（SET NX/TTL 租约、续约、释放、槽位扫描、断连） |
+| `knitid-sequence-redis` | 已完成实现 + Testcontainers 集成测试（原子 INCRBY、日切 TTL、NEVER 持久 scope、批量、跨实例） |
+| `knitid-worker-redis` | 已完成实现 + 单测 + Testcontainers 集成测试（SET NX/TTL 租约、token fencing、续约、释放、槽位扫描、断连） |
 | `knitid-worker-zookeeper` | 已完成实现 + 测试 + Testcontainers 集成测试（临时节点会话租约、ownership/release 校验、槽位扫描、续约检查、断连） |
 | `knitid-worker-kubernetes` | 已完成实现 + 测试（StatefulSet ordinal / Downward API） |
-| `knitid-spring-boot-autoconfigure` | 已完成骨架（配置/注册中心/默认选择/自动配置矩阵/健康检查/生命周期关闭/IdParser/Actuator 端点/指标） |
+| `knitid-spring-boot-autoconfigure` | 已完成（配置/注册中心/默认选择/自动配置矩阵/健康检查/生命周期关闭/IdParser/Actuator 端点/指标） |
 | `knitid-spring-boot-starter` | 已完成 |
 | `knitid-benchmarks` | 已完成 JMH 基准（UUID7/UUID8/ULID/KSID/BIZ） |
 | `knitid-samples` | 已完成五类 ID + Actuator 集成示例 |
