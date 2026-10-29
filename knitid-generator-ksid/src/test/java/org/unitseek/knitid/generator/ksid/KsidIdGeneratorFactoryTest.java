@@ -14,6 +14,7 @@ import org.unitseek.knitid.core.api.IdGenerator;
 import org.unitseek.knitid.core.api.IdType;
 import org.unitseek.knitid.core.exception.IdConfigurationException;
 import org.unitseek.knitid.core.spi.GeneratorConfig;
+import org.unitseek.knitid.core.spi.WorkerIdAssignerProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -71,6 +72,30 @@ class KsidIdGeneratorFactoryTest {
             System.clearProperty("KNITID_WORKER_ID");
             System.clearProperty("KNITID_DATACENTER_ID");
         }
+    }
+
+    @Test
+    void resolvesExternalAssignerProviderByName() {
+        WorkerIdAssignerProvider provider = new WorkerIdAssignerProvider() {
+            @Override
+            public String name() {
+                return "redis";
+            }
+
+            @Override
+            public org.unitseek.knitid.core.spi.WorkerIdAssigner create(int datacenterId, int workerIdBits) {
+                return new org.unitseek.knitid.core.spi.WorkerIdAssigner() {
+                    @Override
+                    public org.unitseek.knitid.core.spi.WorkerId assign() {
+                        return new org.unitseek.knitid.core.spi.WorkerId(datacenterId, 7);
+                    }
+                };
+            }
+        };
+        KsidIdGeneratorFactory factory = new KsidIdGeneratorFactory(FIXED_CLOCK, java.util.List.of(provider));
+        IdGenerator generator = factory.create(config(Map.of("ksid.worker-id-assigner", "redis")));
+        long id = Long.parseLong(generator.generate());
+        assertThat((id >>> 12) & 0x1F).isEqualTo(7L);
     }
 
     private static GeneratorConfig config(Map<String, Object> values) {

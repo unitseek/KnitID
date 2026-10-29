@@ -1,1 +1,2 @@
 org.unitseek.knitid.autoconfigure.KnitIdAutoConfiguration
+org.unitseek.knitid.autoconfigure.KnitIdHealthAutoConfiguration

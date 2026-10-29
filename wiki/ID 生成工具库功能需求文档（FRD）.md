@@ -599,7 +599,7 @@ knitid:
 | `zookeeper` | worker-zookeeper | Curator 临时节点/临时顺序节点 | 启动，会话维持 | 有 |
 | `kubernetes` | worker-kubernetes | StatefulSet 序号（`HOSTNAME` 后缀）或 Downward API | 启动 | 依赖编排唯一性 |
 
-- 交付节奏：`fixed`/`environment` 于 M1 交付；`redis`/`zookeeper`/`kubernetes` 于 M2 交付（见 13.2）。
+- 交付节奏：`fixed`/`environment` 于 M1 交付；`redis` 租约分配器已实现（M2 提前）；`zookeeper`/`kubernetes` 于 M2 交付（见 13.2）。
 - 选择顺序：显式 `worker-id-assigner` > 配置了 `worker-id` 则用 `fixed` > 失败并提示可选项。
 - 契约：`WorkerId assign()` 可阻塞；失败抛 `WorkerIdUnavailableException` 并终止启动；`renew()` 周期续约；`release(WorkerId)` 优雅释放。
 - 租约模块后台续约；连续续约失败 ≥ 3 次 → 健康检查 `DOWN`，后续生成请求抛 `IdGenerationException`（错误码 `KNITID-2007`），不静默降级。

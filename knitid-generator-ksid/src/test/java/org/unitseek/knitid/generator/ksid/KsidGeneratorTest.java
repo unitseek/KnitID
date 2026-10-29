@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.Test;
 
+import org.unitseek.knitid.core.api.HealthState;
 import org.unitseek.knitid.core.exception.ClockBackwardsException;
 import org.unitseek.knitid.core.exception.IdConfigurationException;
 import org.unitseek.knitid.core.exception.IdGenerationException;
@@ -153,6 +154,22 @@ class KsidGeneratorTest {
     }
 
     @Test
+    void healthReportsClockBackwardsCount() {
+        KsidConfig config = new KsidConfig(EPOCH, 41, 5, 5, 12,
+                ClockBackwardsStrategy.THROW, Duration.ofSeconds(5),
+                SequenceOverflowStrategy.WAIT, false, Duration.ofSeconds(20), 3);
+        MutableClock clock = new MutableClock(NOW);
+        KsidGenerator generator = new KsidGenerator(clock, new WorkerId(0, 3), config);
+        generator.generateLong();
+        clock.setInstant(NOW.minus(Duration.ofMillis(10)));
+        assertThatThrownBy(generator::generateLong).isInstanceOf(ClockBackwardsException.class);
+        var snapshot = generator.health(Duration.ofMinutes(1));
+        assertThat(snapshot.state()).isEqualTo(HealthState.UP);
+        assertThat(snapshot.details().get("clockBackwardsCount")).isEqualTo(1);
+        assertThat(snapshot.details().get("workerId")).isEqualTo(3);
+    }
+
+    @Test
     void workerIdMustFitConfiguredBits() {
         KsidConfig config = KsidConfig.defaults();
         assertThatThrownBy(() -> new KsidGenerator(new MutableClock(NOW), new WorkerId(0, 32), config))
@@ -189,6 +206,7 @@ class KsidGeneratorTest {
         assertThatThrownBy(generator::generateLong)
                 .isInstanceOf(IdGenerationException.class)
                 .hasMessageContaining("KNITID-2007");
+        assertThat(generator.health(Duration.ofMinutes(1)).state()).isEqualTo(HealthState.DOWN);
         generator.close();
         assertThat(assigner.released).isEqualTo(new WorkerId(0, 1));
         generator.close();

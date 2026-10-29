@@ -1,5 +1,7 @@
 package org.unitseek.knitid.core.spi;
 
+import java.time.Duration;
+
 /**
  * WorkerId allocation SPI.
  */
@@ -17,6 +19,14 @@ public interface WorkerIdAssigner {
      */
     default boolean renewable() {
         return false;
+    }
+
+    /**
+     * Renewal interval suggested by the assigner, or {@code null} to use the
+     * generator configuration.
+     */
+    default Duration renewalInterval() {
+        return null;
     }
 
     default void renew() {

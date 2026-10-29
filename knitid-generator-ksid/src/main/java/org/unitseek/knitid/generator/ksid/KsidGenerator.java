@@ -1,6 +1,11 @@
 package org.unitseek.knitid.generator.ksid;
 
 import java.time.Clock;
+import java.time.Duration;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -9,7 +14,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
 
+import org.unitseek.knitid.core.api.HealthState;
 import org.unitseek.knitid.core.api.IdContext;
+import org.unitseek.knitid.core.api.IdGeneratorHealth;
+import org.unitseek.knitid.core.api.IdGeneratorHealthSnapshot;
 import org.unitseek.knitid.core.api.IdType;
 import org.unitseek.knitid.core.api.NumericIdGenerator;
 import org.unitseek.knitid.core.exception.ClockBackwardsException;
@@ -25,7 +33,7 @@ import org.unitseek.knitid.core.spi.WorkerIdAssigner;
  * <p>Layout: 1 sign bit + timestamp + datacenter + worker + sequence, with the
  * four configurable parts summing to 63 bits. Generation is thread-safe.</p>
  */
-public final class KsidGenerator implements NumericIdGenerator, AutoCloseable {
+public final class KsidGenerator implements NumericIdGenerator, IdGeneratorHealth, AutoCloseable {
 
     private static final System.Logger LOGGER = System.getLogger(KsidGenerator.class.getName());
 
@@ -60,6 +68,8 @@ public final class KsidGenerator implements NumericIdGenerator, AutoCloseable {
     private final AtomicInteger renewFailures = new AtomicInteger();
 
     private final AtomicBoolean closed = new AtomicBoolean();
+
+    private final Deque<Long> backwardsEvents = new ArrayDeque<>();
 
     private volatile boolean leaseValid = true;
 
@@ -107,7 +117,9 @@ public final class KsidGenerator implements NumericIdGenerator, AutoCloseable {
         if (candidate == null || !candidate.renewable()) {
             return null;
         }
-        long interval = Math.max(1L, config.leaseRenewInterval().toMillis());
+        Duration suggestedInterval = candidate.renewalInterval();
+        Duration effectiveInterval = suggestedInterval != null ? suggestedInterval : config.leaseRenewInterval();
+        long interval = Math.max(1L, effectiveInterval.toMillis());
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(runnable -> {
             Thread thread = new Thread(runnable, "knitid-ksid-lease-" + workerId.workerId());
             thread.setDaemon(true);
@@ -187,6 +199,7 @@ public final class KsidGenerator implements NumericIdGenerator, AutoCloseable {
                     return buildId(timestamp, 0L);
                 }
                 if (timestamp < lastTimestamp) {
+                    recordBackwards(now);
                     switch (config.clockBackwardsStrategy()) {
                         case THROW:
                             throw new ClockBackwardsException(
@@ -259,6 +272,52 @@ public final class KsidGenerator implements NumericIdGenerator, AutoCloseable {
             }
             LockSupport.parkNanos(LEASE_PAUSE_NANOS);
         }
+    }
+
+    private void recordBackwards(long nowMillis) {
+        synchronized (backwardsEvents) {
+            backwardsEvents.addLast(nowMillis);
+        }
+    }
+
+    private int countBackwards(Duration window) {
+        long cutoff = clock.millis() - window.toMillis();
+        synchronized (backwardsEvents) {
+            while (!backwardsEvents.isEmpty() && backwardsEvents.peekFirst() < cutoff) {
+                backwardsEvents.removeFirst();
+            }
+            return backwardsEvents.size();
+        }
+    }
+
+    @Override
+    public IdGeneratorHealthSnapshot health(Duration clockBackwardsWindow) {
+        Duration window = clockBackwardsWindow == null ? Duration.ofMinutes(1) : clockBackwardsWindow;
+        int backwards = countBackwards(window);
+        Map<String, Object> details = new LinkedHashMap<>();
+        details.put("type", "KSID");
+        details.put("datacenterId", workerId.datacenterId());
+        details.put("workerId", workerId.workerId());
+        details.put("leaseValid", leaseValid);
+        details.put("clockBackwardsCount", backwards);
+        details.put("clockBackwardsStrategy", config.clockBackwardsStrategy().name());
+        details.put("epoch", config.epoch().toString());
+        details.put("closed", closed.get());
+        HealthState state;
+        String message;
+        if (closed.get()) {
+            state = HealthState.UNKNOWN;
+            message = "KSID generator is closed";
+        }
+        else if (!leaseValid) {
+            state = HealthState.DOWN;
+            message = "KSID WorkerId lease lost";
+        }
+        else {
+            state = HealthState.UP;
+            message = "KSID ready";
+        }
+        return new IdGeneratorHealthSnapshot(state, message, details);
     }
 
     private long buildId(long timestamp, long seq) {

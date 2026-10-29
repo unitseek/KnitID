@@ -1,5 +1,6 @@
 package org.unitseek.knitid.autoconfigure;
 
+import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -20,6 +21,8 @@ public class KnitIdProperties {
     private String defaultGenerator;
 
     private Limits limits = new Limits();
+
+    private Health health = new Health();
 
     private Map<String, Map<String, Object>> generators = new LinkedHashMap<>();
 
@@ -55,12 +58,53 @@ public class KnitIdProperties {
         this.limits = limits;
     }
 
+    public Health getHealth() {
+        return health;
+    }
+
+    public void setHealth(Health health) {
+        this.health = health == null ? new Health() : health;
+    }
+
     public Map<String, Map<String, Object>> getGenerators() {
         return generators;
     }
 
     public void setGenerators(Map<String, Map<String, Object>> generators) {
         this.generators = generators == null ? new LinkedHashMap<>() : generators;
+    }
+
+    public static class Health {
+
+        private Duration cacheTtl = Duration.ofSeconds(5);
+
+        private int backwardsDownCount = 5;
+
+        private Duration backwardsDownWindow = Duration.ofMinutes(1);
+
+        public Duration getCacheTtl() {
+            return cacheTtl;
+        }
+
+        public void setCacheTtl(Duration cacheTtl) {
+            this.cacheTtl = cacheTtl;
+        }
+
+        public int getBackwardsDownCount() {
+            return backwardsDownCount;
+        }
+
+        public void setBackwardsDownCount(int backwardsDownCount) {
+            this.backwardsDownCount = backwardsDownCount;
+        }
+
+        public Duration getBackwardsDownWindow() {
+            return backwardsDownWindow;
+        }
+
+        public void setBackwardsDownWindow(Duration backwardsDownWindow) {
+            this.backwardsDownWindow = backwardsDownWindow;
+        }
     }
 
     public static class Limits {
