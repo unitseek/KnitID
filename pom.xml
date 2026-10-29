@@ -45,11 +45,11 @@
 
   <distributionManagement>
     <repository>
-      <id>nexus</id>
+      <id>nexus-releases</id>
       <url>${nexus.url}/repository/maven-releases/</url>
     </repository>
     <snapshotRepository>
-      <id>nexus</id>
+      <id>nexus-snapshots</id>
       <url>${nexus.url}/repository/maven-snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
