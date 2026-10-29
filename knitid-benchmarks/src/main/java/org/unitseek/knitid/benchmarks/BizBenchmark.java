@@ -37,7 +37,7 @@ public class BizBenchmark {
     @Setup
     public void setup() {
         Map<String, Object> values = new LinkedHashMap<>();
-        values.put("biz.template", "{prefix}-{yyyyMMdd}-{seq:6}-{check}");
+        values.put("biz.template", "{prefix}-{yyyyMMdd}-{seq:12}-{check}");
         values.put("biz.prefix", "ORD");
         values.put("biz.zone-id", "UTC");
         values.put("biz.sequence-provider", "memory");

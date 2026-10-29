@@ -10,6 +10,10 @@
 
 - [功能需求文档 v0.3](<wiki/ID 生成工具库功能需求文档（FRD）.md>)
 - [FRD 评审意见](<wiki/ID 生成工具库 FRD 评审意见.md>)
+- [配置参考](docs/configuration.md)
+- [基准报告](docs/benchmark-report.md)
+- [发布流程](docs/release.md)
+- [CHANGELOG](CHANGELOG.md)
 
 ## 构建
 
