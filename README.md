@@ -4,7 +4,7 @@
 
 ## 状态
 
-M1/M2 进行中（v0.3.0-SNAPSHOT）：五类 ID 算法（UUIDv7、UUIDv8、ULID、KSID、BIZ）、Redis/ZooKeeper/Kubernetes WorkerId 分配器、Actuator 健康检查、Spring Boot 自动配置与契约测试已完成；剩余 M2 项为 IdParser、Actuator 端点/指标、Redis 序列模块。
+M1/M2 进行中（v0.3.0-SNAPSHOT）：五类 ID 算法（UUIDv7、UUIDv8、ULID、KSID、BIZ）、IdParser、Redis/ZooKeeper/Kubernetes WorkerId 分配器、Actuator 健康检查、Spring Boot 自动配置与契约测试已完成；剩余 M2 项为 Actuator 端点/指标、Redis 序列模块。
 
 ## 文档
 
@@ -32,13 +32,13 @@ mvn clean verify
 | `knitid-worker-redis` | 已完成实现 + 单测 + Testcontainers 集成测试（SET NX/TTL 租约、续约、释放、槽位扫描、断连） |
 | `knitid-worker-zookeeper` | 已完成实现 + 测试 + Testcontainers 集成测试（临时节点会话租约、槽位扫描、续约检查、释放、断连） |
 | `knitid-worker-kubernetes` | 已完成实现 + 测试（StatefulSet ordinal / Downward API） |
-| `knitid-spring-boot-autoconfigure` | 已完成骨架（配置/注册中心/默认选择/自动配置矩阵/健康检查/生命周期关闭） |
+| `knitid-spring-boot-autoconfigure` | 已完成骨架（配置/注册中心/默认选择/自动配置矩阵/健康检查/生命周期关闭/IdParser） |
 | `knitid-spring-boot-starter` | 已完成 |
 | 其余算法/集成模块 | 占位模块（M1/M2 实现） |
 
 ## 测试
 
-当前共 130 个测试，全部通过（`mvn verify`；Testcontainers 用例在无 Docker 时自动跳过）：
+当前共 137 个测试，全部通过（`mvn verify`；Testcontainers 用例在无 Docker 时自动跳过）：
 
 - `knitid-core`：IdType 规范化契约（3）；
 - `knitid-generator-uuid7`：RFC 9562 附录 A.6 向量、属性测试、边界与溢出策略（11）；
@@ -49,7 +49,7 @@ mvn clean verify
 - `knitid-worker-redis`：槽位占用/冲突、租约续约失败、释放、provider 配置校验、自动配置（9），以及 Testcontainers 真实 Redis 的 SET NX/TTL/续约/释放/断连（5）；
 - `knitid-worker-zookeeper`：临时节点分配、重新占用、续约、配置校验、自动配置（6），以及 Testcontainers 真实 ZooKeeper 的分配/释放与断连（2）；
 - `knitid-worker-kubernetes`：StatefulSet ordinal、Downward API、越界/非法 pod 名、配置校验、自动配置（9）；
-- `knitid-spring-boot-autoconfigure`：12 个启动行为矩阵场景 + 7 个健康检查场景（19）；
+- `knitid-spring-boot-autoconfigure`：12 个启动行为矩阵场景 + 7 个健康检查场景 + 7 个 IdParser 场景（26）；
 - `knitid-samples`：Starter + UUIDv7/KSID 集成启动测试（2）。
 
 ## 业务 ID 快速配置
@@ -68,6 +68,15 @@ knitid:
         reset: DAILY                # DAILY | NEVER
         check-algorithm: MOD37_36   # MOD37_36 | MOD11_2 | LUHN | NONE
 ```
+
+## IdParser
+
+`knitid-spring-boot-autoconfigure` 提供 `IdParser` 自动配置：
+
+- 内置识别 UUIDv7、UUIDv8、ULID、纯数字 KSID；
+- UUIDv7 提取时间戳/版本，ULID 提取时间戳；UUIDv8 仅暴露版本/变体；数字 KSID 仅暴露类型与原值（位布局由配置决定）；
+- BIZ 或需要解析 KSID 时间戳/节点/序列时，注册自己的 `IdTypeParser` Bean，用户 Bean 优先于内置解析器；
+- `parse` 失败抛 `IdParseException`，`tryParse` 返回 `Optional.empty()`。
 
 ### Testcontainers 集成测试
 
