@@ -531,9 +531,12 @@ knitid:
 - 文档必须警示：UUID8 语义由应用定义，不保证跨系统互操作，不建议作为公共契约 ID。
 - 验收：版本/变体位；各预设字段解析；与 UUID7 不混淆；并发无重复。
 
-#### FR-UUID8-02 配置（P2）
+#### FR-UUID8-02 配置（P1）
 
 - `knitid.generators.<name>.uuid8.preset`（默认 `TIME_RANDOM`）；随机源固定 `SecureRandom`。
+- `knitid.generators.<name>.uuid8.datacenter-id`（默认 `0`，0-15，仅 `TIME_NODE_RANDOM` 使用）。
+- `knitid.generators.<name>.uuid8.worker-id`（默认 `0`，0-255，仅 `TIME_NODE_RANDOM` 使用）。
+- `TIME_RANDOM` 同毫秒计数溢出时等待下一毫秒。
 - 验收：非法预设启动失败；元数据包含预设枚举值。
 
 ### 8.3 ULID
@@ -1148,6 +1151,8 @@ IdException (RuntimeException)
 | `...uuid7.monotonic` | boolean | `true` | 否 | 同毫秒单调 |
 | `...uuid7.monotonic-overflow` | enum | `WAIT` | 否 | `WAIT`/`THROW` |
 | `...uuid8.preset` | enum | `TIME_RANDOM` | 否 | `TIME_RANDOM`/`TIME_NODE_RANDOM`/`RANDOM` |
+| `...uuid8.datacenter-id` | int | `0` | 否 | 0-15，仅 `TIME_NODE_RANDOM` 使用 |
+| `...uuid8.worker-id` | int | `0` | 否 | 0-255，仅 `TIME_NODE_RANDOM` 使用 |
 | `...ulid.monotonic` | boolean | `true` | 否 | 同毫秒单调 |
 | `...ulid.monotonic-overflow` | enum | `WAIT` | 否 | `WAIT`/`THROW` |
 | `...ulid.random-source` | enum | `PERFORMANCE` | 否 | `PERFORMANCE`/`SECURE` |

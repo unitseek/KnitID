@@ -4,7 +4,7 @@
 
 ## 状态
 
-M1/M2 进行中（v0.3.0-SNAPSHOT）：core API/SPI、UUIDv7、ULID、KSID（位分配/回拨/租约）、业务 ID（BIZ）、Redis/ZooKeeper/Kubernetes WorkerId 分配器、Actuator 健康检查、Spring Boot 自动配置与契约测试已完成；UUID8 为占位模块。
+M1/M2 进行中（v0.3.0-SNAPSHOT）：五类 ID 算法（UUIDv7、UUIDv8、ULID、KSID、BIZ）、Redis/ZooKeeper/Kubernetes WorkerId 分配器、Actuator 健康检查、Spring Boot 自动配置与契约测试已完成；剩余 M2 项为 IdParser、Actuator 端点/指标、Redis 序列模块。
 
 ## 文档
 
@@ -25,6 +25,7 @@ mvn clean verify
 | --- | --- |
 | `knitid-core` | 已完成骨架（API/SPI/异常/静态门面/DurationParser/健康快照） |
 | `knitid-generator-uuid7` | 已完成实现 + 契约/属性测试 |
+| `knitid-generator-uuid8` | 已完成实现 + 测试（TIME_RANDOM/TIME_NODE_RANDOM/RANDOM 预设、版本/变体） |
 | `knitid-generator-ulid` | 已完成实现 + 契约/属性测试（ULID 规范向量、Crockford Base32、单调/溢出） |
 | `knitid-generator-biz` | 已完成实现 + 测试（模板、序列、日切、校验位、上下文） |
 | `knitid-generator-ksid` | 已完成实现 + 测试（位分配校验、回拨策略、序列溢出、WorkerId 租约、健康快照） |
@@ -37,10 +38,11 @@ mvn clean verify
 
 ## 测试
 
-当前共 120 个测试，全部通过（`mvn verify`；Testcontainers 用例在无 Docker 时自动跳过）：
+当前共 130 个测试，全部通过（`mvn verify`；Testcontainers 用例在无 Docker 时自动跳过）：
 
 - `knitid-core`：IdType 规范化契约（3）；
 - `knitid-generator-uuid7`：RFC 9562 附录 A.6 向量、属性测试、边界与溢出策略（11）；
+- `knitid-generator-uuid8`：三种预设布局、版本/变体位、计数溢出、节点字段、随机预设（10）；
 - `knitid-generator-ulid`：ULID 规范示例向量、Crockford Base32、单调递增、溢出策略、属性测试（15）；
 - `knitid-generator-biz`：模板编译、序列日切/永不重置、校验位（MOD37_36/MOD11_2/LUHN）、前缀/业务日期上下文、并发唯一（16）；
 - `knitid-generator-ksid`：位分配校验、回拨 `WAIT`/`THROW`/`BORROW_FUTURE`、序列溢出、WorkerId 越界、租约生命周期、健康快照（23）；
