@@ -56,9 +56,15 @@
 
   <repositories>
     <repository>
-      <id>nexus</id>
+      <id>nexus-releases</id>
       <url>${nexus.url}/repository/maven-public/</url>
       <releases><enabled>true</enabled></releases>
+      <snapshots><enabled>false</enabled></snapshots>
+    </repository>
+    <repository>
+      <id>nexus-snapshots</id>
+      <url>${nexus.url}/repository/maven-public/</url>
+      <releases><enabled>false</enabled></releases>
       <snapshots><enabled>true</enabled></snapshots>
     </repository>
   </repositories>
