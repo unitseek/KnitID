@@ -1,3 +1,5 @@
 org.unitseek.knitid.autoconfigure.KnitIdAutoConfiguration
 org.unitseek.knitid.autoconfigure.KnitIdHealthAutoConfiguration
 org.unitseek.knitid.autoconfigure.parser.KnitIdParserAutoConfiguration
+org.unitseek.knitid.autoconfigure.KnitIdMetricsAutoConfiguration
+org.unitseek.knitid.autoconfigure.KnitIdEndpointAutoConfiguration

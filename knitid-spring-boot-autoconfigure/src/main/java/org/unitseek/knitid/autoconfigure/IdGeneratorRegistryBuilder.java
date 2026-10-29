@@ -1,6 +1,7 @@
 package org.unitseek.knitid.autoconfigure;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -12,6 +13,7 @@ import org.unitseek.knitid.core.api.IdType;
 import org.unitseek.knitid.core.exception.IdConfigurationException;
 import org.unitseek.knitid.core.exception.IdErrorCodes;
 import org.unitseek.knitid.core.spi.GeneratorConfig;
+import org.unitseek.knitid.core.spi.IdGeneratorDecorator;
 import org.unitseek.knitid.core.spi.IdGeneratorFactory;
 
 /**
@@ -25,9 +27,13 @@ final class IdGeneratorRegistryBuilder {
 
     private final ObjectProvider<IdGeneratorFactory> factories;
 
-    IdGeneratorRegistryBuilder(KnitIdProperties properties, ObjectProvider<IdGeneratorFactory> factories) {
+    private final List<IdGeneratorDecorator> decorators;
+
+    IdGeneratorRegistryBuilder(KnitIdProperties properties, ObjectProvider<IdGeneratorFactory> factories,
+            List<IdGeneratorDecorator> decorators) {
         this.properties = properties;
         this.factories = factories;
+        this.decorators = decorators == null ? List.of() : List.copyOf(decorators);
     }
 
     SimpleIdGeneratorRegistry build() {
@@ -52,7 +58,7 @@ final class IdGeneratorRegistryBuilder {
             validateKeys(name, type, raw);
             IdGeneratorFactory factory = requireFactory(factoriesByType, type);
             GeneratorConfig config = new MapGeneratorConfig(name, type, flatten(raw));
-            generators.put(name, factory.create(config));
+            generators.put(name, decorate(factory.create(config), name));
         }
 
         IdGenerator defaultGenerator = resolveDefault(factoriesByType, generators);
@@ -84,7 +90,7 @@ final class IdGeneratorRegistryBuilder {
                 return generator;
             }
             IdGeneratorFactory factory = requireFactory(factoriesByType, type);
-            IdGenerator implicit = factory.create(new MapGeneratorConfig("default", type, Map.of()));
+            IdGenerator implicit = decorate(factory.create(new MapGeneratorConfig("default", type, Map.of())), "default");
             generators.put("default", implicit);
             return implicit;
         }
@@ -98,8 +104,8 @@ final class IdGeneratorRegistryBuilder {
             }
             if (factoriesByType.size() == 1) {
                 Map.Entry<IdType, IdGeneratorFactory> entry = factoriesByType.entrySet().iterator().next();
-                IdGenerator implicit = entry.getValue()
-                        .create(new MapGeneratorConfig("default", entry.getKey(), Map.of()));
+                IdGenerator implicit = decorate(entry.getValue()
+                        .create(new MapGeneratorConfig("default", entry.getKey(), Map.of())), "default");
                 generators.put("default", implicit);
                 return implicit;
             }
@@ -143,6 +149,14 @@ final class IdGeneratorRegistryBuilder {
     private static boolean isDisabled(Map<String, Object> raw) {
         Object enabled = raw.get("enabled");
         return enabled != null && !Boolean.parseBoolean(String.valueOf(enabled));
+    }
+
+    private IdGenerator decorate(IdGenerator generator, String name) {
+        IdGenerator decorated = generator;
+        for (IdGeneratorDecorator decorator : decorators) {
+            decorated = decorator.decorate(decorated, name);
+        }
+        return decorated;
     }
 
     private static IdGeneratorFactory requireFactory(Map<IdType, IdGeneratorFactory> factoriesByType, IdType type) {

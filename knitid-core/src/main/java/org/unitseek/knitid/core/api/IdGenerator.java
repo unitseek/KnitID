@@ -18,6 +18,10 @@ public interface IdGenerator {
 
     String generate(IdContext context);
 
+    default boolean blocking() {
+        return false;
+    }
+
     default List<String> generateBatch(int size) {
         return generateBatch(size, null);
     }

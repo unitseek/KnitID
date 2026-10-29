@@ -11,6 +11,7 @@ import org.springframework.beans.factory.ObjectProvider;
 
 import org.unitseek.knitid.core.api.IdGenerator;
 import org.unitseek.knitid.core.api.IdGeneratorRegistry;
+import org.unitseek.knitid.core.spi.IdGeneratorDecorator;
 import org.unitseek.knitid.core.spi.IdGeneratorFactory;
 
 /**
@@ -24,8 +25,9 @@ public class KnitIdAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public IdGeneratorRegistry idGeneratorRegistry(KnitIdProperties properties,
-            ObjectProvider<IdGeneratorFactory> factories) {
-        return new IdGeneratorRegistryBuilder(properties, factories).build();
+            ObjectProvider<IdGeneratorFactory> factories,
+            ObjectProvider<IdGeneratorDecorator> decorators) {
+        return new IdGeneratorRegistryBuilder(properties, factories, decorators.orderedStream().toList()).build();
     }
 
     @Bean
