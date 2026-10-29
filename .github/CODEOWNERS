@@ -1,2 +1,6 @@
-# P2 skeleton: replace with real maintainers before enabling enforcement.
-# * @unitseek
+# Default owners for the repository. Update handles if the GitHub org/user differs.
+* @unitseek
+
+/docs/ @unitseek
+/.github/ @unitseek
+/SECURITY.md @unitseek

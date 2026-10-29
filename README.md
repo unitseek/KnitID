@@ -63,6 +63,11 @@ class OrderService {
 - [支持渠道](SUPPORT.md)
 - [安全策略](SECURITY.md)
 - [行为准则](CODE_OF_CONDUCT.md)
+- [Roadmap](ROADMAP.md)
+- [治理](GOVERNANCE.md)
+- [维护者](MAINTAINERS.md)
+- [贡献者](CONTRIBUTORS.md)
+- [第三方许可证](docs/third-party.md)
 
 ## 构建
 

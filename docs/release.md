@@ -36,6 +36,7 @@ mvn -B -ntp -Prelease clean deploy
 ## GitHub Actions
 
 - `.github/workflows/ci.yml`：push/PR 构建，JDK 21，`mvn verify`（Ubuntu runner 提供 Docker）；
+- `.github/workflows/docs-check.yml`：PR/push 检查文档结构、链接与代码围栏；
 - `.github/workflows/release.yml`：推送 `v*` tag 时执行 `mvn -Prelease clean deploy`；
   - Secrets：`MAVEN_CENTRAL_USERNAME`、`MAVEN_CENTRAL_PASSWORD`、`GPG_PRIVATE_KEY`、`MAVEN_GPG_PASSPHRASE`。
 
@@ -49,6 +50,7 @@ mvn -B -ntp -Prelease clean deploy
 ## 发布检查清单
 
 - [ ] 所有测试通过（含 Testcontainers）
+- [ ] `node scripts/check-docs.mjs` 通过
 - [ ] `mvn -Prelease clean deploy` 成功
 - [ ] CHANGELOG 更新
 - [ ] README/配置参考/Javadoc 更新

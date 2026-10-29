@@ -24,4 +24,17 @@
 | [设计需求](design/requirements.md) | ✅ | 公开需求摘要 |
 | [ADR](design/adr/README.md) | ✅ | 关键决策记录 |
 
-图例：✅ 已完成（P0/P1）；P2 治理类文档为骨架，见根目录 ROADMAP/GOVERNANCE。
+## Project
+
+| 文档 | 说明 |
+| --- | --- |
+| [Roadmap](../ROADMAP.md) | 1.0/1.1/1.2 路线 |
+| [Governance](../GOVERNANCE.md) | 角色、决策、发布权限 |
+| [Maintainers](../MAINTAINERS.md) | 维护者与职责 |
+| [Contributors](../CONTRIBUTORS.md) | 贡献者 |
+| [Third-party licenses](third-party.md) | 依赖许可证 |
+| [Contributing](../CONTRIBUTING.md) | 开发与 PR 流程 |
+| [Security](../SECURITY.md) | 漏洞报告 |
+| [Code of Conduct](../CODE_OF_CONDUCT.md) | 社区行为准则 |
+
+图例：✅ 已完成（P0/P1/P2）。

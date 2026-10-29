@@ -79,7 +79,7 @@ PR 模板会自动提醒检查项。提交即表示你同意以 Apache-2.0 许�
 - 发布：`docs/release.md`
 - 安全：`SECURITY.md`
 
-P2 治理文档（ROADMAP/GOVERNANCE/MAINTAINERS）中标记 `TODO` 的条目欢迎认领；新增文档请同步 `docs/index.md`。
+欢迎补充文档、示例与治理流程；新增文档请同步 `docs/index.md`，并运行 `node scripts/check-docs.mjs`。
 
 ## Community
 
