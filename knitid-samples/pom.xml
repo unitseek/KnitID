@@ -29,6 +29,22 @@
       <artifactId>knitid-generator-ksid</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.unitseek.knitid</groupId>
+      <artifactId>knitid-generator-uuid8</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.unitseek.knitid</groupId>
+      <artifactId>knitid-generator-ulid</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.unitseek.knitid</groupId>
+      <artifactId>knitid-generator-biz</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
     </dependency>

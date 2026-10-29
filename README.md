@@ -4,7 +4,7 @@
 
 ## 状态
 
-M1/M2 进行中（v0.3.0-SNAPSHOT）：五类 ID 算法（UUIDv7、UUIDv8、ULID、KSID、BIZ）、IdParser、Redis/ZooKeeper/Kubernetes WorkerId 分配器、Redis 序列模块、Actuator 端点/健康检查/指标、Spring Boot 自动配置与契约测试已完成；剩余为基准/示例完善与 1.0 收尾。
+1.0 候选（v0.3.0-SNAPSHOT）：五类 ID 算法（UUIDv7、UUIDv8、ULID、KSID、BIZ）、IdParser、Redis/ZooKeeper/Kubernetes WorkerId 分配器、Redis 序列模块、Actuator 端点/健康检查/指标、JMH 基准、示例工程、Spring Boot 自动配置与契约测试均已完成。
 
 ## 文档
 
@@ -34,11 +34,12 @@ mvn clean verify
 | `knitid-worker-kubernetes` | 已完成实现 + 测试（StatefulSet ordinal / Downward API） |
 | `knitid-spring-boot-autoconfigure` | 已完成骨架（配置/注册中心/默认选择/自动配置矩阵/健康检查/生命周期关闭/IdParser/Actuator 端点/指标） |
 | `knitid-spring-boot-starter` | 已完成 |
-| 其余算法/集成模块 | 占位模块（M1/M2 实现） |
+| `knitid-benchmarks` | 已完成 JMH 基准（UUID7/UUID8/ULID/KSID/BIZ） |
+| `knitid-samples` | 已完成五类 ID + Actuator 集成示例 |
 
 ## 测试
 
-当前共 155 个测试，全部通过（`mvn verify`；Testcontainers 用例在无 Docker 时自动跳过）：
+当前共 159 个测试，全部通过（`mvn verify`；Testcontainers 用例在无 Docker 时自动跳过）：
 
 - `knitid-core`：IdType 规范化契约（3）；
 - `knitid-generator-uuid7`：RFC 9562 附录 A.6 向量、属性测试、边界与溢出策略（11）；
@@ -51,7 +52,7 @@ mvn clean verify
 - `knitid-worker-zookeeper`：临时节点分配、重新占用、续约、配置校验、自动配置（6），以及 Testcontainers 真实 ZooKeeper 的分配/释放与断连（2）；
 - `knitid-worker-kubernetes`：StatefulSet ordinal、Downward API、越界/非法 pod 名、配置校验、自动配置（9）；
 - `knitid-spring-boot-autoconfigure`：12 个启动行为矩阵场景 + 7 个健康检查场景 + 7 个 IdParser 场景 + 7 个端点/指标场景（33）；
-- `knitid-samples`：Starter + UUIDv7/KSID 集成启动测试（2）。
+- `knitid-samples`：UUIDv7/UUID8/ULID/KSID/BIZ + Actuator 集成启动测试（6）。
 
 ## 业务 ID 快速配置
 
@@ -78,6 +79,21 @@ knitid:
 - UUIDv7 提取时间戳/版本，ULID 提取时间戳；UUIDv8 仅暴露版本/变体；数字 KSID 仅暴露类型与原值（位布局由配置决定）；
 - BIZ 或需要解析 KSID 时间戳/节点/序列时，注册自己的 `IdTypeParser` Bean，用户 Bean 优先于内置解析器；
 - `parse` 失败抛 `IdParseException`，`tryParse` 返回 `Optional.empty()`。
+
+## JMH 基准测试
+
+```bash
+# 构建可执行基准 jar
+mvn -pl knitid-benchmarks -am package -DskipTests
+
+# 全量运行
+java -jar knitid-benchmarks/target/knitid-benchmarks.jar
+
+# 快速冒烟（单 fork、单轮）
+java -jar knitid-benchmarks/target/knitid-benchmarks.jar -wi 1 -i 1 -f 1 -w 1 -r 1 Uuid7Benchmark
+```
+
+内置基准：`Uuid7Benchmark`、`Uuid8Benchmark`、`UlidBenchmark`、`KsidBenchmark`（数字）、`BizBenchmark`（模板 + 内存序列）。
 
 ## Actuator
 
