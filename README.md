@@ -47,10 +47,10 @@ mvn clean verify
 `knitid-worker-redis` 使用 Testcontainers 对真实 Redis 验证 SET NX、TTL、续约、释放与断连行为：
 
 - 需要 Docker；无 Docker 时测试通过 `@Testcontainers(disabledWithoutDocker = true)` 自动跳过；
-- 默认镜像 `redis:7.4-alpine`，网络受限时可用环境变量覆盖：
+- 默认镜像 `redis:8.10.3`（真实 Redis，固定版本保证可复现），网络受限时可用环境变量覆盖：
 
 ```bash
-KNITID_TEST_REDIS_IMAGE=your-registry/redis:7.4 mvn -pl knitid-worker-redis -am test
+KNITID_TEST_REDIS_IMAGE=your-registry/redis:8.10.3 mvn -pl knitid-worker-redis -am test
 ```
 
 ## Redis WorkerId 快速配置

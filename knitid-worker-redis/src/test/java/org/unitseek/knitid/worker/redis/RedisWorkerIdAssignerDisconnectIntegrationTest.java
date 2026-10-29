@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class RedisWorkerIdAssignerDisconnectIntegrationTest {
 
     private static final String REDIS_IMAGE = System.getenv().getOrDefault(
-            "KNITID_TEST_REDIS_IMAGE", "redis:7.4-alpine");
+            "KNITID_TEST_REDIS_IMAGE", "redis:8.10.3");
 
     @Test
     void renewAndAssignFailWhenRedisStops() {

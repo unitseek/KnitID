@@ -32,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class RedisWorkerIdAssignerIntegrationTest {
 
     private static final String REDIS_IMAGE = System.getenv().getOrDefault(
-            "KNITID_TEST_REDIS_IMAGE", "redis:7.4-alpine");
+            "KNITID_TEST_REDIS_IMAGE", "redis:8.10.3");
 
     @Container
     static final GenericContainer<?> REDIS = new GenericContainer<>(DockerImageName.parse(REDIS_IMAGE))
