@@ -13,7 +13,8 @@ public class KnitIdFailureAnalyzer extends AbstractFailureAnalyzer<IdConfigurati
     @Override
     protected FailureAnalysis analyze(Throwable rootFailure, IdConfigurationException cause) {
         String description = cause.getMessage();
-        String action = "Check knitid.* configuration and add the required knitid-generator-* module.";
+        String action = "Check the error code/message, fix the referenced knitid.* property, "
+                + "and verify the required generator/worker module is on the classpath.";
         return new FailureAnalysis(description, action, cause);
     }
 }

@@ -136,6 +136,7 @@ public final class KsidGenerator implements NumericIdGenerator, IdGeneratorHealt
         try {
             assigner.renew();
             renewFailures.set(0);
+            leaseValid = true;
         }
         catch (Throwable ex) {
             int failures = renewFailures.incrementAndGet();
