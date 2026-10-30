@@ -10,7 +10,7 @@
 
 ## 状态
 
-1.0.0-SNAPSHOT 开发版（本地 Nexus）：七类 ID 算法（UUIDv7、UUIDv8、ULID、KSID、BIZ、KSUID、TypeID）、IdParser、Redis/ZooKeeper/Kubernetes WorkerId 分配器、Redis 序列模块、Actuator 端点/健康检查/指标、JMH 基准、示例工程、Spring Boot 自动配置与契约测试均已完成。
+1.0.0 发布准备版：七类 ID 算法（UUIDv7、UUIDv8、ULID、KSID、BIZ、KSUID、TypeID）、IdParser、Redis/ZooKeeper/Kubernetes WorkerId 分配器、Redis 序列模块、Actuator 端点/健康检查/指标、JMH 基准、示例工程、Spring Boot 自动配置与契约测试均已完成。
 
 ## 快速开始
 
@@ -20,7 +20,7 @@
 <dependency>
   <groupId>org.unitseek.knitid</groupId>
   <artifactId>knitid-spring-boot-starter</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
 </dependency>
 <dependency>
   <groupId>org.unitseek.knitid</groupId>

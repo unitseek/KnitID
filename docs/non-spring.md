@@ -8,12 +8,12 @@ KnitID 的核心 API 与算法模块零 Spring 依赖，可在普通 Java、Kotl
 <dependency>
   <groupId>org.unitseek.knitid</groupId>
   <artifactId>knitid-core</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
 </dependency>
 <dependency>
   <groupId>org.unitseek.knitid</groupId>
   <artifactId>knitid-generator-uuid7</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
 </dependency>
 ```
 

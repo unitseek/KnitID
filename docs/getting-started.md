@@ -21,12 +21,12 @@
 <dependency>
   <groupId>org.unitseek.knitid</groupId>
   <artifactId>knitid-spring-boot-starter</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
 </dependency>
 <dependency>
   <groupId>org.unitseek.knitid</groupId>
   <artifactId>knitid-generator-uuid7</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
 </dependency>
 ```
 
@@ -38,7 +38,7 @@
     <dependency>
       <groupId>org.unitseek.knitid</groupId>
       <artifactId>knitid-bom</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>

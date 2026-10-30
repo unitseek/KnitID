@@ -13,7 +13,7 @@
 
   <groupId>org.unitseek.knitid</groupId>
   <artifactId>knitid-parent</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <packaging>pom</packaging>
   <name>KnitID</name>
   <description>Unified ID generation toolkit for Spring Boot: UUIDv7, UUIDv8, ULID, KSID, business IDs, KSUID, TypeID</description>
@@ -31,6 +31,7 @@
     <developer>
       <id>unitseek</id>
       <name>UnitSeek</name>
+      <email>unitseek@outlook.com</email>
       <organization>UnitSeek</organization>
       <organizationUrl>https://github.com/unitseek</organizationUrl>
     </developer>
@@ -45,37 +46,18 @@
 
   <distributionManagement>
     <repository>
-      <id>nexus-releases</id>
-      <url>${nexus.url}/repository/maven-releases/</url>
+      <id>central</id>
+      <name>Sonatype Central Portal</name>
+      <url>https://central.sonatype.com/api/v1/publisher</url>
     </repository>
-    <snapshotRepository>
-      <id>nexus-snapshots</id>
-      <url>${nexus.url}/repository/maven-snapshots/</url>
-    </snapshotRepository>
   </distributionManagement>
 
-  <repositories>
-    <repository>
-      <id>nexus-releases</id>
-      <url>${nexus.url}/repository/maven-public/</url>
-      <releases><enabled>true</enabled></releases>
-      <snapshots><enabled>false</enabled></snapshots>
-    </repository>
-    <repository>
-      <id>nexus-snapshots</id>
-      <url>${nexus.url}/repository/maven-public/</url>
-      <releases><enabled>false</enabled></releases>
-      <snapshots><enabled>true</enabled></snapshots>
-    </repository>
-  </repositories>
-
   <properties>
-    <nexus.url>http://172.26.87.240:8081</nexus.url>
     <java.version>21</java.version>
     <maven.compiler.release>21</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <knitid.version>1.0.0-SNAPSHOT</knitid.version>
+    <knitid.version>1.0.0</knitid.version>
   </properties>
 
   <modules>
@@ -105,97 +87,97 @@
       <dependency>
         <groupId>org.unitseek.knitid</groupId>
         <artifactId>knitid-bom</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.unitseek.knitid</groupId>
         <artifactId>knitid-core</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.unitseek.knitid</groupId>
         <artifactId>knitid-test</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.unitseek.knitid</groupId>
         <artifactId>knitid-generator-uuid7</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.unitseek.knitid</groupId>
         <artifactId>knitid-generator-uuid8</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.unitseek.knitid</groupId>
         <artifactId>knitid-generator-ulid</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.unitseek.knitid</groupId>
         <artifactId>knitid-generator-ksid</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.unitseek.knitid</groupId>
         <artifactId>knitid-generator-biz</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.unitseek.knitid</groupId>
         <artifactId>knitid-generator-ksuid</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.unitseek.knitid</groupId>
         <artifactId>knitid-generator-typeid</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.unitseek.knitid</groupId>
         <artifactId>knitid-spring-boot-starter-all</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.unitseek.knitid</groupId>
         <artifactId>knitid-spring-boot-autoconfigure</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.unitseek.knitid</groupId>
         <artifactId>knitid-spring-boot-starter</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.unitseek.knitid</groupId>
         <artifactId>knitid-sequence-redis</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.unitseek.knitid</groupId>
         <artifactId>knitid-worker-redis</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.unitseek.knitid</groupId>
         <artifactId>knitid-worker-zookeeper</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.unitseek.knitid</groupId>
         <artifactId>knitid-worker-kubernetes</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.unitseek.knitid</groupId>
         <artifactId>knitid-benchmarks</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.unitseek.knitid</groupId>
         <artifactId>knitid-samples</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.curator</groupId>
@@ -294,8 +276,9 @@
             <configuration>
               <publishingServerId>central</publishingServerId>
               <tokenAuth>true</tokenAuth>
-              <autoPublish>true</autoPublish>
-              <waitUntil>published</waitUntil>
+              <autoPublish>false</autoPublish>
+              <waitUntil>validated</waitUntil>
+              <deploymentName>knitid-${project.version}</deploymentName>
             </configuration>
           </plugin>
         </plugins>
