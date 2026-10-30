@@ -24,7 +24,17 @@ public record TypeIdConfig(Set<String> prefixes, String defaultPrefix, boolean a
         if (prefixes == null || prefixes.isEmpty()) {
             throw invalid("typeid.prefixes must not be empty");
         }
-        prefixes = Collections.unmodifiableSet(new LinkedHashSet<>(prefixes));
+        Set<String> validated = new LinkedHashSet<>();
+        for (String prefix : prefixes) {
+            if (!isValidPrefix(prefix)) {
+                throw invalid("Invalid typeid prefix: " + prefix);
+            }
+            if (prefix.isEmpty() && !allowEmptyPrefix) {
+                throw invalid("Empty typeid prefix requires typeid.allow-empty-prefix=true");
+            }
+            validated.add(prefix);
+        }
+        prefixes = Collections.unmodifiableSet(validated);
         if (defaultPrefix == null || !prefixes.contains(defaultPrefix)) {
             throw invalid("typeid.default-prefix must be one of " + prefixes);
         }
@@ -37,7 +47,14 @@ public record TypeIdConfig(Set<String> prefixes, String defaultPrefix, boolean a
             collection.forEach(value -> values.add(String.valueOf(value)));
         }
         else if (raw instanceof java.util.Map<?, ?> map) {
-            map.values().forEach(value -> values.add(String.valueOf(value)));
+            map.entrySet().stream()
+                    .sorted(java.util.Map.Entry.comparingByKey(java.util.Comparator.comparing(String::valueOf)))
+                    .forEach(entry -> values.add(String.valueOf(entry.getValue())));
+        }
+        else if (raw instanceof Object[] array) {
+            for (Object value : array) {
+                values.add(String.valueOf(value));
+            }
         }
         else if (raw != null) {
             for (String part : String.valueOf(raw).split(",")) {
@@ -67,7 +84,8 @@ public record TypeIdConfig(Set<String> prefixes, String defaultPrefix, boolean a
     }
 
     public void validateForGeneration(String prefix) {
-        if (prefix == null || !prefixes.contains(prefix)) {
+        if (prefix == null || !isValidPrefix(prefix) || !prefixes.contains(prefix)
+                || (prefix.isEmpty() && !allowEmptyPrefix)) {
             throw invalid("TypeID prefix is not registered: " + prefix + " (registered: " + prefixes + ")");
         }
     }

@@ -6,8 +6,9 @@ import java.util.Objects;
  * Identifier type value object.
  *
  * <p>Built-in types are {@link #UUID7}, {@link #UUID8}, {@link #ULID},
- * {@link #KSID} and {@link #BIZ}. Custom types can be created with
- * {@link #of(String)} so that third-party generators can be registered.</p>
+ * {@link #KSID}, {@link #BIZ}, {@link #KSUID} and {@link #TYPEID}. Custom
+ * types can be created with {@link #of(String)} so that third-party
+ * generators can be registered.</p>
  */
 public final class IdType {
 

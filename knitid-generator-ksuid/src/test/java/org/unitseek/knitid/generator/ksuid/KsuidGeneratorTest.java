@@ -36,6 +36,7 @@ class KsuidGeneratorTest {
         assertThatThrownBy(generator::generate).isInstanceOf(IdGenerationException.class);
         assertThat(KsuidGenerator.decode("short")).isNull();
         assertThat(KsuidGenerator.decode("0".repeat(27).replace('0', '!'))).isNull();
+        assertThat(KsuidGenerator.decode("z".repeat(27))).isNull();
         assertThat(new KsuidIdTypeParser().tryParse("not-a-ksuid")).isEmpty();
     }
 

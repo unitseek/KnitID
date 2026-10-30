@@ -23,7 +23,7 @@ public final class TypeIdIdTypeParser implements IdTypeParser {
         if (raw == null) {
             return Optional.empty();
         }
-        int separator = raw.indexOf('_');
+        int separator = raw.lastIndexOf('_');
         if (separator <= 0 || separator == raw.length() - 1) {
             return Optional.empty();
         }

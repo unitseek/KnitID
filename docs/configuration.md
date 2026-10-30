@@ -117,6 +117,8 @@ knitid:
 
 KSUID 固定 27 位 Base62；无 WorkerId；不保证同秒内单调。
 
+KSUID 没有格式标记，解析器接受任意合法 27 位 Base62 串；这是 KSUID 格式的固有限制，不能据此保证业务来源。
+
 ## 10. TypeID（可选兼容模块）
 
 | 属性 | 默认 | 说明 |
@@ -126,6 +128,8 @@ KSUID 固定 27 位 Base62；无 WorkerId；不保证同秒内单调。
 | `typeid.allow-empty-prefix` | `false` | 是否允许空前缀生成；内置解析器仍只识别带 `_` 的形式 |
 
 TypeID 格式：`<prefix>_<26 位小写 Base32 UUIDv7>`，内部复用 KnitID UUIDv7。
+
+启用 `allow-empty-prefix=true` 后可生成无前缀 26 字符 ID，但内置解析器仍只识别带 `_` 的形式；需要自定义解析器才能解析该产物。
 
 ## 11. WorkerId 分配
 

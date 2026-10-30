@@ -60,7 +60,7 @@ public final class TypeIdGenerator implements IdGenerator {
             bytes[i] = (byte) (msb >>> (56 - 8 * i));
             bytes[8 + i] = (byte) (lsb >>> (56 - 8 * i));
         }
-        BigInteger value = new BigInteger(1, bytes).shiftLeft(2);
+        BigInteger value = new BigInteger(1, bytes);
         char[] encoded = new char[26];
         for (int i = 25; i >= 0; i--) {
             BigInteger[] divRem = value.divideAndRemainder(BASE);
@@ -82,7 +82,7 @@ public final class TypeIdGenerator implements IdGenerator {
             }
             value = value.multiply(BASE).add(BigInteger.valueOf(digit));
         }
-        BigInteger uuidValue = value.shiftRight(2);
+        BigInteger uuidValue = value;
         if (uuidValue.bitLength() > 128) {
             return null;
         }

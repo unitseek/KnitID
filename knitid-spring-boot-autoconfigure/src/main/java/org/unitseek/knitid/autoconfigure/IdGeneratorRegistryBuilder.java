@@ -210,7 +210,12 @@ final class IdGeneratorRegistryBuilder {
         for (Map.Entry<String, Object> entry : source.entrySet()) {
             String key = prefix.isEmpty() ? entry.getKey() : prefix + "." + entry.getKey();
             Object value = entry.getValue();
-            if (value instanceof Map<?, ?> nested && !isIndexedMap(nested)) {
+            if (value instanceof Map<?, ?> nested) {
+                if (isIndexedMap(nested)) {
+                    // YAML sequences bind to Map<String,Object> as {0: ...}; expose a List
+                    // without removing the legacy dotted keys for custom factories.
+                    target.put(key, java.util.List.copyOf(nested.values()));
+                }
                 Map<String, Object> typed = new LinkedHashMap<>();
                 nested.forEach((nestedKey, nestedValue) -> typed.put(String.valueOf(nestedKey), nestedValue));
                 flatten(key, typed, target);

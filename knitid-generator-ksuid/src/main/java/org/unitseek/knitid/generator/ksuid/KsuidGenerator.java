@@ -95,9 +95,11 @@ public final class KsuidGenerator implements IdGenerator {
             return null;
         }
         byte[] bytes = value.toByteArray();
+        if (bytes.length > 20) {
+            return null;
+        }
         byte[] out = new byte[20];
-        int copy = Math.min(bytes.length, out.length);
-        System.arraycopy(bytes, bytes.length - copy, out, out.length - copy, copy);
+        System.arraycopy(bytes, 0, out, out.length - bytes.length, bytes.length);
         return out;
     }
 

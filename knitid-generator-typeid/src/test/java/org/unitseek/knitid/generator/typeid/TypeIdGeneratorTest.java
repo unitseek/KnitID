@@ -46,6 +46,36 @@ class TypeIdGeneratorTest {
     }
 
     @Test
+    void matchesOfficialTypeIdVector() {
+        java.util.UUID uuid = java.util.UUID.fromString("0188bac7-4afa-78aa-bc3b-bd1eef28d881");
+        String suffix = TypeIdGenerator.encode(uuid);
+        assertThat(suffix).isEqualTo("01h2xcejqtf2nbrexx3vqjhp41");
+        assertThat(TypeIdGenerator.decodeSuffix(suffix)).isEqualTo(uuid);
+        TypeIdIdTypeParser parser = new TypeIdIdTypeParser();
+        assertThat(parser.tryParse("user_" + suffix)).isPresent();
+    }
+
+    @Test
+    void parsesPrefixesContainingUnderscore() {
+        TypeIdGenerator generator = new TypeIdGenerator(
+                Clock.fixed(NOW, ZoneOffset.UTC), new ZeroRandom(),
+                new TypeIdConfig(java.util.Set.of("user_profile"), "user_profile", false));
+        String id = generator.generate();
+        assertThat(id).startsWith("user_profile_");
+        assertThat(new TypeIdIdTypeParser().tryParse(id)).isPresent();
+    }
+
+    @Test
+    void rejectsInvalidConfigAndEmptyPrefixInvariant() {
+        assertThatThrownBy(() -> new TypeIdConfig(java.util.Set.of("User"), "User", false))
+                .isInstanceOf(IdConfigurationException.class);
+        assertThatThrownBy(() -> new TypeIdConfig(java.util.Set.of(""), "", false))
+                .isInstanceOf(IdConfigurationException.class);
+        assertThatThrownBy(() -> new TypeIdConfig(java.util.Set.of("user"), "order", false))
+                .isInstanceOf(IdConfigurationException.class);
+    }
+
+    @Test
     void validatesOfficialPrefixRules() {
         assertThat(TypeIdConfig.isValidPrefix("user")).isTrue();
         assertThat(TypeIdConfig.isValidPrefix("user_profile")).isTrue();

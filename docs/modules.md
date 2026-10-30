@@ -15,7 +15,7 @@ knitid-samples / knitid-benchmarks
 ```
 
 - `knitid-core`：API、SPI、异常、解析接口，零 Spring/三方算法依赖；
-- 生成器模块：只依赖 core，各自注册 `IdGeneratorFactory`；
+- 生成器模块：通常只依赖 core，各自注册 `IdGeneratorFactory`；TypeID 额外依赖 UUIDv7 以复用其时间/随机位布局。
 - 自动配置模块：注册中心、默认选择、健康、指标、端点、解析器；
 - Starter：core + autoconfigure，不包含算法；
 - 集成模块：WorkerId 与 Redis 序列，按需引入；
@@ -52,6 +52,9 @@ knitid-samples / knitid-benchmarks
 | UUIDv7 + Spring Boot | starter + generator-uuid7 |
 | KSID + Redis WorkerId | starter + generator-ksid + worker-redis + spring-data-redis |
 | BIZ + Redis 序列 | starter + generator-biz + sequence-redis + spring-data-redis |
+| KSUID | starter + generator-ksuid（或 starter-all） |
+| TypeID | starter + generator-typeid（会传递引入 UUIDv7） |
+| 全部七类 | starter-all |
 | 非 Spring 使用 | core + 算法模块 |
 
 ## BOM

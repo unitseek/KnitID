@@ -1,6 +1,6 @@
 # KnitID Documentation
 
-统一 ID 生成工具库：UUIDv7、UUIDv8、ULID、KSID、业务 ID，Spring Boot 4 自动配置。
+统一 ID 生成工具库：UUIDv7、UUIDv8、ULID、KSID、业务 ID、KSUID、TypeID，Spring Boot 4 自动配置。
 
 ## Start Here
 
