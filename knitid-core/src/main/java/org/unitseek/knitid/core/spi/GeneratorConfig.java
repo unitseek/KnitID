@@ -11,13 +11,31 @@ import org.unitseek.knitid.core.api.IdType;
  *
  * <p>Keys are flattened using dot notation, for example
  * {@code uuid7.monotonic}.</p>
+ *
+ * @since 1.0.0
  */
 public interface GeneratorConfig {
 
+    /**
+     * Returns the configured generator name.
+     *
+     * @return generator name
+     */
     String name();
 
+    /**
+     * Returns the configured identifier type.
+     *
+     * @return identifier type
+     */
     IdType type();
 
+    /**
+     * Returns a raw configuration value.
+     *
+     * @param key flattened key
+     * @return value, or empty if absent
+     */
     Optional<Object> get(String key);
 
     /**
@@ -34,10 +52,25 @@ public interface GeneratorConfig {
         return Set.of();
     }
 
+    /**
+     * Returns a string value or the supplied default.
+     *
+     * @param key flattened key
+     * @param defaultValue fallback value
+     * @return string value
+     */
     default String getString(String key, String defaultValue) {
         return get(key).map(String::valueOf).orElse(defaultValue);
     }
 
+    /**
+     * Returns a boolean value or the supplied default.
+     *
+     * @param key flattened key
+     * @param defaultValue fallback value
+     * @return boolean value
+     * @throws IllegalArgumentException if the value is not a boolean
+     */
     default boolean getBoolean(String key, boolean defaultValue) {
         return get(key).map(value -> {
             if (value instanceof Boolean bool) {
@@ -54,6 +87,14 @@ public interface GeneratorConfig {
         }).orElse(defaultValue);
     }
 
+    /**
+     * Returns an int value or the supplied default.
+     *
+     * @param key flattened key
+     * @param defaultValue fallback value
+     * @return int value
+     * @throws IllegalArgumentException if the value is not an exact int
+     */
     default int getInt(String key, int defaultValue) {
         return get(key).map(value -> {
             try {
@@ -68,6 +109,14 @@ public interface GeneratorConfig {
         }).orElse(defaultValue);
     }
 
+    /**
+     * Returns a long value or the supplied default.
+     *
+     * @param key flattened key
+     * @param defaultValue fallback value
+     * @return long value
+     * @throws IllegalArgumentException if the value is not an exact long
+     */
     default long getLong(String key, long defaultValue) {
         return get(key).map(value -> {
             try {
@@ -82,6 +131,14 @@ public interface GeneratorConfig {
         }).orElse(defaultValue);
     }
 
+    /**
+     * Returns a duration value or the supplied default.
+     *
+     * @param key flattened key
+     * @param defaultValue fallback value
+     * @return duration value
+     * @throws IllegalArgumentException if the value cannot be parsed
+     */
     default Duration getDuration(String key, Duration defaultValue) {
         return get(key).map(value -> value instanceof Duration duration
                 ? duration

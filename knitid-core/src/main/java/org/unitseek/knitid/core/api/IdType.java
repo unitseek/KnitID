@@ -9,13 +9,20 @@ import java.util.Objects;
  * {@link #KSID}, {@link #BIZ}, {@link #KSUID} and {@link #TYPEID}. Custom
  * types can be created with {@link #of(String)} so that third-party
  * generators can be registered.</p>
+ *
+ * @since 1.0.0
  */
 public final class IdType {
 
+    /** RFC 9562 UUIDv7. */
     public static final IdType UUID7 = new IdType("UUID7");
+    /** RFC 9562 UUIDv8 with KnitID presets. */
     public static final IdType UUID8 = new IdType("UUID8");
+    /** ULID. */
     public static final IdType ULID = new IdType("ULID");
+    /** KnitID Snowflake-style numeric ID. */
     public static final IdType KSID = new IdType("KSID");
+    /** Template-driven business identifier. */
     public static final IdType BIZ = new IdType("BIZ");
 
     /**
@@ -42,6 +49,17 @@ public final class IdType {
         this.value = value;
     }
 
+    /**
+     * Creates a normalized identifier type.
+     *
+     * <p>Input is trimmed, and {@code -}, {@code _} and whitespace are removed;
+     * remaining characters are upper-cased. The normalized value must be
+     * 1-64 alphanumeric characters.</p>
+     *
+     * @param raw type name
+     * @return normalized identifier type
+     * @throws IllegalArgumentException if the value is null or invalid
+     */
     public static IdType of(String raw) {
         if (raw == null) {
             throw new IllegalArgumentException("idType must not be null");
@@ -49,6 +67,12 @@ public final class IdType {
         return new IdType(normalize(raw));
     }
 
+    /**
+     * Tests whether a raw value can be normalized to a valid type.
+     *
+     * @param raw candidate value
+     * @return {@code true} if {@link #of(String)} would accept the value
+     */
     public static boolean isValid(String raw) {
         if (raw == null) {
             return false;
@@ -62,6 +86,7 @@ public final class IdType {
         }
     }
 
+    // Normalize by trimming, removing separators and upper-casing ASCII.
     private static String normalize(String raw) {
         String trimmed = raw.trim();
         if (trimmed.isEmpty()) {
@@ -86,6 +111,11 @@ public final class IdType {
         return builder.toString();
     }
 
+    /**
+     * Returns the normalized type name.
+     *
+     * @return normalized type name
+     */
     public String value() {
         return value;
     }

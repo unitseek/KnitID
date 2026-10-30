@@ -8,9 +8,16 @@ import org.unitseek.knitid.core.spi.RandomProvider;
  * Non-cryptographic random provider based on {@link ThreadLocalRandom}.
  *
  * <p>Not suitable for security tokens; intended for ULID performance mode.</p>
+ *
+ * @since 1.0.0
  */
 public final class PerformanceRandomProvider implements RandomProvider {
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Not cryptographically secure.</p>
+     */
     @Override
     public void nextBytes(byte[] bytes) {
         int index = 0;
@@ -29,11 +36,17 @@ public final class PerformanceRandomProvider implements RandomProvider {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int nextInt(int bound) {
         return ThreadLocalRandom.current().nextInt(bound);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean secure() {
         return false;

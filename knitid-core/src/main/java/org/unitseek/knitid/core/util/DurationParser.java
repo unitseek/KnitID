@@ -7,12 +7,26 @@ import java.util.Locale;
 /**
  * Parses Spring Boot style durations (for example {@code 5s}, {@code 1m},
  * {@code 2d}) as well as ISO-8601 durations.
+ *
+ * @since 1.0.0
  */
 public final class DurationParser {
 
     private DurationParser() {
     }
 
+    /**
+     * Parses a duration.
+     *
+     * <p>Supported units are {@code ns}, {@code us}/{@code µs}, {@code ms},
+     * {@code s}, {@code m}, {@code h} and {@code d}; ISO-8601 {@code P...}
+     * values are also accepted.</p>
+     *
+     * @param value duration text
+     * @return parsed duration
+     * @throws IllegalArgumentException if the value is null, empty, malformed
+     *         or out of range
+     */
     public static Duration parse(String value) {
         if (value == null) {
             throw new IllegalArgumentException("duration must not be null");
@@ -21,6 +35,7 @@ public final class DurationParser {
         if (text.isEmpty()) {
             throw new IllegalArgumentException("duration must not be empty");
         }
+        // Support both P... and signed +P.../-P... ISO-8601 forms.
         boolean signedIso = text.length() > 1
                 && (text.charAt(0) == '-' || text.charAt(0) == '+')
                 && Character.toUpperCase(text.charAt(1)) == 'P';

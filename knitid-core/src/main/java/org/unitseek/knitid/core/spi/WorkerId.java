@@ -2,6 +2,10 @@ package org.unitseek.knitid.core.spi;
 
 /**
  * Worker identity used by KSID.
+ *
+ * @param datacenterId datacenter id, non-negative
+ * @param workerId worker id, non-negative
+ * @since 1.0.0
  */
 public record WorkerId(int datacenterId, int workerId) {
 

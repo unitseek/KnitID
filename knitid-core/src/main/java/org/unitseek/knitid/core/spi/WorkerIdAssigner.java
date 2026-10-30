@@ -4,6 +4,8 @@ import java.time.Duration;
 
 /**
  * WorkerId allocation SPI.
+ *
+ * @since 1.0.0
  */
 public interface WorkerIdAssigner {
 
@@ -29,9 +31,20 @@ public interface WorkerIdAssigner {
         return null;
     }
 
+    /**
+     * Renews a renewable lease. Default is a no-op.
+     *
+     * @throws org.unitseek.knitid.core.exception.WorkerIdUnavailableException if
+     *         the lease cannot be renewed
+     */
     default void renew() {
     }
 
+    /**
+     * Releases a lease/worker id. Default is a no-op.
+     *
+     * @param workerId worker id to release
+     */
     default void release(WorkerId workerId) {
     }
 }
