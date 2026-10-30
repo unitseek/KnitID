@@ -24,6 +24,13 @@ import org.unitseek.knitid.generator.biz.MemorySequenceProvider;
 @ConditionalOnClass(BizIdGenerator.class)
 public class BizAutoConfiguration {
 
+    /**
+     * Registers the business-ID generator factory and resolves custom
+     * {@link SequenceProvider} beans by name.
+     *
+     * @param beanFactory bean factory used to look up sequence providers
+     * @return business-ID factory
+     */
     @Bean
     @ConditionalOnMissingBean
     public BizIdGeneratorFactory bizIdGeneratorFactory(ListableBeanFactory beanFactory) {

@@ -8,6 +8,13 @@ import org.unitseek.knitid.core.spi.GeneratorConfig;
 
 /**
  * Immutable ULID configuration.
+ *
+ * @param monotonic whether the 80-bit random value is incremented within the
+ *        same millisecond
+ * @param monotonicOverflow behaviour when monotonic random space is exhausted
+ * @param randomSource random source; defaults to
+ *        {@link UlidRandomSource#PERFORMANCE}
+ * @since 1.0.0
  */
 public record UlidConfig(boolean monotonic, UlidMonotonicOverflow monotonicOverflow, UlidRandomSource randomSource) {
 
@@ -20,10 +27,23 @@ public record UlidConfig(boolean monotonic, UlidMonotonicOverflow monotonicOverf
         }
     }
 
+    /**
+     * Returns the default configuration: monotonic WAIT and
+     * {@link UlidRandomSource#PERFORMANCE}.
+     *
+     * @return default ULID configuration
+     */
     public static UlidConfig defaults() {
         return new UlidConfig(true, UlidMonotonicOverflow.WAIT, UlidRandomSource.PERFORMANCE);
     }
 
+    /**
+     * Parses ULID configuration from a generator configuration.
+     *
+     * @param config generator configuration
+     * @return parsed configuration
+     * @throws IdConfigurationException if an enum value is invalid
+     */
     public static UlidConfig from(GeneratorConfig config) {
         return new UlidConfig(
                 config.getBoolean("ulid.monotonic", true),

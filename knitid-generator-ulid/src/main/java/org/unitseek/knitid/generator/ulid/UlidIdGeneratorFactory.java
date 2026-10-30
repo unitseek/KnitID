@@ -12,14 +12,27 @@ import org.unitseek.knitid.core.spi.RandomProvider;
 
 /**
  * Factory for {@link UlidGenerator}.
+ *
+ * @since 1.0.0
  */
 public final class UlidIdGeneratorFactory implements IdGeneratorFactory {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IdType type() {
         return IdType.ULID;
     }
 
+    /**
+     * Creates a ULID generator from the {@code ulid.*} configuration block.
+     *
+     * @param config generator configuration
+     * @return new ULID generator
+     * @throws org.unitseek.knitid.core.exception.IdConfigurationException if
+     *         an enum value is invalid
+     */
     @Override
     public IdGenerator create(GeneratorConfig config) {
         UlidConfig ulidConfig = UlidConfig.from(config);

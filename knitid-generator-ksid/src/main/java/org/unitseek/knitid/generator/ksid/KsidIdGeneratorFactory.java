@@ -29,24 +29,50 @@ public final class KsidIdGeneratorFactory implements IdGeneratorFactory {
 
     private final List<WorkerIdAssignerProvider> assignerProviders;
 
+    /**
+     * Creates a factory using the system clock and no extra WorkerId providers.
+     */
     public KsidIdGeneratorFactory() {
         this(Clock.systemUTC(), List.of());
     }
 
+    /**
+     * Creates a factory using the supplied clock and no extra WorkerId providers.
+     *
+     * @param clock timestamp source
+     */
     public KsidIdGeneratorFactory(Clock clock) {
         this(clock, List.of());
     }
 
+    /**
+     * Creates a factory with additional WorkerId assigner providers.
+     *
+     * @param clock timestamp source
+     * @param assignerProviders optional providers for Redis/ZooKeeper/Kubernetes
+     *        style assigners; {@code null} is treated as empty
+     */
     public KsidIdGeneratorFactory(Clock clock, List<WorkerIdAssignerProvider> assignerProviders) {
         this.clock = clock;
         this.assignerProviders = assignerProviders == null ? List.of() : List.copyOf(assignerProviders);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IdType type() {
         return IdType.KSID;
     }
 
+    /**
+     * Creates a KSID generator from the {@code ksid.*} configuration block.
+     *
+     * @param config generator configuration
+     * @return new KSID generator
+     * @throws IdConfigurationException if the bit layout, WorkerId or assigner
+     *         configuration is invalid
+     */
     @Override
     public IdGenerator create(GeneratorConfig config) {
         KsidConfig ksidConfig = KsidConfig.from(config);

@@ -23,6 +23,14 @@ public final class MemorySequenceProvider implements SequenceProvider {
                 }
             });
 
+    /**
+     * Returns the next value for a scope.
+     *
+     * <p>Only the most recent 10,000 scopes are retained in memory.</p>
+     *
+     * @param scope non-null sequence scope
+     * @return next sequence value
+     */
     @Override
     public long next(String scope) {
         if (scope == null) {

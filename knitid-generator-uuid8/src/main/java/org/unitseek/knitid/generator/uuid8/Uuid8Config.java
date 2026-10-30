@@ -8,6 +8,13 @@ import org.unitseek.knitid.core.spi.GeneratorConfig;
 
 /**
  * Immutable UUIDv8 configuration.
+ *
+ * @param preset fixed UUIDv8 layout
+ * @param datacenterId 4-bit datacenter id, used only by
+ *        {@link Uuid8Preset#TIME_NODE_RANDOM}
+ * @param workerId 8-bit worker id, used only by
+ *        {@link Uuid8Preset#TIME_NODE_RANDOM}
+ * @since 1.0.0
  */
 public record Uuid8Config(Uuid8Preset preset, int datacenterId, int workerId) {
 
@@ -23,10 +30,23 @@ public record Uuid8Config(Uuid8Preset preset, int datacenterId, int workerId) {
         }
     }
 
+    /**
+     * Returns the default configuration: {@link Uuid8Preset#TIME_RANDOM},
+     * datacenter 0 and worker 0.
+     *
+     * @return default UUIDv8 configuration
+     */
     public static Uuid8Config defaults() {
         return new Uuid8Config(Uuid8Preset.TIME_RANDOM, 0, 0);
     }
 
+    /**
+     * Parses UUIDv8 configuration from a generator configuration.
+     *
+     * @param config generator configuration
+     * @return parsed configuration
+     * @throws IdConfigurationException if the preset or an id is invalid
+     */
     public static Uuid8Config from(GeneratorConfig config) {
         try {
             return new Uuid8Config(

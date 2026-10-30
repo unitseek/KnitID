@@ -20,6 +20,13 @@ import org.unitseek.knitid.core.spi.RandomProvider;
  * <p>Layout: 48-bit Unix millisecond timestamp, version 7, variant {@code 10},
  * then 74 random bits. In monotonic mode the 74 random bits are treated as a
  * counter (RFC 9562 section 6.2, method 2).</p>
+ *
+ * <p>Instances are thread-safe. When monotonic mode is enabled and the random
+ * space of the current millisecond is exhausted, the configured
+ * {@link MonotonicOverflow} strategy decides whether to wait or fail.</p>
+ *
+ * @see <a href="https://www.rfc-editor.org/rfc/rfc9562">RFC 9562</a>
+ * @since 1.0.0
  */
 public final class Uuid7Generator implements IdGenerator {
 
@@ -45,10 +52,25 @@ public final class Uuid7Generator implements IdGenerator {
 
     private long randomB;
 
+    /**
+     * Creates a monotonic UUIDv7 generator with {@link MonotonicOverflow#WAIT}.
+     *
+     * @param clock timestamp source
+     * @param random random source
+     */
     public Uuid7Generator(Clock clock, RandomProvider random) {
         this(clock, random, true, MonotonicOverflow.WAIT);
     }
 
+    /**
+     * Creates a UUIDv7 generator.
+     *
+     * @param clock timestamp source
+     * @param random random source
+     * @param monotonic whether to increment the 74-bit random space within the
+     *        same millisecond
+     * @param overflow behaviour when monotonic space is exhausted
+     */
     public Uuid7Generator(Clock clock, RandomProvider random, boolean monotonic, MonotonicOverflow overflow) {
         this.clock = clock;
         this.random = random;
@@ -56,16 +78,31 @@ public final class Uuid7Generator implements IdGenerator {
         this.overflow = overflow;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IdType type() {
         return IdType.UUID7;
     }
 
+    /**
+     * Generates a UUIDv7 string.
+     *
+     * @return canonical UUIDv7 string
+     */
     @Override
     public String generate() {
         return generate((IdContext) null);
     }
 
+    /**
+     * Generates a UUIDv7 string. UUIDv7 has no context-dependent fields; the
+     * context is ignored.
+     *
+     * @param context ignored
+     * @return canonical UUIDv7 string
+     */
     @Override
     public synchronized String generate(IdContext context) {
         return generateUuid().toString();

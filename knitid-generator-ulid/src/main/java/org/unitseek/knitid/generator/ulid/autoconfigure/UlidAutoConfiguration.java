@@ -15,6 +15,11 @@ import org.unitseek.knitid.generator.ulid.UlidIdGeneratorFactory;
 @ConditionalOnClass(UlidGenerator.class)
 public class UlidAutoConfiguration {
 
+    /**
+     * Registers the ULID generator factory.
+     *
+     * @return ULID factory
+     */
     @Bean
     @ConditionalOnMissingBean
     public UlidIdGeneratorFactory ulidIdGeneratorFactory() {

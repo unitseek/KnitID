@@ -15,6 +15,11 @@ import org.unitseek.knitid.generator.uuid7.Uuid7IdGeneratorFactory;
 @ConditionalOnClass(Uuid7Generator.class)
 public class Uuid7AutoConfiguration {
 
+    /**
+     * Registers the UUIDv7 generator factory.
+     *
+     * @return UUIDv7 factory
+     */
     @Bean
     @ConditionalOnMissingBean
     public Uuid7IdGeneratorFactory uuid7IdGeneratorFactory() {

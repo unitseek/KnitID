@@ -20,6 +20,10 @@ public final class BizIdGeneratorFactory implements IdGeneratorFactory {
 
     private final SequenceProviderResolver sequenceProviderResolver;
 
+    /**
+     * Creates a factory with system clock and only the built-in {@code memory}
+     * sequence provider.
+     */
     public BizIdGeneratorFactory() {
         this(Clock.systemUTC(), name -> {
             if ("memory".equalsIgnoreCase(name)) {
@@ -31,17 +35,34 @@ public final class BizIdGeneratorFactory implements IdGeneratorFactory {
         });
     }
 
+    /**
+     * Creates a factory with a custom sequence-provider resolver.
+     *
+     * @param clock timestamp source
+     * @param sequenceProviderResolver resolver for {@code biz.sequence-provider}
+     */
     public BizIdGeneratorFactory(Clock clock, SequenceProviderResolver sequenceProviderResolver) {
         this.clock = java.util.Objects.requireNonNull(clock, "clock must not be null");
         this.sequenceProviderResolver = java.util.Objects.requireNonNull(
                 sequenceProviderResolver, "sequenceProviderResolver must not be null");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IdType type() {
         return IdType.BIZ;
     }
 
+    /**
+     * Creates a business-ID generator from the {@code biz.*} configuration block.
+     *
+     * @param config generator configuration
+     * @return new business-ID generator
+     * @throws IdConfigurationException if the template, prefix, sequence
+     *         provider or check algorithm is invalid
+     */
     @Override
     public IdGenerator create(GeneratorConfig config) {
         java.util.Objects.requireNonNull(config, "config must not be null");

@@ -17,6 +17,13 @@ import org.unitseek.knitid.generator.ksid.KsidIdGeneratorFactory;
 @ConditionalOnClass(KsidGenerator.class)
 public class KsidAutoConfiguration {
 
+    /**
+     * Registers the KSID generator factory with all available WorkerId
+     * assigner providers.
+     *
+     * @param assignerProviders providers contributed by optional worker modules
+     * @return KSID factory
+     */
     @Bean
     @ConditionalOnMissingBean
     public KsidIdGeneratorFactory ksidIdGeneratorFactory(ObjectProvider<WorkerIdAssignerProvider> assignerProviders) {

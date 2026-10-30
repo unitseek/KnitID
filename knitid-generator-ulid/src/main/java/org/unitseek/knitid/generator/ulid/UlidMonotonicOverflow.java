@@ -5,7 +5,9 @@ package org.unitseek.knitid.generator.ulid;
  */
 public enum UlidMonotonicOverflow {
 
+    /** Wait for the next millisecond. */
     WAIT,
 
+    /** Fail with an {@link org.unitseek.knitid.core.exception.IdGenerationException}. */
     THROW
 }

@@ -15,6 +15,20 @@ import org.unitseek.knitid.core.spi.GeneratorConfig;
  * <p>Layout: 1 sign bit (always 0) + timestamp bits + datacenter bits +
  * worker bits + sequence bits = 64 bits, therefore the four configurable
  * fields must sum to 63.</p>
+ *
+ * @param epoch timestamp epoch; the default is 2024-01-01T00:00:00Z
+ * @param timestampBits timestamp width; must fit within 42 bits
+ * @param datacenterIdBits datacenter id width
+ * @param workerIdBits worker id width
+ * @param sequenceBits per-millisecond sequence width
+ * @param clockBackwardsStrategy behaviour when the clock moves backwards
+ * @param maxBackwardsWait upper bound for wait-based clock catch-up
+ * @param sequenceOverflowStrategy behaviour when the sequence is exhausted
+ * @param allowBorrowFuture explicit opt-in for BORROW_FUTURE
+ * @param leaseRenewInterval WorkerId lease renewal interval
+ * @param leaseMaxRenewFailures consecutive renewal failures before the lease
+ *        is marked invalid
+ * @since 1.0.0
  */
 public record KsidConfig(
         Instant epoch,
@@ -29,24 +43,37 @@ public record KsidConfig(
         Duration leaseRenewInterval,
         int leaseMaxRenewFailures) {
 
+    /** Default KSID epoch: 2024-01-01T00:00:00Z. */
     public static final Instant DEFAULT_EPOCH = Instant.parse("2024-01-01T00:00:00Z");
 
+    /** Default timestamp width: 41 bits. */
     public static final int DEFAULT_TIMESTAMP_BITS = 41;
 
+    /** Default datacenter id width: 5 bits. */
     public static final int DEFAULT_DATACENTER_ID_BITS = 5;
 
+    /** Default worker id width: 5 bits. */
     public static final int DEFAULT_WORKER_ID_BITS = 5;
 
+    /** Default sequence width: 12 bits. */
     public static final int DEFAULT_SEQUENCE_BITS = 12;
 
+    /** Default maximum clock-backwards wait: 5 seconds. */
     public static final Duration DEFAULT_MAX_BACKWARDS_WAIT = Duration.ofSeconds(5);
 
+    /** Default WorkerId lease renewal interval: 20 seconds. */
     public static final Duration DEFAULT_LEASE_RENEW_INTERVAL = Duration.ofSeconds(20);
 
+    /** Default consecutive lease-renewal failure threshold: 3. */
     public static final int DEFAULT_LEASE_MAX_RENEW_FAILURES = 3;
 
     private static final int TOTAL_BITS = 63;
 
+    /**
+     * Validates the bit layout and policy invariants.
+     *
+     * @throws IdConfigurationException if any component is invalid
+     */
     public KsidConfig {
         if (epoch == null) {
             throw invalid("ksid.epoch must not be null");
@@ -86,6 +113,14 @@ public record KsidConfig(
         }
     }
 
+    /**
+     * Returns the default KSID configuration.
+     *
+     * <p>41 timestamp bits, 5 datacenter bits, 5 worker bits, 12 sequence
+     * bits, WAIT strategies and a 20-second lease renewal interval.</p>
+     *
+     * @return default KSID configuration
+     */
     public static KsidConfig defaults() {
         return new KsidConfig(DEFAULT_EPOCH, DEFAULT_TIMESTAMP_BITS, DEFAULT_DATACENTER_ID_BITS,
                 DEFAULT_WORKER_ID_BITS, DEFAULT_SEQUENCE_BITS, ClockBackwardsStrategy.WAIT,
@@ -93,6 +128,14 @@ public record KsidConfig(
                 DEFAULT_LEASE_RENEW_INTERVAL, DEFAULT_LEASE_MAX_RENEW_FAILURES);
     }
 
+    /**
+     * Parses KSID configuration from a generator configuration.
+     *
+     * @param config generator configuration
+     * @return parsed configuration
+     * @throws IdConfigurationException if a value is malformed or violates the
+     *         63-bit layout constraints
+     */
     public static KsidConfig from(GeneratorConfig config) {
         Instant epoch;
         try {

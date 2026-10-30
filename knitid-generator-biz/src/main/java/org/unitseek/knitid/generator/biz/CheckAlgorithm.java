@@ -105,10 +105,23 @@ public enum CheckAlgorithm {
         this.alphabet = alphabet;
     }
 
+    /**
+     * Returns the alphabet accepted by this algorithm.
+     *
+     * @return accepted characters
+     */
     public String alphabet() {
         return alphabet;
     }
 
+    /**
+     * Computes the check character for the supplied content.
+     *
+     * @param content content preceding the check digit
+     * @return check character
+     * @throws IdGenerationException if the content contains unsupported
+     *         characters or this algorithm is {@link #NONE}
+     */
     public abstract char checkDigit(String content);
 
     private static IdGenerationException invalid(String message) {

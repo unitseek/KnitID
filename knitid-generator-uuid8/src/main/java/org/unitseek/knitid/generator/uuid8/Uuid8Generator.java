@@ -40,22 +40,44 @@ public final class Uuid8Generator implements IdGenerator {
 
     private long fixedRandom;
 
+    /**
+     * Creates a UUIDv8 generator.
+     *
+     * @param clock timestamp source
+     * @param config preset and node configuration
+     * @param random random source
+     */
     public Uuid8Generator(Clock clock, Uuid8Config config, RandomProvider random) {
         this.clock = Objects.requireNonNull(clock, "clock must not be null");
         this.config = Objects.requireNonNull(config, "config must not be null");
         this.random = Objects.requireNonNull(random, "random must not be null");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IdType type() {
         return IdType.UUID8;
     }
 
+    /**
+     * Generates a UUIDv8 string using the configured preset.
+     *
+     * @return canonical UUIDv8 string
+     */
     @Override
     public String generate() {
         return generate((IdContext) null);
     }
 
+    /**
+     * Generates a UUIDv8 string. UUIDv8 has no context-dependent fields; the
+     * context is ignored.
+     *
+     * @param context ignored
+     * @return canonical UUIDv8 string
+     */
     @Override
     public synchronized String generate(IdContext context) {
         return switch (config.preset()) {

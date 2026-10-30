@@ -15,7 +15,13 @@ import org.unitseek.knitid.core.spi.RandomProvider;
 import org.unitseek.knitid.core.spi.SequenceProvider;
 
 /**
- * Template driven business identifier generator.
+ * Template-driven business identifier generator.
+ *
+ * <p>Output is composed from configured date/time, sequence, random and
+ * check-digit placeholders. The generator is thread-safe and serializes
+ * sequence allocation through its {@link SequenceProvider}.</p>
+ *
+ * @since 1.0.0
  */
 public final class BizIdGenerator implements IdGenerator {
 
@@ -33,6 +39,15 @@ public final class BizIdGenerator implements IdGenerator {
 
     private final RandomProvider random;
 
+    /**
+     * Creates a business-ID generator.
+     *
+     * @param clock timestamp source
+     * @param config business-ID configuration
+     * @param template compiled template
+     * @param sequenceProvider sequence provider
+     * @param random random source for {@code {random:n}}
+     */
     public BizIdGenerator(Clock clock, BizConfig config, BizTemplate template,
             SequenceProvider sequenceProvider, RandomProvider random) {
         this.clock = Objects.requireNonNull(clock, "clock must not be null");
@@ -42,16 +57,35 @@ public final class BizIdGenerator implements IdGenerator {
         this.random = Objects.requireNonNull(random, "random must not be null");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IdType type() {
         return IdType.BIZ;
     }
 
+    /**
+     * Generates a business ID using the current time and configured prefix.
+     *
+     * @return business ID
+     * @throws IdGenerationException if a placeholder cannot be rendered or the
+     *         output exceeds the length limit
+     */
     @Override
     public String generate() {
         return generate(null);
     }
 
+    /**
+     * Generates a business ID, optionally overriding prefix, node, business
+     * date or business date-time through the context.
+     *
+     * @param context optional generation context
+     * @return business ID
+     * @throws IdGenerationException if a placeholder cannot be rendered or the
+     *         output exceeds the length limit
+     */
     @Override
     public synchronized String generate(IdContext context) {
         LocalDateTime now = LocalDateTime.ofInstant(Instant.ofEpochMilli(clock.millis()), config.zoneId());

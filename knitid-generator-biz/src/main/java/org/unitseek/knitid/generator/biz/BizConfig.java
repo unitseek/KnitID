@@ -11,6 +11,16 @@ import org.unitseek.knitid.core.spi.GeneratorConfig;
 
 /**
  * Immutable business-ID configuration.
+ *
+ * @param template output template, at most {@value #MAX_TEMPLATE_LENGTH} characters
+ * @param prefix optional literal/context prefix, at most
+ *        {@value #MAX_PREFIX_LENGTH} characters
+ * @param zoneId time zone used for date/time placeholders and daily reset
+ * @param nodeId optional node id for the {@code {worker}} placeholder
+ * @param sequenceProviderName sequence provider bean name or {@code memory}
+ * @param reset sequence reset policy
+ * @param checkAlgorithm check-digit algorithm
+ * @since 1.0.0
  */
 public record BizConfig(
         String template,
@@ -21,8 +31,10 @@ public record BizConfig(
         SequenceReset reset,
         CheckAlgorithm checkAlgorithm) {
 
+    /** Maximum template length. */
     public static final int MAX_TEMPLATE_LENGTH = 128;
 
+    /** Maximum prefix length. */
     public static final int MAX_PREFIX_LENGTH = 16;
 
     private static final Pattern PREFIX_PATTERN = Pattern.compile("[A-Za-z0-9_-]{1," + MAX_PREFIX_LENGTH + "}");
@@ -54,6 +66,13 @@ public record BizConfig(
         }
     }
 
+    /**
+     * Parses business-ID configuration from a generator configuration.
+     *
+     * @param config generator configuration
+     * @return parsed configuration
+     * @throws IdConfigurationException if a required value is missing or invalid
+     */
     public static BizConfig from(GeneratorConfig config) {
         String template = config.getString("biz.template", null);
         String prefix = config.getString("biz.prefix", null);

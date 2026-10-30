@@ -15,6 +15,11 @@ import org.unitseek.knitid.generator.uuid8.Uuid8IdGeneratorFactory;
 @ConditionalOnClass(Uuid8Generator.class)
 public class Uuid8AutoConfiguration {
 
+    /**
+     * Registers the UUIDv8 generator factory.
+     *
+     * @return UUIDv8 factory
+     */
     @Bean
     @ConditionalOnMissingBean
     public Uuid8IdGeneratorFactory uuid8IdGeneratorFactory() {

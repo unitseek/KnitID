@@ -10,14 +10,27 @@ import org.unitseek.knitid.core.spi.IdGeneratorFactory;
 
 /**
  * Factory for {@link Uuid7Generator}.
+ *
+ * @since 1.0.0
  */
 public final class Uuid7IdGeneratorFactory implements IdGeneratorFactory {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IdType type() {
         return IdType.UUID7;
     }
 
+    /**
+     * Creates a UUIDv7 generator from the {@code uuid7.*} configuration block.
+     *
+     * @param config generator configuration
+     * @return new UUIDv7 generator
+     * @throws org.unitseek.knitid.core.exception.IdConfigurationException if
+     *         {@code uuid7.monotonic-overflow} is invalid
+     */
     @Override
     public IdGenerator create(GeneratorConfig config) {
         boolean monotonic = config.getBoolean("uuid7.monotonic", true);

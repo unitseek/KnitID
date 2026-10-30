@@ -77,10 +77,25 @@ public final class KsidGenerator implements NumericIdGenerator, IdGeneratorHealt
 
     private long sequence;
 
+    /**
+     * Creates a KSID generator without a renewable WorkerId assigner.
+     *
+     * @param clock timestamp source
+     * @param workerId assigned datacenter/worker id
+     * @param config bit layout and policies
+     */
     public KsidGenerator(Clock clock, WorkerId workerId, KsidConfig config) {
         this(clock, workerId, config, null);
     }
 
+    /**
+     * Creates a KSID generator and optionally starts WorkerId lease renewal.
+     *
+     * @param clock timestamp source
+     * @param workerId assigned datacenter/worker id
+     * @param config bit layout and policies
+     * @param assigner renewable assigner, or {@code null} for a fixed worker id
+     */
     public KsidGenerator(Clock clock, WorkerId workerId, KsidConfig config, WorkerIdAssigner assigner) {
         this.clock = Objects.requireNonNull(clock, "clock must not be null");
         this.workerId = Objects.requireNonNull(workerId, "workerId must not be null");
@@ -149,32 +164,74 @@ public final class KsidGenerator implements NumericIdGenerator, IdGeneratorHealt
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IdType type() {
         return IdType.KSID;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Returns {@code true} when clock-backwards or sequence-overflow
+     * strategy is {@link ClockBackwardsStrategy#WAIT} or
+     * {@link SequenceOverflowStrategy#WAIT}.</p>
+     */
     @Override
     public boolean blocking() {
         return config.clockBackwardsStrategy() == ClockBackwardsStrategy.WAIT
                 || config.sequenceOverflowStrategy() == SequenceOverflowStrategy.WAIT;
     }
 
+    /**
+     * Generates a KSID as a decimal string.
+     *
+     * @return decimal KSID
+     */
     @Override
     public String generate() {
         return Long.toString(generateLong());
     }
 
+    /**
+     * Generates a KSID as a decimal string. KSID has no context fields; the
+     * context is ignored.
+     *
+     * @param context ignored
+     * @return decimal KSID
+     */
     @Override
     public String generate(IdContext context) {
         return Long.toString(generateLong(context));
     }
 
+    /**
+     * Generates a KSID as a {@code long}.
+     *
+     * @return KSID value
+     * @throws IdGenerationException if the generator is closed, the lease is
+     *         invalid, the timestamp is exhausted, or the sequence is exhausted
+     * @throws ClockBackwardsException if the configured policy rejects a
+     *         backwards clock
+     */
     @Override
     public long generateLong() {
         return generateLong(null);
     }
 
+    /**
+     * Generates a KSID as a {@code long}. KSID has no context fields; the
+     * context is ignored.
+     *
+     * @param context ignored
+     * @return KSID value
+     * @throws IdGenerationException if the generator is closed, the lease is
+     *         invalid, the timestamp is exhausted, or the sequence is exhausted
+     * @throws ClockBackwardsException if the configured policy rejects a
+     *         backwards clock
+     */
     @Override
     public long generateLong(IdContext context) {
         synchronized (this) {
@@ -297,6 +354,14 @@ public final class KsidGenerator implements NumericIdGenerator, IdGeneratorHealt
         }
     }
 
+    /**
+     * Returns a snapshot of lease validity, clock-backwards activity and
+     * current configuration.
+     *
+     * @param clockBackwardsWindow window used to count recent backwards events;
+     *        {@code null} defaults to one minute
+     * @return health snapshot
+     */
     @Override
     public IdGeneratorHealthSnapshot health(Duration clockBackwardsWindow) {
         Duration window = clockBackwardsWindow == null ? Duration.ofMinutes(1) : clockBackwardsWindow;
@@ -338,6 +403,11 @@ public final class KsidGenerator implements NumericIdGenerator, IdGeneratorHealt
         return leaseValid;
     }
 
+    /**
+     * Stops lease renewal, releases the WorkerId and closes the assigner.
+     *
+     * <p>Idempotent; subsequent generation fails.</p>
+     */
     @Override
     public synchronized void close() {
         if (closed.get()) {

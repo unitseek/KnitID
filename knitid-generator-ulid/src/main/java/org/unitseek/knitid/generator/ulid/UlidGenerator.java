@@ -42,10 +42,25 @@ public final class UlidGenerator implements IdGenerator {
 
     private long randomLo;
 
+    /**
+     * Creates a monotonic ULID generator with {@link UlidMonotonicOverflow#WAIT}.
+     *
+     * @param clock timestamp source
+     * @param random random source
+     */
     public UlidGenerator(Clock clock, RandomProvider random) {
         this(clock, random, true, UlidMonotonicOverflow.WAIT);
     }
 
+    /**
+     * Creates a ULID generator.
+     *
+     * @param clock timestamp source
+     * @param random random source
+     * @param monotonic whether to increment the 80-bit random portion within
+     *        the same millisecond
+     * @param overflow behaviour when monotonic space is exhausted
+     */
     public UlidGenerator(Clock clock, RandomProvider random, boolean monotonic, UlidMonotonicOverflow overflow) {
         this.clock = Objects.requireNonNull(clock, "clock must not be null");
         this.random = Objects.requireNonNull(random, "random must not be null");
@@ -53,16 +68,31 @@ public final class UlidGenerator implements IdGenerator {
         this.overflow = overflow;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IdType type() {
         return IdType.ULID;
     }
 
+    /**
+     * Generates a ULID string.
+     *
+     * @return 26-character ULID
+     */
     @Override
     public String generate() {
         return generate((IdContext) null);
     }
 
+    /**
+     * Generates a ULID string. ULID has no context-dependent fields; the
+     * context is ignored.
+     *
+     * @param context ignored
+     * @return 26-character ULID
+     */
     @Override
     public synchronized String generate(IdContext context) {
         long now = clock.millis();
