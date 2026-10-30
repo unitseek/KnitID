@@ -22,12 +22,21 @@ public record KsuidConfig(KsuidRandomSource randomSource) {
     }
 
     public static KsuidConfig from(GeneratorConfig config) {
+        validateKeys(config);
         String raw = config.getString("ksuid.random-source", KsuidRandomSource.SECURE.name());
         try {
             return new KsuidConfig(Enum.valueOf(KsuidRandomSource.class, raw.trim().toUpperCase(Locale.ROOT)));
         }
         catch (IllegalArgumentException ex) {
             throw invalid("Invalid ksuid.random-source: " + raw + " (expected SECURE or PERFORMANCE)");
+        }
+    }
+
+    private static void validateKeys(GeneratorConfig config) {
+        for (String key : config.keys()) {
+            if (!"type".equals(key) && !"enabled".equals(key) && !"ksuid.random-source".equals(key)) {
+                throw invalid("Unknown ksuid property: " + key);
+            }
         }
     }
 

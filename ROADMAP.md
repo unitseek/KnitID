@@ -10,7 +10,7 @@
 - [x] Spring Boot 4 自动配置、严格配置校验、FailureAnalyzer
 - [x] IdParser、Actuator 端点、健康检查、Micrometer 指标
 - [x] JMH 基准、示例工程、P0/P1 文档、发布流水线
-- [x] 194 个测试（含 Redis/ZooKeeper Testcontainers）
+- [x] 197 个测试（含 Redis/ZooKeeper Testcontainers）
 - [ ] 1.0.0 正式发布到 Maven Central
 - [ ] 在 Java 21 固定硬件复测正式基准报告
 

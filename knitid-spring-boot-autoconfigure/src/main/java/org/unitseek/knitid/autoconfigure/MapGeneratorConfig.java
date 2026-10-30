@@ -39,6 +39,11 @@ final class MapGeneratorConfig implements GeneratorConfig {
         return Optional.ofNullable(parameters.get(key));
     }
 
+    @Override
+    public java.util.Set<String> keys() {
+        return java.util.Set.copyOf(parameters.keySet());
+    }
+
     Map<String, Object> parameters() {
         return parameters;
     }

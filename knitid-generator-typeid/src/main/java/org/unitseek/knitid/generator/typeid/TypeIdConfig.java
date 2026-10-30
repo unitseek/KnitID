@@ -41,6 +41,7 @@ public record TypeIdConfig(Set<String> prefixes, String defaultPrefix, boolean a
     }
 
     public static TypeIdConfig from(GeneratorConfig config) {
+        validateKeys(config);
         Object raw = config.get("typeid.prefixes").orElse(null);
         List<String> values = new ArrayList<>();
         if (raw instanceof Collection<?> collection) {
@@ -48,7 +49,7 @@ public record TypeIdConfig(Set<String> prefixes, String defaultPrefix, boolean a
         }
         else if (raw instanceof java.util.Map<?, ?> map) {
             map.entrySet().stream()
-                    .sorted(java.util.Map.Entry.comparingByKey(java.util.Comparator.comparing(String::valueOf)))
+                    .sorted((left, right) -> compareKeys(left.getKey(), right.getKey()))
                     .forEach(entry -> values.add(String.valueOf(entry.getValue())));
         }
         else if (raw instanceof Object[] array) {
@@ -92,6 +93,27 @@ public record TypeIdConfig(Set<String> prefixes, String defaultPrefix, boolean a
 
     public static boolean isValidPrefix(String prefix) {
         return prefix != null && PREFIX_PATTERN.matcher(prefix).matches();
+    }
+
+    private static void validateKeys(GeneratorConfig config) {
+        for (String key : config.keys()) {
+            if ("type".equals(key) || "enabled".equals(key)
+                    || "typeid.prefixes".equals(key) || "typeid.default-prefix".equals(key)
+                    || "typeid.allow-empty-prefix".equals(key)
+                    || key.matches("typeid\\.prefixes\\.[0-9]+")) {
+                continue;
+            }
+            throw invalid("Unknown typeid property: " + key);
+        }
+    }
+
+    private static int compareKeys(Object left, Object right) {
+        try {
+            return Integer.compare(Integer.parseInt(String.valueOf(left)), Integer.parseInt(String.valueOf(right)));
+        }
+        catch (NumberFormatException ex) {
+            return String.valueOf(left).compareTo(String.valueOf(right));
+        }
     }
 
     private static IdConfigurationException invalid(String message) {

@@ -27,7 +27,8 @@
 - **generator-***：实现算法与 `IdGeneratorFactory`；
 - **autoconfigure**：把配置、工厂、装饰器组装成注册中心；
 - **worker-*/sequence-redis**：通过 SPI 提供 WorkerId/序列；
-- **starter**：只聚合 core + autoconfigure。
+- **starter**：只聚合 core + autoconfigure，不包含算法；
+- **starter-all**：聚合普通 starter 与全部七类生成器，面向“开箱即用”场景。
 
 ## 2. 核心抽象
 

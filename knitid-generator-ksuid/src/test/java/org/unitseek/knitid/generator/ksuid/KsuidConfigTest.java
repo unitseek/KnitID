@@ -30,6 +30,13 @@ class KsuidConfigTest {
     }
 
     @Test
+    void rejectsUnknownNestedKeys() {
+        org.assertj.core.api.Assertions.assertThatThrownBy(
+                () -> KsuidConfig.from(config(Map.of("ksuid.random-sourcee", "SECURE"))))
+                .isInstanceOf(org.unitseek.knitid.core.exception.IdConfigurationException.class);
+    }
+
+    @Test
     void recognizesOfficialKsuidShape() {
         assertThat(KsuidGenerator.decode("0ujtsYcgvSTl8PAuAdqWYSMnLOv")).isNotNull();
     }
@@ -39,6 +46,7 @@ class KsuidConfigTest {
             @Override public String name() { return "ksuid"; }
             @Override public IdType type() { return IdType.KSUID; }
             @Override public Optional<Object> get(String key) { return Optional.ofNullable(values.get(key)); }
+            @Override public java.util.Set<String> keys() { return values.keySet(); }
         };
     }
 }

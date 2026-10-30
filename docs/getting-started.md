@@ -15,7 +15,7 @@
 
 ## 2. 引入依赖
 
-Starter 只包含自动配置，不包含任何算法。按需引入生成器：
+普通 starter 只包含自动配置，不包含任何算法。按需引入生成器；若希望一次引入全部七类算法，可使用 `knitid-spring-boot-starter-all`。按需示例：
 
 ```xml
 <dependency>

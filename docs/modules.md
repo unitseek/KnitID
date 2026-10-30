@@ -17,7 +17,7 @@ knitid-samples / knitid-benchmarks
 - `knitid-core`：API、SPI、异常、解析接口，零 Spring/三方算法依赖；
 - 生成器模块：通常只依赖 core，各自注册 `IdGeneratorFactory`；TypeID 额外依赖 UUIDv7 以复用其时间/随机位布局。
 - 自动配置模块：注册中心、默认选择、健康、指标、端点、解析器；
-- Starter：core + autoconfigure，不包含算法；
+- Starter：core + autoconfigure，不包含算法；starter-all 额外聚合七类生成器；
 - 集成模块：WorkerId 与 Redis 序列，按需引入；
 - Test/Benchmarks/Samples：不进入生产依赖。
 

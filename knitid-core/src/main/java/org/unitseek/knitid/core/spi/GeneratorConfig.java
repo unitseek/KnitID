@@ -2,6 +2,7 @@ package org.unitseek.knitid.core.spi;
 
 import java.time.Duration;
 import java.util.Optional;
+import java.util.Set;
 
 import org.unitseek.knitid.core.api.IdType;
 
@@ -18,6 +19,15 @@ public interface GeneratorConfig {
     IdType type();
 
     Optional<Object> get(String key);
+
+    /**
+     * Flattened keys visible in this configuration. Implementations that can
+     * enumerate their keys should override this; an empty set means the
+     * configuration cannot be validated for unknown keys.
+     */
+    default Set<String> keys() {
+        return Set.of();
+    }
 
     default String getString(String key, String defaultValue) {
         return get(key).map(String::valueOf).orElse(defaultValue);
