@@ -56,6 +56,18 @@ class TypeIdGeneratorTest {
     }
 
     @Test
+    void roundTripsGeneratedTypeIds() {
+        TypeIdGenerator generator = new TypeIdGenerator(
+                Clock.fixed(NOW, ZoneOffset.UTC), new ZeroRandom(), config);
+        for (int i = 0; i < 1000; i++) {
+            String id = generator.generate();
+            String suffix = id.substring(id.lastIndexOf('_') + 1);
+            assertThat(TypeIdGenerator.decodeSuffix(suffix)).isNotNull();
+            assertThat(new TypeIdIdTypeParser().tryParse(id)).isPresent();
+        }
+    }
+
+    @Test
     void parsesPrefixesContainingUnderscore() {
         TypeIdGenerator generator = new TypeIdGenerator(
                 Clock.fixed(NOW, ZoneOffset.UTC), new ZeroRandom(),

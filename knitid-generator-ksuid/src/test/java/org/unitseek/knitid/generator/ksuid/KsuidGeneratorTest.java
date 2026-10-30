@@ -30,6 +30,22 @@ class KsuidGeneratorTest {
     }
 
     @Test
+    void roundTripsBoundaryAndRandomTwentyByteValues() {
+        byte[] zeros = new byte[20];
+        assertThat(KsuidGenerator.encode(zeros)).isEqualTo("0".repeat(27));
+        assertThat(KsuidGenerator.decode("0".repeat(27))).containsExactly(zeros);
+        byte[] ones = new byte[20];
+        java.util.Arrays.fill(ones, (byte) 0xFF);
+        assertThat(KsuidGenerator.decode(KsuidGenerator.encode(ones))).containsExactly(ones);
+        java.util.Random random = new java.util.Random(42L);
+        for (int i = 0; i < 1000; i++) {
+            byte[] bytes = new byte[20];
+            random.nextBytes(bytes);
+            assertThat(KsuidGenerator.decode(KsuidGenerator.encode(bytes))).containsExactly(bytes);
+        }
+    }
+
+    @Test
     void rejectsClockBeforeEpochAndInvalidInput() {
         KsuidGenerator generator = new KsuidGenerator(
                 Clock.fixed(Instant.parse("2000-01-01T00:00:00Z"), ZoneOffset.UTC), new ZeroRandom());

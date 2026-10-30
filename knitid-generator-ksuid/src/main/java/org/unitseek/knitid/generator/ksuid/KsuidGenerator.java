@@ -1,6 +1,5 @@
 package org.unitseek.knitid.generator.ksuid;
 
-import java.math.BigInteger;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Objects;
@@ -21,8 +20,6 @@ public final class KsuidGenerator implements IdGenerator {
     public static final Instant EPOCH = Instant.ofEpochSecond(1_400_000_000L);
 
     private static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-
-    private static final BigInteger BASE = BigInteger.valueOf(ALPHABET.length());
 
     private static final long MAX_SECONDS = 0xFFFF_FFFFL;
 
@@ -69,12 +66,23 @@ public final class KsuidGenerator implements IdGenerator {
     }
 
     static String encode(byte[] bytes) {
-        BigInteger value = new BigInteger(1, bytes);
+        int[] limbs = new int[5];
+        for (int i = 0; i < 5; i++) {
+            int offset = i * 4;
+            limbs[i] = ((bytes[offset] & 0xFF) << 24)
+                    | ((bytes[offset + 1] & 0xFF) << 16)
+                    | ((bytes[offset + 2] & 0xFF) << 8)
+                    | (bytes[offset + 3] & 0xFF);
+        }
         char[] encoded = new char[27];
-        for (int i = encoded.length - 1; i >= 0; i--) {
-            BigInteger[] divRem = value.divideAndRemainder(BASE);
-            encoded[i] = ALPHABET.charAt(divRem[1].intValue());
-            value = divRem[0];
+        for (int position = encoded.length - 1; position >= 0; position--) {
+            long remainder = 0;
+            for (int i = 0; i < limbs.length; i++) {
+                long current = (remainder << 32) | (limbs[i] & 0xFFFF_FFFFL);
+                limbs[i] = (int) (current / 62L);
+                remainder = current % 62L;
+            }
+            encoded[position] = ALPHABET.charAt((int) remainder);
         }
         return new String(encoded);
     }
@@ -83,23 +91,30 @@ public final class KsuidGenerator implements IdGenerator {
         if (raw == null || raw.length() != 27) {
             return null;
         }
-        BigInteger value = BigInteger.ZERO;
+        int[] limbs = new int[5];
         for (int i = 0; i < raw.length(); i++) {
             int digit = ALPHABET.indexOf(raw.charAt(i));
             if (digit < 0) {
                 return null;
             }
-            value = value.multiply(BASE).add(BigInteger.valueOf(digit));
-        }
-        if (value.bitLength() > 160) {
-            return null;
-        }
-        byte[] bytes = value.toByteArray();
-        if (bytes.length > 20) {
-            return null;
+            long carry = digit;
+            for (int limb = limbs.length - 1; limb >= 0; limb--) {
+                long current = (limbs[limb] & 0xFFFF_FFFFL) * 62L + carry;
+                limbs[limb] = (int) current;
+                carry = current >>> 32;
+            }
+            if (carry != 0) {
+                return null;
+            }
         }
         byte[] out = new byte[20];
-        System.arraycopy(bytes, 0, out, out.length - bytes.length, bytes.length);
+        for (int i = 0; i < 5; i++) {
+            int offset = i * 4;
+            out[offset] = (byte) (limbs[i] >>> 24);
+            out[offset + 1] = (byte) (limbs[i] >>> 16);
+            out[offset + 2] = (byte) (limbs[i] >>> 8);
+            out[offset + 3] = (byte) limbs[i];
+        }
         return out;
     }
 

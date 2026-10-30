@@ -102,7 +102,7 @@ mvn clean verify
 
 ## 测试
 
-当前共 190 个测试，全部通过（`mvn verify`；Testcontainers 用例在无 Docker 时自动跳过）：
+当前共 194 个测试，全部通过（`mvn verify`；Testcontainers 用例在无 Docker 时自动跳过）：
 
 - `knitid-core`：IdType 规范化契约 + DurationParser 边界（5）；
 - `knitid-generator-uuid7`：RFC 9562 附录 A.6 向量、属性测试、边界、溢出与回拨策略（12）；
@@ -110,14 +110,16 @@ mvn clean verify
 - `knitid-generator-ulid`：ULID 规范示例向量、Crockford Base32、单调递增、溢出策略、属性测试（15）；
 - `knitid-generator-biz`：模板编译、序列日切/永不重置、校验位（MOD37_36/MOD11_2/LUHN）、前缀/业务日期上下文、并发唯一（17）；
 - `knitid-generator-ksid`：位分配校验、回拨 `WAIT`/`THROW`/`BORROW_FUTURE`、序列溢出、WorkerId 越界、租约生命周期、健康快照（23）；
-- `knitid-generator-ksuid`：27 位 Base62、时间戳、解析、配置与自动配置（6）；
-- `knitid-generator-typeid`：官方向量、前缀规则、多前缀、编解码、解析、配置与自动配置（10）；
+- `knitid-generator-ksuid`：27 位 Base62、时间戳、编解码往返、解析、配置与自动配置（7）；
+- `knitid-generator-typeid`：官方向量、前缀规则、多前缀、编解码往返、解析、配置与自动配置（11）；
 - `knitid-sequence-redis`：原子 INCRBY、TTL/持久 scope、批量区间、跨实例共享、失败映射、自动配置（7 + 5 Testcontainers + 2），含两个 BIZ 生成器共享序列的集成测试；
 - `knitid-worker-redis`：槽位占用/冲突、token fencing、租约续约失败、释放、provider 配置校验、自动配置（9），以及 Testcontainers 真实 Redis 的 SET NX/TTL/续约/释放/断连（8）；
 - `knitid-worker-zookeeper`：临时节点分配、重新占用、续约、配置校验、自动配置（6），以及 Testcontainers 真实 ZooKeeper 的分配/释放、foreign release 与断连（3）；
 - `knitid-worker-kubernetes`：StatefulSet ordinal、Downward API、越界/非法 pod 名、配置校验、自动配置（9）；
 - `knitid-spring-boot-autoconfigure`：12 个启动行为矩阵场景 + 7 个健康检查场景 + 7 个 IdParser 场景 + 7 个端点/指标场景 + 1 个禁用场景 + 2 个默认/批大小场景 + 1 个索引 Map（37）；
-- `knitid-samples`：UUIDv7/UUID8/ULID/KSID/BIZ + Actuator 集成启动测试（6）。
+- `knitid-spring-boot-starter`：依赖边界，确认不含生成器类（1）；
+- `knitid-spring-boot-starter-all`：依赖边界，确认包含七类生成器（1）；
+- `knitid-samples`：UUIDv7/UUID8/ULID/KSID/BIZ/KSUID/TypeID + Actuator 集成启动测试（6）。
 
 ## 业务 ID 快速配置
 

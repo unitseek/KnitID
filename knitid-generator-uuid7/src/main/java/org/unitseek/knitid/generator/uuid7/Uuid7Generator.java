@@ -2,7 +2,7 @@ package org.unitseek.knitid.generator.uuid7;
 
 import java.time.Clock;
 import java.time.Duration;
-import java.util.HexFormat;
+import java.util.UUID;
 import java.util.Locale;
 import java.util.concurrent.locks.LockSupport;
 
@@ -68,6 +68,13 @@ public final class Uuid7Generator implements IdGenerator {
 
     @Override
     public synchronized String generate(IdContext context) {
+        return generateUuid().toString();
+    }
+
+    /**
+     * Generates a UUIDv7 without formatting it as a string.
+     */
+    public synchronized UUID generateUuid() {
         long now = clock.millis();
         if (now < 0 || now > MAX_48_BITS) {
             throw new IdGenerationException(
@@ -87,7 +94,7 @@ public final class Uuid7Generator implements IdGenerator {
             lastTimestamp = now;
             newRandom();
         }
-        return format(lastTimestamp, randomA, randomB);
+        return toUuid(lastTimestamp, randomA, randomB);
     }
 
     private void newRandom() {
@@ -135,22 +142,13 @@ public final class Uuid7Generator implements IdGenerator {
     }
 
     static String format(long timestamp, int randA, long randB) {
-        byte[] bytes = new byte[16];
-        bytes[0] = (byte) (timestamp >>> 40);
-        bytes[1] = (byte) (timestamp >>> 32);
-        bytes[2] = (byte) (timestamp >>> 24);
-        bytes[3] = (byte) (timestamp >>> 16);
-        bytes[4] = (byte) (timestamp >>> 8);
-        bytes[5] = (byte) timestamp;
-        bytes[6] = (byte) (0x70 | ((randA >>> 8) & 0x0F));
-        bytes[7] = (byte) randA;
-        bytes[8] = (byte) (0x80 | ((randB >>> 56) & 0x3F));
-        for (int i = 9; i < 16; i++) {
-            bytes[i] = (byte) (randB >>> (8 * (15 - i)));
-        }
-        String hex = HexFormat.of().formatHex(bytes);
-        return hex.substring(0, 8) + "-" + hex.substring(8, 12) + "-" + hex.substring(12, 16)
-                + "-" + hex.substring(16, 20) + "-" + hex.substring(20);
+        return toUuid(timestamp, randA, randB).toString();
+    }
+
+    private static UUID toUuid(long timestamp, int randA, long randB) {
+        long msb = (timestamp << 16) | 0x7000L | (randA & 0x0FFFL);
+        long lsb = 0x8000_0000_0000_0000L | (randB & 0x3FFF_FFFF_FFFF_FFFFL);
+        return new UUID(msb, lsb);
     }
 
     static MonotonicOverflow parseOverflow(String value) {

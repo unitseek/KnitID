@@ -1,6 +1,5 @@
 package org.unitseek.knitid.generator.typeid;
 
-import java.math.BigInteger;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Objects;
@@ -21,8 +20,6 @@ import org.unitseek.knitid.generator.uuid7.Uuid7Generator;
 public final class TypeIdGenerator implements IdGenerator {
 
     private static final String ALPHABET = "0123456789abcdefghjkmnpqrstvwxyz";
-
-    private static final BigInteger BASE = BigInteger.valueOf(ALPHABET.length());
 
     private final TypeIdConfig config;
 
@@ -47,25 +44,29 @@ public final class TypeIdGenerator implements IdGenerator {
     public String generate(IdContext context) {
         String prefix = context != null && context.prefix() != null ? context.prefix() : config.defaultPrefix();
         config.validateForGeneration(prefix);
-        UUID uuid = UUID.fromString(uuid7.generate());
+        UUID uuid = uuid7.generateUuid();
         String suffix = encode(uuid);
         return prefix.isEmpty() ? suffix : prefix + "_" + suffix;
     }
 
     static String encode(UUID uuid) {
-        byte[] bytes = new byte[16];
         long msb = uuid.getMostSignificantBits();
         long lsb = uuid.getLeastSignificantBits();
-        for (int i = 0; i < 8; i++) {
-            bytes[i] = (byte) (msb >>> (56 - 8 * i));
-            bytes[8 + i] = (byte) (lsb >>> (56 - 8 * i));
-        }
-        BigInteger value = new BigInteger(1, bytes);
         char[] encoded = new char[26];
-        for (int i = 25; i >= 0; i--) {
-            BigInteger[] divRem = value.divideAndRemainder(BASE);
-            encoded[i] = ALPHABET.charAt(divRem[1].intValue());
-            value = divRem[0];
+        for (int group = 0; group < 26; group++) {
+            int value = 0;
+            for (int bit = 0; bit < 5; bit++) {
+                int bitIndex = group * 5 + bit;
+                int current = 0;
+                if (bitIndex >= 2) {
+                    int uuidBit = bitIndex - 2;
+                    current = uuidBit < 64
+                            ? (int) ((msb >>> (63 - uuidBit)) & 1L)
+                            : (int) ((lsb >>> (63 - (uuidBit - 64))) & 1L);
+                }
+                value = (value << 1) | current;
+            }
+            encoded[group] = ALPHABET.charAt(value);
         }
         return new String(encoded);
     }
@@ -74,27 +75,27 @@ public final class TypeIdGenerator implements IdGenerator {
         if (suffix == null || suffix.length() != 26 || suffix.charAt(0) > '7') {
             return null;
         }
-        BigInteger value = BigInteger.ZERO;
-        for (int i = 0; i < suffix.length(); i++) {
-            int digit = ALPHABET.indexOf(suffix.charAt(i));
+        long msb = 0;
+        long lsb = 0;
+        for (int group = 0; group < 26; group++) {
+            int digit = ALPHABET.indexOf(suffix.charAt(group));
             if (digit < 0) {
                 return null;
             }
-            value = value.multiply(BASE).add(BigInteger.valueOf(digit));
-        }
-        BigInteger uuidValue = value;
-        if (uuidValue.bitLength() > 128) {
-            return null;
-        }
-        byte[] bytes = new byte[16];
-        byte[] source = uuidValue.toByteArray();
-        int copy = Math.min(source.length, bytes.length);
-        System.arraycopy(source, source.length - copy, bytes, bytes.length - copy, copy);
-        long msb = 0;
-        long lsb = 0;
-        for (int i = 0; i < 8; i++) {
-            msb = (msb << 8) | (bytes[i] & 0xFFL);
-            lsb = (lsb << 8) | (bytes[8 + i] & 0xFFL);
+            for (int bit = 4; bit >= 0; bit--) {
+                int bitIndex = group * 5 + (4 - bit);
+                if (bitIndex < 2) {
+                    continue;
+                }
+                int uuidBit = bitIndex - 2;
+                long current = (digit >>> bit) & 1;
+                if (uuidBit < 64) {
+                    msb = (msb << 1) | current;
+                }
+                else {
+                    lsb = (lsb << 1) | current;
+                }
+            }
         }
         UUID uuid = new UUID(msb, lsb);
         if (uuid.version() != 7 || uuid.variant() != 2) {
