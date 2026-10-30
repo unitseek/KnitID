@@ -23,6 +23,6 @@ class SampleApplicationTest {
     void startsAndGeneratesUuid7() {
         assertThat(idGenerator.type()).isEqualTo(IdType.UUID7);
         assertThat(idGenerator.generate()).hasSize(36);
-        assertThat(registry.names()).contains("uuid7", "uuid8", "ulid", "ksid", "biz");
+        assertThat(registry.names()).contains("uuid7", "uuid8", "ulid", "ksid", "biz", "ksuid", "typeid");
     }
 }

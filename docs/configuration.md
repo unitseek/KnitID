@@ -17,7 +17,9 @@
 </dependency>
 ```
 
-算法模块：`knitid-generator-uuid7`、`-uuid8`、`-ulid`、`-ksid`、`-biz`。
+算法模块：`knitid-generator-uuid7`、`-uuid8`、`-ulid`、`-ksid`、`-biz`、`-ksuid`、`-typeid`。
+
+`knitid-spring-boot-starter-all` 会引入全部七类算法；普通 starter 不包含算法。
 集成模块：`knitid-worker-redis`、`-zookeeper`、`-kubernetes`、`knitid-sequence-redis`。
 
 ## 2. 根属性
@@ -39,7 +41,7 @@ knitid:
   generators:
     <name>:
       enabled: true
-      type: UUID7   # UUID7 | UUID8 | ULID | KSID | BIZ
+      type: UUID7   # UUID7 | UUID8 | ULID | KSID | BIZ | KSUID | TYPEID
 ```
 
 | 属性 | 类型 | 默认 | 说明 |
@@ -107,7 +109,25 @@ knitid:
 
 上下文覆盖：`IdContext.businessDateTime` 可指定完整业务时间；仅指定 `businessDate` 时时间部分使用 00:00:00，避免“旧日期 + 当前时间”的歧义。
 
-## 9. WorkerId 分配
+## 9. KSUID（可选兼容模块）
+
+| 属性 | 默认 | 说明 |
+| --- | --- | --- |
+| `ksuid.random-source` | `SECURE` | `SECURE`/ `PERFORMANCE`；PERFORMANCE 仅性能/基准场景，生产禁用 |
+
+KSUID 固定 27 位 Base62；无 WorkerId；不保证同秒内单调。
+
+## 10. TypeID（可选兼容模块）
+
+| 属性 | 默认 | 说明 |
+| --- | --- | --- |
+| `typeid.prefixes` | 必填 | 允许的前缀列表，遵循 TypeID v0.3.0 |
+| `typeid.default-prefix` | 首项 | 默认前缀，必须属于 prefixes |
+| `typeid.allow-empty-prefix` | `false` | 是否允许空前缀生成；内置解析器仍只识别带 `_` 的形式 |
+
+TypeID 格式：`<prefix>_<26 位小写 Base32 UUIDv7>`，内部复用 KnitID UUIDv7。
+
+## 11. WorkerId 分配
 
 - `fixed`：使用 `ksid.worker-id` / `ksid.datacenter-id`；
 - `environment`：环境变量/系统属性 `KNITID_WORKER_ID`、`KNITID_DATACENTER_ID`；
@@ -115,7 +135,7 @@ knitid:
 - `zookeeper`：`knitid.worker.zookeeper.connect-string`（必填）、`namespace`（`knitid`）、`session-timeout`（10s）、`connection-timeout`（10s）；
 - `kubernetes`：`knitid.worker.kubernetes.mode`（`STATEFULSET_ORDINAL`/`DOWNWARD_API`）、`pod-name`（默认读 `HOSTNAME`/`POD_NAME`）。
 
-## 10. Redis 序列
+## 12. Redis 序列
 
 | 属性 | 默认 | 说明 |
 | --- | --- | --- |
@@ -125,13 +145,13 @@ knitid:
 
 Bean 名称：`redis` 或 `redisSequenceProvider`。
 
-## 11. Actuator
+## 13. Actuator
 
 - 端点：`/actuator/knitid`，暴露配置 `management.endpoints.web.exposure.include=knitid`；
 - 健康键：`knitId`；开关 `management.health.knitid.enabled`；
 - 指标：`knitid.id.generation.duration`、`knitid.id.generation.errors`、`knitid.id.batch.size`、`knitid.id.worker.id`。
 
-## 12. 完整示例
+## 14. 完整示例
 
 ```yaml
 knitid:

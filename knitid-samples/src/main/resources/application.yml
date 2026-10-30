@@ -16,6 +16,17 @@ knitid:
       ksid:
         datacenter-id: 0
         worker-id: 0
+    ksuid:
+      type: KSUID
+      ksuid:
+        random-source: SECURE
+    typeid:
+      type: TYPEID
+      typeid:
+        prefixes:
+          - sample
+        default-prefix: sample
+        allow-empty-prefix: false
     biz:
       type: BIZ
       biz:

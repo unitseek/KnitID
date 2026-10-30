@@ -52,7 +52,7 @@ if (fs.existsSync(configPath)) {
 const requiredConfigKeys = [
   'knitid.default-type', 'knitid.default-generator', 'knitid.limits.max-batch-size',
   'knitid.health.cache-ttl', 'generators.<name>', 'uuid7.monotonic', 'uuid8.preset',
-  'ulid.random-source', 'ksid.worker-id-assigner', 'biz.template', 'knitid.worker.redis',
+  'ulid.random-source', 'ksid.worker-id-assigner', 'biz.template', 'ksuid.random-source', 'typeid.prefixes', 'typeid.default-prefix', 'typeid.allow-empty-prefix', 'knitid.worker.redis',
   'knitid.worker.zookeeper', 'knitid.worker.kubernetes', 'knitid.sequence.redis'
 ];
 if (config) {

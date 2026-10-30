@@ -159,6 +159,13 @@ final class IdGeneratorRegistryBuilder {
         return implicit;
     }
 
+    private static boolean isIndexedMap(Map<?, ?> map) {
+        return !map.isEmpty() && map.keySet().stream().allMatch(key -> {
+            String text = String.valueOf(key);
+            return !text.isEmpty() && text.chars().allMatch(Character::isDigit);
+        });
+    }
+
     private IdGenerator decorate(IdGenerator generator, String name) {
         IdGenerator decorated = generator;
         for (IdGeneratorDecorator decorator : decorators) {
@@ -203,7 +210,7 @@ final class IdGeneratorRegistryBuilder {
         for (Map.Entry<String, Object> entry : source.entrySet()) {
             String key = prefix.isEmpty() ? entry.getKey() : prefix + "." + entry.getKey();
             Object value = entry.getValue();
-            if (value instanceof Map<?, ?> nested) {
+            if (value instanceof Map<?, ?> nested && !isIndexedMap(nested)) {
                 Map<String, Object> typed = new LinkedHashMap<>();
                 nested.forEach((nestedKey, nestedValue) -> typed.put(String.valueOf(nestedKey), nestedValue));
                 flatten(key, typed, target);

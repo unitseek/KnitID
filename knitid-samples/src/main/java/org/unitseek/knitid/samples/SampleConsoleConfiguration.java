@@ -21,7 +21,7 @@ public class SampleConsoleConfiguration {
             System.out.println();
             System.out.println("KnitID sample IDs (one per generator)");
             System.out.println("-------------------------------------");
-            for (String name : List.of("uuid7", "uuid8", "ulid", "ksid", "biz")) {
+            for (String name : List.of("uuid7", "uuid8", "ulid", "ksid", "biz", "ksuid", "typeid")) {
                 IdGenerator generator = registry.get(name);
                 System.out.printf("%-6s %-4s %s%n", name, generator.type(), generator.generate());
             }

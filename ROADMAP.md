@@ -4,13 +4,13 @@
 
 ## 1.0 — 稳定发布
 
-- [x] 五类生成器：UUIDv7、UUIDv8、ULID、KSID、BIZ
+- [x] 七类生成器：UUIDv7、UUIDv8、ULID、KSID、BIZ、KSUID、TypeID
 - [x] WorkerId：fixed、environment、Redis、ZooKeeper、Kubernetes
 - [x] Redis 序列（BIZ 多实例）
 - [x] Spring Boot 4 自动配置、严格配置校验、FailureAnalyzer
 - [x] IdParser、Actuator 端点、健康检查、Micrometer 指标
 - [x] JMH 基准、示例工程、P0/P1 文档、发布流水线
-- [x] 173 个测试（含 Redis/ZooKeeper Testcontainers）
+- [x] 179 个测试（含 Redis/ZooKeeper Testcontainers）
 - [ ] 1.0.0 正式发布到 Maven Central
 - [ ] 在 Java 21 固定硬件复测正式基准报告
 

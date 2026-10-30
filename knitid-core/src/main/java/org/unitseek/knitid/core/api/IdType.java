@@ -16,6 +16,8 @@ public final class IdType {
     public static final IdType ULID = new IdType("ULID");
     public static final IdType KSID = new IdType("KSID");
     public static final IdType BIZ = new IdType("BIZ");
+    public static final IdType KSUID = new IdType("KSUID");
+    public static final IdType TYPEID = new IdType("TYPEID");
 
     private static final int MAX_LENGTH = 64;
 

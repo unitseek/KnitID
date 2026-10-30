@@ -38,7 +38,7 @@ Testcontainers 默认镜像：
 | --- | --- |
 | `knitid-core` | API、SPI、异常、解析接口；零 Spring/三方算法依赖 |
 | `knitid-test` | 测试工具（MutableClock） |
-| `knitid-generator-*` | 五类生成器 |
+| `knitid-generator-*` | 七类生成器（含 KSUID/TypeID 可选模块） |
 | `knitid-spring-boot-autoconfigure` | 自动配置、健康、端点、指标、解析器 |
 | `knitid-sequence-redis` | Redis 序列 |
 | `knitid-worker-*` | WorkerId 分配器 |

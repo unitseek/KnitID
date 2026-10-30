@@ -12,6 +12,7 @@
 | Kubernetes（可选） | Downward API / StatefulSet | WorkerId 分配 |
 | GraalVM Native | 支持（需按模块验证） | 核心无反射依赖；Spring AOT 由 Boot 处理 |
 | Micrometer | Boot 4 管理版本 | 指标可选 |
+| KSUID/TypeID | v1.0.0 可选模块 | 普通 starter 不包含；需显式引入 |
 
 > 库的核心模块（`knitid-core`）零 Spring 依赖，可脱离 Spring Boot 使用；但 Spring Boot Starter/自动配置仅支持 Boot 4.x。
 

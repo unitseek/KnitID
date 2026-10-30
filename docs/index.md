@@ -13,7 +13,7 @@
 | [发布流程](release.md) | ✅ | Maven Central、CI/CD |
 | [基准报告](benchmark-report.md) | ✅ | JMH 结果与方法 |
 | [快速开始](getting-started.md) | ✅ | 5 分钟上手 |
-| [ID 选型](id-selection.md) | ✅ | 五类 ID 决策树 |
+| [ID 选型](id-selection.md) | ✅ | 七类 ID 决策树 |
 | [模块说明](modules.md) | ✅ | 模块依赖与选择 |
 | [SPI 扩展](spi.md) | ✅ | 自定义生成器/分配器/序列/解析器 |
 | [运维指南](operations.md) | ✅ | WorkerId、时钟、Redis/ZK、容量 |

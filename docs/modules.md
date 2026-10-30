@@ -3,9 +3,11 @@
 ## 依赖关系
 
 ```text
-knitid-core  ←  knitid-generator-{uuid7,uuid8,ulid,ksid,biz}
+knitid-core  ←  knitid-generator-{uuid7,uuid8,ulid,ksid,biz,ksuid,typeid}
      ↑
 knitid-spring-boot-autoconfigure  ←  knitid-spring-boot-starter
+     ↑
+knitid-spring-boot-starter-all (starter + all seven generators)
      ↑
 knitid-worker-{redis,zookeeper,kubernetes} / knitid-sequence-redis
      ↑
@@ -31,8 +33,11 @@ knitid-samples / knitid-benchmarks
 | `knitid-generator-ulid` | ULID | — |
 | `knitid-generator-ksid` | KSID（Snowflake） | — |
 | `knitid-generator-biz` | 业务 ID | — |
+| `knitid-generator-ksuid` | KSUID | — |
+| `knitid-generator-typeid` | TypeID（依赖 UUIDv7） | KnitID UUIDv7 |
 | `knitid-spring-boot-autoconfigure` | Spring Boot 自动配置 | Spring Boot 4 |
-| `knitid-spring-boot-starter` | Starter | Spring Boot 4 |
+| `knitid-spring-boot-starter` | Starter（不含算法） | Spring Boot 4 |
+| `knitid-spring-boot-starter-all` | 全家桶七类算法 | Spring Boot 4 |
 | `knitid-worker-redis` | Redis WorkerId 租约 | spring-data-redis |
 | `knitid-worker-zookeeper` | ZooKeeper WorkerId | Curator/ZooKeeper |
 | `knitid-worker-kubernetes` | K8s StatefulSet WorkerId | 无（读环境变量） |
