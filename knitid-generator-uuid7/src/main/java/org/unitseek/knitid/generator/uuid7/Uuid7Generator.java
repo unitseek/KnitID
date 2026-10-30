@@ -73,6 +73,15 @@ public final class Uuid7Generator implements IdGenerator {
 
     /**
      * Generates a UUIDv7 without formatting it as a string.
+     *
+     * <p>This is intended for generators such as TypeID that need the raw
+     * timestamp and random bits and would otherwise pay for a UUID
+     * string/parse round trip.</p>
+     *
+     * @return generated UUIDv7
+     * @throws IdGenerationException if the clock is outside the 48-bit range
+     *         or the monotonic random space is exhausted
+     * @since 1.0.0
      */
     public synchronized UUID generateUuid() {
         long now = clock.millis();

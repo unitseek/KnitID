@@ -8,16 +8,31 @@ import org.unitseek.knitid.core.parser.IdInfo;
 import org.unitseek.knitid.core.parser.IdTypeParser;
 
 /**
- * Parser for prefixed TypeID strings. Suffix-only TypeIDs are intentionally
- * not accepted by the built-in parser because they would collide with ULID.
+ * Parser for prefixed TypeID strings.
+ *
+ * <p>Suffix-only TypeIDs are intentionally not accepted by the built-in parser
+ * because they would collide with ULID. Prefixes containing underscores are
+ * supported; the separator is resolved from the right because the suffix is
+ * always 26 characters.</p>
+ *
+ * @since 1.0.0
  */
 public final class TypeIdIdTypeParser implements IdTypeParser {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IdType type() {
         return IdType.TYPEID;
     }
 
+    /**
+     * Parses a prefixed TypeID and extracts its prefix and UUIDv7 timestamp.
+     *
+     * @param raw candidate identifier
+     * @return parsed information, or empty if the value is not a prefixed TypeID
+     */
     @Override
     public Optional<IdInfo> tryParse(String raw) {
         if (raw == null) {

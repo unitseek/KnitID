@@ -14,7 +14,18 @@ import org.unitseek.knitid.core.exception.IdErrorCodes;
 import org.unitseek.knitid.core.spi.GeneratorConfig;
 
 /**
- * TypeID configuration. Prefixes follow TypeID Specification v0.3.0.
+ * TypeID configuration.
+ *
+ * <p>Prefixes follow TypeID Specification v0.3.0: lowercase ASCII letters and
+ * underscores only, starting and ending with a letter, at most 63 characters.
+ * An empty prefix is valid in the specification but must be explicitly enabled
+ * with {@link #allowEmptyPrefix()}.</p>
+ *
+ * @param prefixes registered prefixes, in configuration order
+ * @param defaultPrefix prefix used when {@link org.unitseek.knitid.core.api.IdContext#prefix()} is absent
+ * @param allowEmptyPrefix whether an empty prefix may be generated; the built-in
+ *        parser still only recognizes prefixed forms
+ * @since 1.0.0
  */
 public record TypeIdConfig(Set<String> prefixes, String defaultPrefix, boolean allowEmptyPrefix) {
 
@@ -40,6 +51,15 @@ public record TypeIdConfig(Set<String> prefixes, String defaultPrefix, boolean a
         }
     }
 
+    /**
+     * Parses TypeID configuration from a generator configuration.
+     *
+     * @param config generator configuration
+     * @return parsed configuration
+     * @throws IdConfigurationException if prefixes are missing/invalid, the
+     *         default prefix is not registered, or an unknown nested key is
+     *         present
+     */
     public static TypeIdConfig from(GeneratorConfig config) {
         validateKeys(config);
         Object raw = config.get("typeid.prefixes").orElse(null);
@@ -84,6 +104,13 @@ public record TypeIdConfig(Set<String> prefixes, String defaultPrefix, boolean a
         return new TypeIdConfig(prefixes, defaultPrefix, allowEmpty);
     }
 
+    /**
+     * Validates that a prefix may be used for generation.
+     *
+     * @param prefix candidate prefix
+     * @throws IdConfigurationException if the prefix is invalid, unregistered,
+     *         or empty while empty prefixes are disabled
+     */
     public void validateForGeneration(String prefix) {
         if (prefix == null || !isValidPrefix(prefix) || !prefixes.contains(prefix)
                 || (prefix.isEmpty() && !allowEmptyPrefix)) {
@@ -91,6 +118,12 @@ public record TypeIdConfig(Set<String> prefixes, String defaultPrefix, boolean a
         }
     }
 
+    /**
+     * Tests a prefix against TypeID Specification v0.3.0.
+     *
+     * @param prefix candidate prefix, including the empty string
+     * @return {@code true} if the prefix is syntactically valid
+     */
     public static boolean isValidPrefix(String prefix) {
         return prefix != null && PREFIX_PATTERN.matcher(prefix).matches();
     }

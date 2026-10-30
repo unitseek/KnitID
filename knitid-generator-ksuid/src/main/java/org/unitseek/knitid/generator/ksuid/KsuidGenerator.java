@@ -12,11 +12,26 @@ import org.unitseek.knitid.core.exception.IdGenerationException;
 import org.unitseek.knitid.core.spi.RandomProvider;
 
 /**
- * KSUID generator: 4-byte timestamp (seconds since 2014-05-13T16:53:20Z)
- * followed by 16 random bytes, encoded as 27 Base62 characters.
+ * KSUID (K-Sortable Unique ID) generator.
+ *
+ * <p>The binary value is 20 bytes: a 4-byte unsigned Unix timestamp in
+ * seconds since {@link #EPOCH}, followed by 16 random bytes. It is encoded
+ * as 27 Base62 characters. KSUIDs are globally unique and roughly sortable
+ * by generation second, but the random suffix is not monotonic within the
+ * same second.</p>
+ *
+ * <p>This generator uses the configured {@link RandomProvider}; production
+ * configurations must use a cryptographically strong source. It is thread-safe
+ * if the configured {@link RandomProvider} is thread-safe.</p>
+ *
+ * @see <a href="https://github.com/segmentio/ksuid">KSUID specification</a>
+ * @since 1.0.0
  */
 public final class KsuidGenerator implements IdGenerator {
 
+    /**
+     * KSUID epoch: 2014-05-13T16:53:20Z.
+     */
     public static final Instant EPOCH = Instant.ofEpochSecond(1_400_000_000L);
 
     private static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -27,16 +42,32 @@ public final class KsuidGenerator implements IdGenerator {
 
     private final RandomProvider random;
 
+    /**
+     * Creates a KSUID generator.
+     *
+     * @param clock clock used for the timestamp
+     * @param random source used for the 16-byte random suffix
+     */
     public KsuidGenerator(Clock clock, RandomProvider random) {
         this.clock = Objects.requireNonNull(clock, "clock must not be null");
         this.random = Objects.requireNonNull(random, "random must not be null");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IdType type() {
         return IdType.KSUID;
     }
 
+    /**
+     * Generates a 27-character KSUID.
+     *
+     * @return KSUID string
+     * @throws IdGenerationException if the clock is before the KSUID epoch or
+     *         the 32-bit timestamp range is exhausted
+     */
     @Override
     public String generate() {
         long now = clock.millis();
@@ -60,11 +91,19 @@ public final class KsuidGenerator implements IdGenerator {
         return encode(bytes);
     }
 
+    /**
+     * Generates a KSUID. KSUID has no context-dependent fields; the context
+     * argument is ignored.
+     *
+     * @param context ignored
+     * @return KSUID string
+     */
     @Override
     public String generate(IdContext context) {
         return generate();
     }
 
+    // Fixed 5 x 32-bit limbs avoid BigInteger allocations during Base62 conversion.
     static String encode(byte[] bytes) {
         int[] limbs = new int[5];
         for (int i = 0; i < 5; i++) {
@@ -87,6 +126,7 @@ public final class KsuidGenerator implements IdGenerator {
         return new String(encoded);
     }
 
+    // Decodes 27 Base62 characters into the 20-byte KSUID representation.
     static byte[] decode(String raw) {
         if (raw == null || raw.length() != 27) {
             return null;
@@ -118,6 +158,7 @@ public final class KsuidGenerator implements IdGenerator {
         return out;
     }
 
+    // Extracts the unsigned 32-bit epoch-relative timestamp from decoded bytes.
     static Instant timestamp(byte[] bytes) {
         long seconds = ((long) (bytes[0] & 0xFF) << 24)
                 | ((long) (bytes[1] & 0xFF) << 16)

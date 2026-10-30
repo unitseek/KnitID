@@ -21,9 +21,14 @@ public interface GeneratorConfig {
     Optional<Object> get(String key);
 
     /**
-     * Flattened keys visible in this configuration. Implementations that can
-     * enumerate their keys should override this; an empty set means the
-     * configuration cannot be validated for unknown keys.
+     * Flattened keys visible in this configuration.
+     *
+     * <p>Implementations that can enumerate their keys should override this.
+     * An empty set means the configuration cannot be validated for unknown
+     * keys; callers must not treat it as evidence that no keys are present.</p>
+     *
+     * @return flattened configuration keys
+     * @since 1.0.0
      */
     default Set<String> keys() {
         return Set.of();

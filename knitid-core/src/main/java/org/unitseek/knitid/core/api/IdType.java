@@ -17,7 +17,21 @@ public final class IdType {
     public static final IdType ULID = new IdType("ULID");
     public static final IdType KSID = new IdType("KSID");
     public static final IdType BIZ = new IdType("BIZ");
+
+    /**
+     * KSUID (K-Sortable Unique ID); provided by the optional
+     * {@code knitid-generator-ksuid} module.
+     *
+     * @since 1.0.0
+     */
     public static final IdType KSUID = new IdType("KSUID");
+
+    /**
+     * TypeID (type-prefixed UUIDv7); provided by the optional
+     * {@code knitid-generator-typeid} module.
+     *
+     * @since 1.0.0
+     */
     public static final IdType TYPEID = new IdType("TYPEID");
 
     private static final int MAX_LENGTH = 64;
