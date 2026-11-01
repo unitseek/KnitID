@@ -25,6 +25,15 @@ class ConfiguredParserAutoConfigurationTest {
                     "knitid.generators.biz-id.biz.sequence-provider=memory");
 
     @Test
+    void ignoresDisabledGenerators() {
+        runner.withPropertyValues("knitid.generators.ksid-id.enabled=false")
+                .run(context -> {
+                    assertThat(context).hasNotFailed();
+                    assertThat(context).doesNotHaveBean(KsidLayoutIdTypeParser.class);
+                });
+    }
+
+    @Test
     void bindsLayoutAndTemplateParsers() {
         runner.run(context -> {
             assertThat(context).hasNotFailed();

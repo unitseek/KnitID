@@ -57,7 +57,7 @@ public final class KnitIdGaugeBinder implements SmartInitializingSingleton {
                         .tag("name", entry.getKey())
                         .tag("id.type", generator.type().value().toLowerCase(java.util.Locale.ROOT))
                         .tag("id.name", entry.getKey())
-                        .description("Current KSID WorkerId")
+                        .description("Current WorkerId")
                         .register(meterRegistry);
             }
             Gauge.builder("knitid.id.clock.backwards", () -> detail(health, "clockBackwardsCount"))

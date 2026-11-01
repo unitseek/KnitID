@@ -20,9 +20,10 @@ import org.unitseek.knitid.core.parser.IdTypeParser;
  * Built-in parser for business IDs generated from a specific {@link BizConfig}
  * template.
  *
- * <p>Register this parser as a bean when the application knows the BIZ
- * template. It validates the template shape, check digit, and extracts
- * sequence, worker, prefix and date/time where present.</p>
+ * <p>Spring Boot auto-configuration registers this parser when a BIZ generator
+ * is configured. It can also be registered manually for non-Spring usage. It
+ * validates the template shape, check digit, and extracts sequence, worker,
+ * prefix and date/time where present.</p>
  *
  * @since 1.0.0
  */

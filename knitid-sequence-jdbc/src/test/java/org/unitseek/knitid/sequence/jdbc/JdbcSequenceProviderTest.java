@@ -12,6 +12,7 @@ import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,6 +27,21 @@ class JdbcSequenceProviderTest {
         assertThat(provider.next("order")).isEqualTo(2);
         assertThat(provider.next("order")).isEqualTo(3);
         assertThat(provider.next("other")).isEqualTo(0);
+    }
+
+    @Test
+    void reservationSurvivesOuterTransactionRollback() {
+        JdbcDataSource dataSource = dataSource();
+        JdbcSequenceProvider provider = provider(dataSource, 3);
+        TransactionTemplate outer = new TransactionTemplate(new DataSourceTransactionManager(dataSource));
+        outer.execute(status -> {
+            assertThat(provider.next("rollback-safe")).isZero();
+            status.setRollbackOnly();
+            return null;
+        });
+
+        JdbcSequenceProvider restarted = provider(dataSource, 3);
+        assertThat(restarted.next("rollback-safe")).isEqualTo(3);
     }
 
     @Test

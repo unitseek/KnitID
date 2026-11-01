@@ -114,7 +114,7 @@ CI 工作流：`.github/workflows/native.yml`（workflow_dispatch / 每周计划
 
 ## 测试
 
-当前共 213 个测试（Boot 4.0 兼容矩阵另加 1 个），全部通过（`mvn verify`；Testcontainers 用例在无 Docker 时自动跳过）：
+当前共 215 个测试（Boot 4.0 兼容矩阵另加 1 个），全部通过（`mvn verify`；Testcontainers 用例在无 Docker 时自动跳过）：
 
 - `knitid-core`：IdType 规范化契约 + DurationParser 边界 + 异步/流式批量 API（9）；
 - `knitid-generator-uuid7`：RFC 9562 附录 A.6 向量、属性测试、边界、溢出与回拨策略（12）；
@@ -125,12 +125,12 @@ CI 工作流：`.github/workflows/native.yml`（workflow_dispatch / 每周计划
 - `knitid-generator-ksuid`：27 位 Base62、时间戳、编解码往返、解析、配置与自动配置（8）；
 - `knitid-generator-typeid`：官方向量、前缀规则、多前缀、编解码往返、解析、配置与自动配置（13）；
 - `knitid-sequence-redis`：原子 INCRBY、TTL/持久 scope、批量区间、跨实例共享、失败映射、自动配置（7 + 5 Testcontainers + 2），含两个 BIZ 生成器共享序列的集成测试；
-- `knitid-sequence-jdbc`：数据库号段、事务行锁、跨块连续、并发唯一、自动配置（3）；
+- `knitid-sequence-jdbc`：数据库号段、事务行锁、跨块连续、并发唯一、回滚隔离、自动配置（4）；
 - `knitid-boot-compat-4.0`：Spring Boot 4.0.9 兼容启动与 UUIDv7 生成（1，仅 `-Pboot-4.0`）；
 - `knitid-worker-redis`：槽位占用/冲突、token fencing、租约续约失败、释放、provider 配置校验、自动配置（9），以及 Testcontainers 真实 Redis 的 SET NX/TTL/续约/释放/断连（8）；
 - `knitid-worker-zookeeper`：临时节点分配、重新占用、续约、配置校验、自动配置（6），以及 Testcontainers 真实 ZooKeeper 的分配/释放、foreign release 与断连（3）；
 - `knitid-worker-kubernetes`：StatefulSet ordinal、Downward API、越界/非法 pod 名、配置校验、自动配置（9）；
-- `knitid-spring-boot-autoconfigure`：启动矩阵/健康/解析/端点/指标/配置诊断/回拨指标/索引 Map/自动绑定解析器（41）；
+- `knitid-spring-boot-autoconfigure`：启动矩阵/健康/解析/端点/指标/配置诊断/回拨指标/索引 Map/自动绑定解析器（42）；
 - `knitid-spring-boot-starter`：依赖边界，确认不含生成器类，且无生成器模块时可启动（2）；
 - `knitid-spring-boot-starter-all`：依赖边界，确认包含七类生成器（1）；
 - `knitid-samples`：七类 ID + Actuator + 多租户前缀示例启动测试（7）。

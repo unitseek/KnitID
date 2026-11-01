@@ -24,7 +24,7 @@ import org.unitseek.knitid.sequence.jdbc.JdbcSequenceProvider;
  * @since 1.0.0
  */
 @AutoConfiguration
-@ConditionalOnClass({ DataSource.class, SequenceProvider.class })
+@ConditionalOnClass({ JdbcTemplate.class, SequenceProvider.class })
 @ConditionalOnBean({ DataSource.class, PlatformTransactionManager.class })
 @ConditionalOnSingleCandidate(DataSource.class)
 @ConditionalOnProperty(prefix = "knitid.sequence.jdbc", name = "enabled", matchIfMissing = true)

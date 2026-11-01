@@ -177,7 +177,7 @@ CREATE TABLE knitid_sequence (
 );
 ```
 
-每个进程在事务内执行 `SELECT ... FOR UPDATE` 预留号段；进程崩溃可能留下空洞，不保证 BIZ 序列无空洞。
+每个进程在独立事务（`REQUIRES_NEW`）内执行 `SELECT ... FOR UPDATE` 预留号段，因此业务事务回滚不会回退已预留号段；进程崩溃可能留下空洞，不保证 BIZ 序列无空洞。
 
 ## 14. Actuator
 

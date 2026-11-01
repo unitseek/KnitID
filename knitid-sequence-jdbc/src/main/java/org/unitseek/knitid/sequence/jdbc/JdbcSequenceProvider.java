@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import org.unitseek.knitid.core.exception.IdErrorCodes;
@@ -35,8 +36,12 @@ public final class JdbcSequenceProvider implements SequenceProvider {
     public JdbcSequenceProvider(JdbcTemplate jdbc, PlatformTransactionManager transactionManager,
             String tableName, int blockSize) {
         this.jdbc = Objects.requireNonNull(jdbc, "jdbc must not be null");
-        this.transactions = new TransactionTemplate(Objects.requireNonNull(transactionManager,
+        TransactionTemplate template = new TransactionTemplate(Objects.requireNonNull(transactionManager,
                 "transactionManager must not be null"));
+        // The block reservation must survive a rollback of the business transaction
+        // that requested the ID; otherwise another instance could reserve the same range.
+        template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        this.transactions = template;
         if (tableName == null || !tableName.matches("[A-Za-z_][A-Za-z0-9_]*")) {
             throw new IllegalArgumentException("tableName must be a simple SQL identifier");
         }

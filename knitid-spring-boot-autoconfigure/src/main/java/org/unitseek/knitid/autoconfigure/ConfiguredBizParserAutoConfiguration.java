@@ -53,7 +53,11 @@ public class ConfiguredBizParserAutoConfiguration {
 
     private static Optional<GeneratorConfig> config(KnitIdProperties properties, String name, IdType wanted) {
         Map<String, Object> raw = properties.getGenerators().get(name);
-        if (raw == null || Boolean.FALSE.equals(raw.get("enabled"))) {
+        if (raw == null) {
+            return Optional.empty();
+        }
+        Object enabled = raw.get("enabled");
+        if (enabled != null && !Boolean.parseBoolean(String.valueOf(enabled))) {
             return Optional.empty();
         }
         Object typeValue = raw.get("type");

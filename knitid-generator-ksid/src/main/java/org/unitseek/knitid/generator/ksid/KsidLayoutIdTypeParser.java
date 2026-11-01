@@ -11,9 +11,10 @@ import org.unitseek.knitid.core.parser.IdTypeParser;
 /**
  * Built-in parser for numeric KSID values using a specific bit layout.
  *
- * <p>Register this parser as a bean when the application knows the KSID layout
- * used by its generator. Without a configured layout, {@code KsidNumericIdTypeParser}
- * only exposes the raw decimal value.</p>
+ * <p>Spring Boot auto-configuration registers this parser when a KSID generator
+ * is configured. It can also be registered manually for non-Spring usage.
+ * Without a configured layout, {@code KsidNumericIdTypeParser} only exposes the
+ * raw decimal value.</p>
  *
  * @since 1.0.0
  */
