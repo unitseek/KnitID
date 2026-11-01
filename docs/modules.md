@@ -58,7 +58,7 @@ knitid-core + generator-*  ←  knitid-cli（独立可执行 JAR）
 | KSID + Redis WorkerId | starter + generator-ksid + worker-redis + spring-data-redis |
 | BIZ + Redis 序列 | starter + generator-biz + sequence-redis + spring-data-redis |
 | BIZ + JDBC 序列 | starter + generator-biz + sequence-jdbc + DataSource |
-| Boot 4.0 兼容验证 | `mvn -Pboot-4.0 verify` |
+| Boot 4.0 兼容验证 | `mvn -B -ntp "-Pboot-4.0" verify`（PowerShell 需引号） |
 | KSUID | starter + generator-ksuid（或 starter-all） |
 | TypeID | starter + generator-typeid（会传递引入 UUIDv7） |
 | 全部七类 | starter-all |

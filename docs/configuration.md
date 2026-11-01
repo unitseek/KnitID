@@ -194,6 +194,7 @@ management:
         include: knitid,knitid-config,health,metrics
 ```
 
+- 端点开关：`management.endpoint.knitid.enabled`、`management.endpoint.knitid-config.enabled`；
 - 健康键：`knitId`；开关 `management.health.knitid.enabled`；
 - 指标：`knitid.id.generation.duration`、`knitid.id.generation.errors`、`knitid.id.batch.size`、`knitid.id.worker.id`、`knitid.id.clock.backwards`；
 - 指标同时包含 OTel 风格 tags `id.type`、`id.name`，错误指标包含 `error.type`；

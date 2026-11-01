@@ -13,7 +13,7 @@
 | GraalVM Native | 支持（需按模块验证） | 核心无反射依赖；Spring AOT 由 Boot 处理 |
 | Micrometer | Boot 4 管理版本 | 指标可选 |
 | KSUID/TypeID | v1.0.0 可选模块 | 普通 starter 不包含；需显式引入 |
-| Spring Boot 4.0 | 兼容矩阵 | `mvn -Pboot-4.0 verify`；默认 4.1.x 构建 |
+| Spring Boot 4.0 | 兼容矩阵 | `mvn -B -ntp "-Pboot-4.0" verify`；默认 4.1.x 构建 |
 | Spring Boot 4.1 | 默认 | 根 POM 当前 4.1.2 |
 
 > 库的核心模块（`knitid-core`）零 Spring 依赖，可脱离 Spring Boot 使用；但 Spring Boot Starter/自动配置仅支持 Boot 4.x。
@@ -23,10 +23,39 @@
 | 组合 | 状态 |
 | --- | --- |
 | Java 21 + Boot 4.1.x | ✅ CI 主路径 |
-| Java 21 + Boot 4.0.x | ⚠️ 目标支持，尚未纳入 CI 矩阵 |
+| Java 21 + Boot 4.0.x | ✅ CI 兼容矩阵（`boot-4.0` profile） |
 | Java 25 + Boot 4.1.x | ⚠️ 开发机验证（基准/本地）；正式支持以 Java 21 为准 |
 | Boot 3.x | ❌ 不支持；请使用 0.2 之前版本或升级 Boot |
 | Java < 21 | ❌ 不支持 |
+
+## 本地执行兼容矩阵
+
+Maven 的 profile 参数是 `-Pboot-4.0`。注意不同 shell 对点号参数的解析不同：
+
+Bash / zsh：
+
+```bash
+mvn -B -ntp -Pboot-4.0 verify
+```
+
+PowerShell：
+
+```powershell
+mvn -B -ntp "-Pboot-4.0" verify
+```
+
+PowerShell 不加引号时，可能把 `-Pboot-4.0` 拆成 `-Pboot-4` 和 `.0`，导致：
+
+```text
+The requested profile "boot-4" could not be activated because it does not exist.
+Unknown lifecycle phase ".0".
+```
+
+等价写法：
+
+```powershell
+mvn -B -ntp -P boot-4.0 verify
+```
 
 ## Versioning
 

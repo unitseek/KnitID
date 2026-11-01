@@ -34,7 +34,18 @@ java -jar knitid-benchmarks/target/knitid-benchmarks.jar -wi 1 -i 1 -f 1 -w 1 -r
 - ULID 需要 Base32 编码，约为 UUIDv7 的 1/3；
 - KSID 有同步与序列逻辑，仍满足 1M 目标；
 - BIZ 含模板拼接/校验位，吞吐最低，但通常不是瓶颈；
-- 未覆盖：多线程、Redis 序列 RTT、WorkerId 续约、数据库写入。
+- 附加基准覆盖多线程 memory 序列与 RedisSequenceProvider 的本地逻辑开销；
+- 官方报告未覆盖真实 Redis 网络 RTT、Redis 集群/故障、WorkerId 续约与数据库写入。
+
+## 附加基准
+
+```bash
+java -jar knitid-benchmarks/target/knitid-benchmarks.jar ConcurrentSequenceBenchmark
+java -jar knitid-benchmarks/target/knitid-benchmarks.jar RedisSequenceBenchmark
+```
+
+- `ConcurrentSequenceBenchmark`：8 线程内存序列；
+- `RedisSequenceBenchmark`：用内存 store 隔离 Redis 网络，测 provider 自身开销；不代表真实 Redis 延迟。
 
 ## 添加基准
 

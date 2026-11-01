@@ -45,6 +45,8 @@ mvn -B -ntp -Prelease -DskipTests -Dgpg.skip=true verify
 ```bash
 mvn -B -ntp -DskipTests install
 mvn -pl knitid-samples spring-boot:run
+mvn -B -ntp -pl knitid-cli -am -DskipTests package
+java -jar knitid-cli/target/knitid-cli-1.0.0.jar --version
 ```
 
 ## GPG 发布密钥准备
@@ -87,7 +89,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\setup-gpg-release.ps
 - `central-publishing-maven-plugin` 使用 server id `central`；
 - 首次发布使用 `autoPublish=false`、`waitUntil=validated`，在 Portal 检查后人工 Publish；
 - `maven-gpg-plugin` 在 `verify` 阶段签名；
-- `knitid-samples`、`knitid-benchmarks` 的 `maven-deploy-plugin` 已设置 `skip=true`。
+- `knitid-samples`、`knitid-benchmarks` 的 `maven-deploy-plugin` 已设置 `skip=true`；
+- `knitid-cli` 作为可执行 JAR 随其他模块发布，构建时会生成带依赖的主 artifact。
 
 执行：
 
@@ -121,6 +124,7 @@ mvn -B -ntp -Prelease clean deploy
 - [ ] CHANGELOG 更新
 - [ ] README/配置参考/Javadoc 更新
 - [ ] 示例工程可运行
+- [ ] CLI `java -jar knitid-cli/target/knitid-cli-1.0.0.jar --version` 可运行
 - [ ] 基准报告更新
 - [ ] Maven Central 构件包含 sources/javadoc/asc
 - [ ] 发布说明（Release Notes）发布

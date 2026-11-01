@@ -2,7 +2,7 @@
 
 KnitID CLI 用于在终端、脚本和排障场景中生成/解析 ID，不依赖 Spring Boot。
 
-- v1.0.0 状态：可用骨架，覆盖无基础设施依赖的本地操作；
+- v1.0.0 状态：可用，覆盖无基础设施依赖的本地操作；
 - 不访问 Redis、数据库、ZooKeeper、Kubernetes；
 - 不启动 daemon，不读取隐式配置文件。
 

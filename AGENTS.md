@@ -33,7 +33,7 @@ KnitID 是 Java 21 的统一 ID 生成工具库，提供：
 mvn -B -ntp verify
 
 # Spring Boot 4.0 兼容矩阵（profile 增加兼容测试模块）
-mvn -B -ntp -Pboot-4.0 verify
+mvn -B -ntp "-Pboot-4.0" verify
 
 # 只测 CLI
 mvn -B -ntp -pl knitid-cli -am test

@@ -142,7 +142,7 @@ IdTypeParser bizParser() {
 }
 ```
 
-用户 Bean 优先于内置解析器；内置支持 UUIDv7、UUIDv8、ULID、纯数字 KSID（仅类型/原值）。
+用户 Bean 优先于内置解析器。Spring Boot 会自动绑定已配置 generator 的 BIZ/KSID parser；内置还支持 UUIDv7、UUIDv8、ULID、KSUID、TypeID 和纯数字 KSID。多个同类型布局需要自定义 parser。
 
 ## 5. 装饰器
 

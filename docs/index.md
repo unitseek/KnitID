@@ -11,6 +11,7 @@
 | [兼容性与版本策略](compatibility.md) | ✅ | Java/Boot 矩阵、SemVer、弃用 |
 | [迁移指南](migration.md) | ✅ | 从其他 ID 库迁移 |
 | [发布流程](release.md) | ✅ | Maven Central、CI/CD |
+| [基准测试](benchmarks.md) | ✅ | JMH 运行方法、附加基准 |
 | [基准报告](benchmark-report.md) | ✅ | JMH 结果与方法 |
 | [快速开始](getting-started.md) | ✅ | 5 分钟上手 |
 | [ID 选型](id-selection.md) | ✅ | 七类 ID 决策树 |
@@ -30,7 +31,7 @@
 
 | 文档 | 说明 |
 | --- | --- |
-| [Roadmap](../ROADMAP.md) | 1.0/1.1/1.2 路线 |
+| [Roadmap](../ROADMAP.md) | 1.0 路线与 Backlog |
 | [Governance](../GOVERNANCE.md) | 角色、决策、发布权限 |
 | [Maintainers](../MAINTAINERS.md) | 维护者与职责 |
 | [Contributors](../CONTRIBUTORS.md) | 贡献者 |

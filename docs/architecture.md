@@ -20,6 +20,11 @@
           +--------v--------+
           | knitid-core      |
           | api / spi / parser / exception |
+          +--------+---------+
+                   |
+          +--------v--------+
+          | knitid-cli       |
+          | gen / parse      |
           +-----------------+
 ```
 
@@ -28,7 +33,8 @@
 - **autoconfigure**：把配置、工厂、装饰器组装成注册中心；
 - **worker-*/sequence-redis**：通过 SPI 提供 WorkerId/序列；
 - **starter**：只聚合 core + autoconfigure，不包含算法；
-- **starter-all**：聚合普通 starter 与全部七类生成器，面向“开箱即用”场景。
+- **starter-all**：聚合普通 starter 与全部七类生成器，面向“开箱即用”场景；
+- **cli**：独立可执行 JAR，直接使用 core + 生成器模块，不启动 Spring。
 
 ## 2. 核心抽象
 
@@ -53,7 +59,8 @@
    - 遍历 `knitid.generators.*`，校验键、创建、应用 `IdGeneratorDecorator`；
    - 选择默认生成器；
 4. 创建 `@Primary` `IdGenerator`（`DelegatingIdGenerator`），每次调用委托给注册中心默认生成器；
-5. 健康（`knitId`）、指标装饰器、Actuator 端点、IdParser 按条件装配。
+5. 健康（`knitId`）、指标装饰器、Actuator 端点、IdParser 按条件装配；
+6. BIZ/KSID parser 自动绑定到默认/选中的 generator；`knitid-config` 端点提供脱敏诊断。
 
 ## 4. 默认生成器选择
 
@@ -93,8 +100,9 @@
 
 - KSID 健康快照含 `workerId`、`leaseValid`、`clockBackwardsCount`、策略、epoch；
 - `KnitIdHealthIndicator` 缓存 `5s`，DOWN 条件：快照 DOWN 或窗口内回拨次数 ≥ 阈值；
-- 指标装饰器记录 duration/errors/batch；KSID 生成器始终注册 WorkerId gauge，其他生成器仅在健康快照含 `workerId` 时注册；
-- Actuator 端点只读，受 `management.endpoint.knitid.enabled` 控制。
+- 指标装饰器记录 duration/errors/batch，并带 OTel 风格 `id.type`/`id.name` tags；
+- KSID 生成器始终注册 WorkerId gauge，其他生成器仅在健康快照含 `workerId` 时注册；回拨指标为 `knitid.id.clock.backwards`；
+- Actuator 端点只读，受 `management.endpoint.knitid.enabled` / `management.endpoint.knitid-config.enabled` 控制。
 
 ## 8. 线程模型
 

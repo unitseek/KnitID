@@ -56,7 +56,10 @@ class OrderService {
 - [配置参考](docs/configuration.md)
 - [兼容性与版本策略](docs/compatibility.md)
 - [迁移指南](docs/migration.md)
+- [基准测试](docs/benchmarks.md)
 - [基准报告](docs/benchmark-report.md)
+- [CLI](docs/cli.md)
+- [AI 使用指南](docs/ai-usage.md)
 - [发布流程](docs/release.md)
 - [CHANGELOG](CHANGELOG.md)
 - [贡献指南](CONTRIBUTING.md)
@@ -74,7 +77,8 @@ class OrderService {
 要求 JDK 21+、Maven 3.9+：
 
 ```bash
-mvn clean verify
+mvn -B -ntp verify
+mvn -B -ntp "-Pboot-4.0" verify   # PowerShell 必须加引号
 ```
 
 ## GraalVM Native
@@ -127,7 +131,7 @@ CI 工作流：`.github/workflows/native.yml`（workflow_dispatch / 每周计划
 - `knitid-generator-typeid`：官方向量、前缀规则、多前缀、编解码往返、解析、配置与自动配置（13）；
 - `knitid-sequence-redis`：原子 INCRBY、TTL/持久 scope、批量区间、跨实例共享、失败映射、自动配置（7 + 5 Testcontainers + 2），含两个 BIZ 生成器共享序列的集成测试；
 - `knitid-sequence-jdbc`：数据库号段、事务行锁、跨块连续、并发唯一、回滚隔离、自动配置（4）；
-- `knitid-boot-compat-4.0`：Spring Boot 4.0.9 兼容启动与 UUIDv7 生成（1，仅 `-Pboot-4.0`）；
+- `knitid-boot-compat-4.0`：Spring Boot 4.0.9 兼容启动与 UUIDv7 生成（1，仅 `-Pboot-4.0`；PowerShell 使用 `"-Pboot-4.0"`）；
 - `knitid-worker-redis`：槽位占用/冲突、token fencing、租约续约失败、释放、provider 配置校验、自动配置（9），以及 Testcontainers 真实 Redis 的 SET NX/TTL/续约/释放/断连（8）；
 - `knitid-worker-zookeeper`：临时节点分配、重新占用、续约、配置校验、自动配置（6），以及 Testcontainers 真实 ZooKeeper 的分配/释放、foreign release 与断连（3）；
 - `knitid-worker-kubernetes`：StatefulSet ordinal、Downward API、越界/非法 pod 名、配置校验、自动配置（9）；
@@ -207,13 +211,13 @@ java -jar knitid-benchmarks/target/knitid-benchmarks.jar -wi 1 -i 1 -f 1 -w 1 -r
 ## Actuator
 
 - **端点**：`/actuator/knitid`（生成器列表）与 `/actuator/knitid-config`（脱敏配置诊断）；
-  暴露配置：`management.endpoints.web.exposure.include=knitid`。
+  暴露配置：`management.endpoints.web.exposure.include=knitid,knitid-config`。
 - **指标**（Micrometer）：
   - `knitid.id.generation.duration`（Timer，tags `type`/`name`/`id.type`/`id.name`）；
-  - `knitid.id.generation.errors`（Counter，tags `type`/`name`/`reason`）；
+  - `knitid.id.generation.errors`（Counter，tags `type`/`name`/`reason`/`id.type`/`id.name`/`error.type`）；
   - `knitid.id.batch.size`（DistributionSummary，tags `type`/`name`）；
   - `knitid.id.worker.id`（Gauge，tags `name`/`id.type`/`id.name`）；
-- `knitid.id.clock.backwards`（Gauge，健康窗口内回拨次数）。
+  - `knitid.id.clock.backwards`（Gauge，健康窗口内回拨次数）。
 - 指标包装通过 `IdGeneratorDecorator` SPI 完成，Micrometer 不存在时不生效、不影响启动。
 
 ### Testcontainers 集成测试

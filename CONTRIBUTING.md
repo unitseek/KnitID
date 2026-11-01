@@ -15,6 +15,8 @@
 git clone https://github.com/unitseek/knitid.git
 cd knitid
 mvn -B -ntp verify
+mvn -B -ntp "-Pboot-4.0" verify   # PowerShell 引号；Bash 可写 -Pboot-4.0
+node scripts/check-docs.mjs
 ```
 
 常用命令：
@@ -41,9 +43,11 @@ Testcontainers 默认镜像：
 | `knitid-generator-*` | 七类生成器（含 KSUID/TypeID 可选模块） |
 | `knitid-spring-boot-autoconfigure` | 自动配置、健康、端点、指标、解析器 |
 | `knitid-sequence-redis` | Redis 序列 |
+| `knitid-sequence-jdbc` | 数据库号段序列 |
 | `knitid-worker-*` | WorkerId 分配器 |
 | `knitid-benchmarks` | JMH 基准 |
 | `knitid-samples` | 示例与集成测试 |
+| `knitid-cli` | 无 Spring 的 gen/parse CLI |
 
 ## Code Style
 
@@ -75,6 +79,8 @@ PR 模板会自动提醒检查项。提交即表示你同意以 Apache-2.0 许�
 
 - 配置项：`docs/configuration.md`
 - 兼容性与版本：`docs/compatibility.md`
+- CLI：`docs/cli.md`
+- AI 使用：`docs/ai-usage.md`
 - 迁移：`docs/migration.md`
 - 发布：`docs/release.md`
 - 安全：`SECURITY.md`

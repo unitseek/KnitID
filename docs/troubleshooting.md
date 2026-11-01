@@ -24,8 +24,8 @@
 
 1. **日志**：定位第一个异常与错误码，不要只看最终包装异常；
 2. **配置**：确认生成器名称、类型、嵌套块、默认选择；
-3. **Actuator**：`GET /actuator/knitid`、`GET /actuator/health/knitId`；
-4. **指标**：`knitid.id.generation.errors{reason=...}`、duration、worker.id；
+3. **Actuator**：`GET /actuator/knitid`、`GET /actuator/knitid-config`、`GET /actuator/health/knitId`；
+4. **指标**：`knitid.id.generation.errors{reason=...}`、duration、worker.id、clock.backwards；
 5. **基础设施**：Redis `PING/SCAN`、ZooKeeper `ls /workers`、Pod 名/ordinal；
 6. **时钟**：`timedatectl`/NTP 偏移、容器时间；
 7. **依赖**：`mvn dependency:tree` 确认模块与版本。
@@ -89,8 +89,28 @@ knitid:
 ### Actuator 端点 404
 
 - 引入 `spring-boot-starter-actuator`；
-- `management.endpoints.web.exposure.include=knitid`；
-- 检查 `management.endpoint.knitid.enabled` 与安全配置。
+- `management.endpoints.web.exposure.include=knitid,knitid-config`；
+- 检查 `management.endpoint.knitid.enabled` / `management.endpoint.knitid-config.enabled` 与安全配置。
+
+### Boot 4.0 profile 无法激活
+
+PowerShell 会把未加引号的 `-Pboot-4.0` 拆成 `-Pboot-4` 和 `.0`。使用：
+
+```powershell
+mvn -B -ntp "-Pboot-4.0" verify
+```
+
+或 `mvn -B -ntp -P boot-4.0 verify`。
+
+### IDEA 根 POM 报 `tokenAuth` 不允许
+
+`central-publishing-maven-plugin` 0.12.0 已移除 `tokenAuth` 参数。Central 认证使用 `publishingServerId` 对应的 Maven server 凭据；不要添加 `<tokenAuth>`。服务端凭据由 `settings.xml` 或 CI secrets 提供。
+
+### CLI 报 Unknown command / Invalid type
+
+- 先运行 `java -jar knitid-cli/target/knitid-cli-1.0.0.jar --help`；
+- `--type` 只支持 UUID7/UUID8/ULID/KSUID/TYPEID；
+- BIZ/KSID 生成、Redis/DB 序列和 WorkerId 不在 CLI v1 范围，见 [CLI](cli.md)。
 
 ### Testcontainers 跳过
 

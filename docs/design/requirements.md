@@ -8,7 +8,8 @@
 
 - 统一 `IdGenerator` API 与 Spring Boot 4 自动配置；
 - 覆盖 UUIDv7/UUIDv8/ULID/KSID/BIZ，并提供 KSUID/TypeID 可选兼容模块；
-- 多实例 WorkerId 分配与 Redis 序列；
+- 多实例 WorkerId 分配、Redis/JDBC 序列；
+- BIZ/KSID 内置解析器与 CLI；
 - 可观测性（健康/指标/端点）与可扩展 SPI；
 - 核心零 Spring 依赖，支持非 Spring 场景。
 
@@ -54,7 +55,7 @@
 | --- | --- |
 | 性能（单线程开发机） | UUIDv7 ≥ 500k、ULID ≥ 500k、KSID ≥ 1M、BIZ ≥ 300k ops/s |
 | 可靠性 | WorkerId 租约丢失后停止生成；Redis 序列失败不回退 |
-| 可观测性 | 健康键、生成耗时/错误/批量/WorkerId 指标 |
+| 可观测性 | 健康键、生成耗时/错误/批量/WorkerId/回拨指标、脱敏配置诊断 |
 | 兼容性 | Java 21、Spring Boot 4.0/4.1；Boot 3 不支持 |
 | 安全 | SecureRandom 默认；不把可枚举 ID 当令牌 |
 | 可扩展 | 工厂/WorkerId/序列/解析器/装饰器 SPI |
@@ -70,7 +71,7 @@
 
 ## 6. 验收与追溯
 
-- 单元/属性/Testcontainers 测试 220 个；
+- 单元/属性/Testcontainers 测试 220 个（Boot 4.0 矩阵另加 1 个）；
 - `mvn verify` 全绿；
 - `docs/` 覆盖配置、迁移、运维、排障、SPI；
 - 发布流水线见 [发布流程](../release.md)。

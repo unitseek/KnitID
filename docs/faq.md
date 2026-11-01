@@ -64,7 +64,7 @@ WorkerId 本身不是密钥，但泄露部署拓扑/容量信息；限制 Actuat
 
 ### 如何解析 KSID 的时间戳/WorkerId？
 
-内置解析器只识别数字 KSID 类型与原值（位布局是配置相关的）。注册自定义 `IdTypeParser`，按 `epoch/位宽` 解码。
+Spring Boot 下会自动绑定已配置 generator 的 BIZ 模板/KSID 位布局解析器；多个同类型但布局不同的 generator 需要自定义 `IdTypeParser`。非 Spring 场景直接使用生成器模块中的 parser 类。
 
 ## 兼容性
 
@@ -78,13 +78,17 @@ WorkerId 本身不是密钥，但泄露部署拓扑/容量信息；限制 Actuat
 
 ### 支持 GraalVM Native 吗？
 
-核心模块无反射依赖，设计上支持；Spring Boot 自动配置由 Boot AOT 处理。建议在目标版本上做 native 集成测试，见 [非 Spring 用法](non-spring.md)。
+核心模块无反射依赖，设计上支持；Spring Boot 自动配置由 Boot AOT 处理。仓库有 `.github/workflows/native.yml` 冒烟工作流，发布前仍需在目标 GraalVM 版本验证，见 [非 Spring 用法](non-spring.md)。
 
 ### 如何从其他 ID 库迁移？
 
 见 [迁移指南](migration.md)。已有 ID 的格式/位布局不能直接假设兼容，需要双写/回放和新旧列规划。
 
 ## 其他
+
+### 有 CLI 吗？
+
+有。`knitid-cli` 提供 `gen` / `parse`，生成覆盖 UUID7、UUID8、ULID、KSUID、TypeID，解析额外支持数字 KSID；不依赖 Spring，也不访问 Redis/数据库。见 [CLI](cli.md)。
 
 ### 批量接口一次能生成多少？
 

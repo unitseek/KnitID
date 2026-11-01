@@ -55,7 +55,7 @@ KnitID 是 ID 生成基础库，安全问题的核心是**唯一性、可预测�
 - KSID 多实例必须使用 Redis/ZooKeeper/Kubernetes 分配 WorkerId，或确保 `fixed` 的 WorkerId 全局唯一；
 - 部署环境必须启用 NTP/时钟同步，并监控回拨；
 - Redis/ZooKeeper 使用认证、TLS、网络隔离，禁止公网暴露；
-- Actuator 端点按需暴露，生产环境限制 `/actuator/knitid` 访问；
+- Actuator 端点按需暴露，生产环境限制 `/actuator/knitid`、`/actuator/knitid-config` 访问；
 - 不要把密钥、连接串、WorkerId 写入日志或公开配置；
 - BIZ 模板中的 `{random:n}` 不是安全随机源，不能用于令牌/密码；
 - 需要不可预测 ID 时使用 UUIDv7/SecureRandom 或 UUIDv8 `RANDOM`，不要使用可枚举序列。

@@ -87,20 +87,34 @@ String order = IdGenerators.get("order").generate();
 
 ## 4. 解析
 
-`IdParser`/`IdTypeParser` 在 core 中只有接口；内置实现位于 `knitid-spring-boot-autoconfigure`。非 Spring 场景可：
+`IdParser`/`IdTypeParser` 在 core 中只有接口。内置实现分布：
 
-- 自行实现 `IdTypeParser` 并用组合器调用；
-- 或引入 autoconfigure 模块使用 `SimpleIdParser`（会带入 Spring 依赖，不推荐只做解析时使用）。
+- UUIDv7/UUIDv8/ULID/纯数字 KSID：`knitid-spring-boot-autoconfigure`；
+- KSUID/TypeID：各自生成器模块；
+- BIZ 模板/KSID 位布局：各自生成器模块，Spring Boot 下按 generator 自动绑定。
 
-## 5. GraalVM Native
+非 Spring 场景可以自行组合 `IdTypeParser`，或直接引入对应模块的 parser 类。只做解析时不要为了 `SimpleIdParser` 引入整个 autoconfigure/Spring 依赖。
+
+## 5. CLI
+
+无需 Spring 即可使用 CLI：
+
+```bash
+java -jar knitid-cli/target/knitid-cli-1.0.0.jar gen --type UUID7
+java -jar knitid-cli/target/knitid-cli-1.0.0.jar parse <id>
+```
+
+CLI v1 只支持无外部基础设施的类型；完整范围见 [CLI](cli.md)。
+
+## 6. GraalVM Native
 
 - 核心算法无反射、无动态代理、无 Jackson；
 - `SecureRandom`/`Clock`/`System.Logger` 均为 native-image 友好 API；
 - Spring Boot 应用使用 Boot 4 的 AOT 处理自动配置；
-- 发布前应在目标 GraalVM 版本运行 native 集成测试（本仓库 CI 尚未覆盖 native）；
+- 仓库提供 `.github/workflows/native.yml`（workflow_dispatch / 每周计划）做 GraalVM Native 冒烟；不是每个 PR 都执行，发布前仍需在目标 GraalVM 版本验证；
 - 如自定义 `RandomProvider`/`IdTypeParser`，确保注册方式 AOT 可分析（避免运行时反射扫描）。
 
-## 6. Kotlin
+## 7. Kotlin
 
 ```kotlin
 val ids: IdGenerator = Uuid7Generator(Clock.systemUTC(), SecureRandomProvider())
@@ -112,7 +126,7 @@ fun nextOrderId(registry: IdGeneratorRegistry): String =
 
 Kotlin 可空性：`IdContext` 参数可传 `null`；`IdInfo` 字段可为空，按需判空。
 
-## 7. 线程安全与阻塞
+## 8. 线程安全与阻塞
 
 - 所有内置生成器线程安全；
 - KSID 在 `clock-backwards.strategy=WAIT` 时可能阻塞，`blocking()` 返回 `true`；

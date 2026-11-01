@@ -9,6 +9,8 @@
 - [选型指南](docs/id-selection.md)
 - [FAQ](docs/faq.md)
 - [排障与错误码](docs/troubleshooting.md)
+- [CLI](docs/cli.md)
+- [AI 使用指南](docs/ai-usage.md)
 
 ## Where to Ask
 

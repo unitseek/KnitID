@@ -151,11 +151,12 @@ management:
   endpoints:
     web:
       exposure:
-        include: knitid,health,metrics
+        include: knitid,knitid-config,health,metrics
 ```
 
 ```bash
 curl http://localhost:8080/actuator/knitid
+curl http://localhost:8080/actuator/knitid-config
 curl http://localhost:8080/actuator/health/knitId
 ```
 
@@ -168,3 +169,5 @@ curl http://localhost:8080/actuator/health/knitId
 - 多实例 KSID：[运维指南](operations.md)
 - 自定义扩展：[SPI 指南](spi.md)
 - 常见问题：[FAQ](faq.md)
+- 命令行工具：[CLI](cli.md)
+- AI 辅助：[AI 使用指南](ai-usage.md)

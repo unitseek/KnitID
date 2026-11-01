@@ -29,7 +29,7 @@
 
 ```bash
 mvn -B -ntp verify
-mvn -B -ntp -Pboot-4.0 verify
+mvn -B -ntp "-Pboot-4.0" verify
 mvn -B -ntp -pl knitid-cli -am package
 java -jar knitid-cli/target/knitid-cli-1.0.0.jar gen --type UUID7
 node scripts/check-docs.mjs
