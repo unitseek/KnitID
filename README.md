@@ -10,7 +10,7 @@
 
 ## 状态
 
-1.0.0 发布准备版：七类 ID 算法（UUIDv7、UUIDv8、ULID、KSID、BIZ、KSUID、TypeID）、IdParser、Redis/ZooKeeper/Kubernetes WorkerId 分配器、Redis 序列模块、Actuator 端点/健康检查/指标、JMH 基准、示例工程、Spring Boot 自动配置与契约测试均已完成；包含 JDBC 序列、BIZ/KSID 内置解析器、异步/流式批量、脱敏配置诊断和 Spring Boot 4.0 兼容测试。
+1.0.0 发布准备版：七类 ID 算法（UUIDv7、UUIDv8、ULID、KSID、BIZ、KSUID、TypeID）、IdParser、Redis/ZooKeeper/Kubernetes WorkerId 分配器、Redis 序列模块、Actuator 端点/健康检查/指标、JMH 基准、示例工程、CLI v1、Spring Boot 自动配置与契约测试均已完成；包含 JDBC 序列、BIZ/KSID 内置解析器、异步/流式批量、脱敏配置诊断和 Spring Boot 4.0 兼容测试。
 
 ## 快速开始
 
@@ -111,10 +111,11 @@ CI 工作流：`.github/workflows/native.yml`（workflow_dispatch / 每周计划
 | `knitid-spring-boot-starter-all` | 已完成（包含全部七类算法模块） |
 | `knitid-benchmarks` | 已完成 JMH 基准（UUID7/UUID8/ULID/KSID/BIZ） |
 | `knitid-samples` | 已完成七类 ID + Actuator 集成示例 |
+| `knitid-cli` | 已完成 CLI v1（gen/parse，无 Spring、无外部基础设施） |
 
 ## 测试
 
-当前共 215 个测试（Boot 4.0 兼容矩阵另加 1 个），全部通过（`mvn verify`；Testcontainers 用例在无 Docker 时自动跳过）：
+当前共 220 个测试（Boot 4.0 兼容矩阵另加 1 个），全部通过（`mvn verify`；Testcontainers 用例在无 Docker 时自动跳过）：
 
 - `knitid-core`：IdType 规范化契约 + DurationParser 边界 + 异步/流式批量 API（9）；
 - `knitid-generator-uuid7`：RFC 9562 附录 A.6 向量、属性测试、边界、溢出与回拨策略（12）；
@@ -133,7 +134,8 @@ CI 工作流：`.github/workflows/native.yml`（workflow_dispatch / 每周计划
 - `knitid-spring-boot-autoconfigure`：启动矩阵/健康/解析/端点/指标/配置诊断/回拨指标/索引 Map/自动绑定解析器（42）；
 - `knitid-spring-boot-starter`：依赖边界，确认不含生成器类，且无生成器模块时可启动（2）；
 - `knitid-spring-boot-starter-all`：依赖边界，确认包含七类生成器（1）；
-- `knitid-samples`：七类 ID + Actuator + 多租户前缀示例启动测试（7）。
+- `knitid-samples`：七类 ID + Actuator + 多租户前缀示例启动测试（7）；
+- `knitid-cli`：help/version、UUID7 批量、自动解析、JSON 输出、非法类型退出码（5）。
 
 ## 业务 ID 快速配置
 

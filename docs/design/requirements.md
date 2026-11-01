@@ -45,6 +45,7 @@
 | FR-AUTO-02 | 普通 starter 不含算法；starter-all 含七类算法 | starter/starter-all 依赖级测试 + samples 七类启动验证 |
 | FR-OBS-01 | 健康/端点/指标 | 集成测试 |
 | FR-PARSE-01 | 类型识别与元数据解析 | 解析器测试 |
+| FR-CLI-01 | CLI v1 gen/parse，文本/JSON 输出，无 Spring | CLI 测试 |
 | FR-DOC-01 | 文档、示例、基准、发布流程 | 本仓库文档 |
 
 ## 4. 非功能需求
@@ -69,7 +70,7 @@
 
 ## 6. 验收与追溯
 
-- 单元/属性/Testcontainers 测试 215 个；
+- 单元/属性/Testcontainers 测试 220 个；
 - `mvn verify` 全绿；
 - `docs/` 覆盖配置、迁移、运维、排障、SPI；
 - 发布流水线见 [发布流程](../release.md)。

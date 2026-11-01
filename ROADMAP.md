@@ -12,7 +12,7 @@
 - [x] Spring Boot 4 自动配置、严格配置校验、FailureAnalyzer
 - [x] IdParser、Actuator 端点、健康检查、Micrometer 指标
 - [x] JMH 基准、示例工程、P0/P1 文档、发布流水线
-- [x] 215 个测试（含 Redis/ZooKeeper Testcontainers）
+- [x] 220 个测试（含 Redis/ZooKeeper Testcontainers）
 - [ ] 1.0.0 正式发布到 Maven Central
 - [ ] 在 Java 21 固定硬件复测正式基准报告
 
@@ -37,6 +37,7 @@
 - [x] Actuator 配置诊断（不泄露敏感信息）
 - [x] 多线程/Redis 序列基准
 - [x] 多租户/业务类型扩展示例
+- [x] CLI v1.0.0（gen/parse，无 Spring、无外部基础设施）
 
 ## Backlog
 

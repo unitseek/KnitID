@@ -20,6 +20,8 @@
 | [排障与错误码](troubleshooting.md) | ✅ | `KNITID-xxxx` 对照 |
 | [FAQ](faq.md) | ✅ | 常见问题 |
 | [非 Spring 用法](non-spring.md) | ✅ | core API、GraalVM、Kotlin |
+| [CLI](cli.md) | ✅ | 命令行生成/解析、退出码、v1 范围 |
+| [AI 使用指南](ai-usage.md) | ✅ | 让 AI 正确使用/修改 KnitID |
 | [架构](architecture.md) | ✅ | 模块图、自动配置、扩展点 |
 | [设计需求](design/requirements.md) | ✅ | 公开需求摘要 |
 | [ADR](design/adr/README.md) | ✅ | 关键决策记录 |

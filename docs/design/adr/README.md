@@ -9,6 +9,7 @@ ADR 记录不可逆或影响公共契约的决策。
 | [0003](0003-biz-defaults.md) | BIZ 默认模板策略 | Accepted |
 | [0004](0004-core-zero-spring.md) | 核心模块零 Spring 依赖 | Accepted |
 | [0005](0005-uuid7-method2.md) | UUIDv7 单调使用 RFC 9562 Method 2 | Accepted |
+| [0006](0006-cli.md) | 提供独立 CLI 模块 | Accepted |
 
 ## 模板
 

@@ -12,6 +12,8 @@ knitid-spring-boot-starter-all (starter + all seven generators)
 knitid-worker-{redis,zookeeper,kubernetes} / knitid-sequence-redis
      ↑
 knitid-samples / knitid-benchmarks
+
+knitid-core + generator-*  ←  knitid-cli（独立可执行 JAR）
 ```
 
 - `knitid-core`：API、SPI、异常、解析接口，零 Spring/三方算法依赖；
@@ -46,6 +48,7 @@ knitid-samples / knitid-benchmarks
 | `knitid-boot-compat-4.0` | Spring Boot 4.0 兼容测试 | 仅 profile `boot-4.0` |
 | `knitid-benchmarks` | JMH | 仅开发 |
 | `knitid-samples` | 示例 | 仅开发 |
+| `knitid-cli` | 无 Spring 的命令行 gen/parse | JDK + 对应生成器模块 |
 
 ## 最小依赖组合
 
@@ -60,6 +63,7 @@ knitid-samples / knitid-benchmarks
 | TypeID | starter + generator-typeid（会传递引入 UUIDv7） |
 | 全部七类 | starter-all |
 | 非 Spring 使用 | core + 算法模块 |
+| CLI | `knitid-cli` 可执行 JAR |
 
 ## BOM
 

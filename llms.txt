@@ -1,0 +1,50 @@
+# KnitID
+
+> Java 21 统一 ID 生成工具库：UUIDv7、UUIDv8、ULID、KSID、BIZ、KSUID、TypeID；Spring Boot 4、解析、序列、WorkerId、CLI。
+
+## 快速上下文
+
+- 版本：1.0.0
+- Java：21+
+- Spring Boot：4.1.x（兼容 4.0.x profile）
+- 构建：Maven 多模块
+- 核心约束：knitid-core 零 Spring 依赖
+
+## 文档
+
+- [README](https://github.com/unitseek/knitid/blob/main/README.md)：定位、快速开始、模块、测试
+- [配置参考](https://github.com/unitseek/knitid/blob/main/docs/configuration.md)：全部 knitid.* 配置
+- [快速开始](https://github.com/unitseek/knitid/blob/main/docs/getting-started.md)
+- [ID 选型](https://github.com/unitseek/knitid/blob/main/docs/id-selection.md)
+- [模块说明](https://github.com/unitseek/knitid/blob/main/docs/modules.md)
+- [SPI 扩展](https://github.com/unitseek/knitid/blob/main/docs/spi.md)
+- [兼容性](https://github.com/unitseek/knitid/blob/main/docs/compatibility.md)
+- [非 Spring 用法](https://github.com/unitseek/knitid/blob/main/docs/non-spring.md)
+- [CLI](https://github.com/unitseek/knitid/blob/main/docs/cli.md)
+- [排障/错误码](https://github.com/unitseek/knitid/blob/main/docs/troubleshooting.md)
+- [ADR](https://github.com/unitseek/knitid/blob/main/docs/design/adr/README.md)
+- [AI 使用指南](https://github.com/unitseek/knitid/blob/main/docs/ai-usage.md)
+
+## 常用命令
+
+```bash
+mvn -B -ntp verify
+mvn -B -ntp -Pboot-4.0 verify
+mvn -B -ntp -pl knitid-cli -am package
+java -jar knitid-cli/target/knitid-cli-1.0.0.jar gen --type UUID7
+node scripts/check-docs.mjs
+```
+
+## 代码入口
+
+- `knitid-core`：API/SPI/异常/解析接口
+- `knitid-generator-*`：各 ID 算法
+- `knitid-spring-boot-autoconfigure`：Spring Boot 自动配置
+- `knitid-cli`：无 Spring 命令行工具
+- `docs/`：权威文档
+
+## 约束
+
+- 不要在 core 中引入 Spring。
+- 不要提交密钥、私钥、passphrase。
+- 公共 API 变更需同步文档和测试。

@@ -81,6 +81,7 @@
     <module>knitid-worker-kubernetes</module>
     <module>knitid-benchmarks</module>
     <module>knitid-samples</module>
+    <module>knitid-cli</module>
   </modules>
 
   <dependencyManagement>
@@ -183,6 +184,11 @@
       <dependency>
         <groupId>org.unitseek.knitid</groupId>
         <artifactId>knitid-samples</artifactId>
+        <version>1.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.unitseek.knitid</groupId>
+        <artifactId>knitid-cli</artifactId>
         <version>1.0.0</version>
       </dependency>
       <dependency>
