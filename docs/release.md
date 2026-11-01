@@ -87,7 +87,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\setup-gpg-release.ps
 
 - `distributionManagement` 指向 `https://central.sonatype.com/api/v1/publisher`；
 - `central-publishing-maven-plugin` 使用 server id `central`；
-- 首次发布使用 `autoPublish=false`、`waitUntil=validated`，在 Portal 检查后人工 Publish；
+- 首次发布使用 `autoPublish=true`、`waitUntil=PUBLISHED`，验证后自动发布到 Maven Central；
 - `maven-gpg-plugin` 在 `verify` 阶段签名；
 - `knitid-samples`、`knitid-benchmarks` 的 `maven-deploy-plugin` 已设置 `skip=true`；
 - `knitid-cli` 作为可执行 JAR 随其他模块发布，构建时会生成带依赖的主 artifact。
