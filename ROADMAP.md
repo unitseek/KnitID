@@ -40,8 +40,8 @@
 - [x] `node scripts/check-docs.mjs`：文档检查通过
 - [x] Native smoke：构建、运行、三个生成器输出通过
 - [x] 文档站点与版本化文档 workflow（首次推送后生效）
-- [ ] GitHub Actions 固定到 commit SHA
-- [ ] CI 定期执行 OSV / Dependency-Check
+- [x] GitHub Actions 固定到 commit SHA
+- [x] CI 定期 OSV 扫描 workflow（每周/手动）
 - [ ] 1.0.0 正式发布到 Maven Central（需要推送/发布授权）
 - [ ] 发布后创建 GitHub Release Notes（需要发布授权）
 

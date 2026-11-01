@@ -104,6 +104,7 @@ mvn -B -ntp -Prelease clean deploy
 
 - `.github/workflows/ci.yml`：push/PR 构建，JDK 21，`mvn verify`（Ubuntu runner 提供 Docker）；
 - `.github/workflows/docs-check.yml`：PR/push 检查文档结构、链接与代码围栏；
+- `.github/workflows/security.yml`：每周/手动生成 SBOM 并执行 OSV 依赖漏洞扫描；
 - `.github/workflows/release.yml`：推送 `v*` tag 时执行 `mvn -Prelease clean deploy`；
   - Secrets：`MAVEN_CENTRAL_USERNAME`、`MAVEN_CENTRAL_PASSWORD`、`GPG_PRIVATE_KEY`、`MAVEN_GPG_PASSPHRASE`；
   - `release` job 使用 GitHub Environment `release`，并校验 tag/version。
