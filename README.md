@@ -5,12 +5,13 @@
 [![Java 21](https://img.shields.io/badge/Java-21+-blue.svg)](https://adoptium.net/)
 [![Spring Boot 4](https://img.shields.io/badge/Spring%20Boot-4.0%20%7C%204.1-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![Javadoc](https://img.shields.io/badge/javadoc-site-blue)](https://unitseek.github.io/knitid/)
+[![Maven Central](https://img.shields.io/maven-central/v/org.unitseek.knitid/knitid-core.svg)](https://central.sonatype.com/artifact/org.unitseek.knitid/knitid-core)
 
 统一、模块化的 Spring Boot ID 生成工具库：UUIDv7、UUIDv8、ULID、KSID（Snowflake 算法）、业务 ID、KSUID、TypeID。
 
 ## 状态
 
-1.0.0 发布准备版：七类 ID 算法（UUIDv7、UUIDv8、ULID、KSID、BIZ、KSUID、TypeID）、IdParser、Redis/ZooKeeper/Kubernetes WorkerId 分配器、Redis 序列模块、Actuator 端点/健康检查/指标、JMH 基准、示例工程、CLI v1、Spring Boot 自动配置与契约测试均已完成；包含 JDBC 序列、BIZ/KSID 内置解析器、异步/流式批量、脱敏配置诊断和 Spring Boot 4.0 兼容测试。
+1.0.0 正式版：七类 ID 算法（UUIDv7、UUIDv8、ULID、KSID、BIZ、KSUID、TypeID）、IdParser、Redis/ZooKeeper/Kubernetes WorkerId 分配器、Redis 序列模块、Actuator 端点/健康检查/指标、JMH 基准、示例工程、CLI v1、Spring Boot 自动配置与契约测试均已完成；包含 JDBC 序列、BIZ/KSID 内置解析器、异步/流式批量、脱敏配置诊断和 Spring Boot 4.0 兼容测试。
 
 ## 快速开始
 

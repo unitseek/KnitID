@@ -4,7 +4,7 @@
 
 ## 1.0.0 — 稳定发布
 
-状态：核心代码、自动化测试、Docker Testcontainers、Spring Boot 4.0 矩阵、Native 冒烟、安全审查、MkDocs 版本化文档和 Java 21 基准已完成；等待发布工程与 Maven Central 授权。
+状态：1.0.0 已发布到 Maven Central，GitHub Release 已创建；核心能力、自动化测试、Docker Testcontainers、Spring Boot 4.0 矩阵、Native 冒烟、安全审查、MkDocs 版本化文档和 Java 21 基准均已完成。
 
 ### 核心能力
 
@@ -42,8 +42,8 @@
 - [x] 文档站点与版本化文档 workflow（首次推送后生效）
 - [x] GitHub Actions 固定到 commit SHA
 - [x] CI 定期 OSV 扫描 workflow（每周/手动）
-- [ ] 1.0.0 正式发布到 Maven Central（需要推送/发布授权）
-- [ ] 发布后创建 GitHub Release Notes（需要发布授权）
+- [x] 1.0.0 正式发布到 Maven Central
+- [x] 发布后创建 GitHub Release Notes
 
 ## 1.1 — CLI、兼容性与数据库建议
 
