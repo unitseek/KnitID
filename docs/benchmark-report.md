@@ -1,9 +1,9 @@
 # KnitID JMH 基准报告
 
 **版本**：1.0.0
-**日期**：2026-10-29
+**日期**：2026-11-01
 **JMH**：1.37
-**运行方式**：单 fork、单线程、3 × 1s warmup、5 × 1s measurement，返回 `String`（KSID 返回 `long`）
+**运行方式**：3 forks、单线程、5 × 1s warmup、10 × 1s measurement，返回 `String`（KSID 返回 `long`）
 **原始结果**：`docs/benchmark-results.json`
 
 ## 环境
@@ -13,11 +13,11 @@
 | CPU | Intel Xeon W-10885M @ 2.40GHz（8 核 / 16 线程） |
 | 内存 | 64 GB |
 | 操作系统 | Windows 11 Pro for Workstations |
-| JDK | OpenJDK 25.0.4.1 (Microsoft) |
+| JDK | OpenJDK 21.0.8 (Microsoft) |
 | JMH | 1.37 |
 | 构建 | Maven 3.9.16，`release=21` |
 
-> 说明：库基线为 Java 21，本次基准在 JDK 25 上运行；正式发布报告建议在目标 CI/生产硬件（Java 21）复测。
+> 这是 1.0.0 发布前的固定开发机 Java 21 基准。正式生产容量仍需按目标硬件、JVM 参数和实际负载复测。
 
 ## 生成器配置
 
@@ -33,36 +33,35 @@
 
 | 基准 | 吞吐（ops/s） | 99.9% 误差 | 需求目标 | 结论 |
 | --- | --- | --- | --- | --- |
-| UUIDv7 | 17,614,816 | ± 8,518,938 | ≥ 500,000 | 达标（误差受环境噪声影响较大） |
-| UUIDv8 | 2,743,475 | ± 236,242 | 无硬性目标 | — |
-| ULID | 6,047,289 | ± 1,067,261 | ≥ 500,000 | 达标 |
-| KSID | 2,798,557 | ± 434,633 | ≥ 1,000,000 | 达标 |
-| BIZ | 627,569 | ± 279,210 | ≥ 300,000 | 达标 |
+| UUIDv7 | 21,458,510 | ± 1,719,754 | ≥ 500,000 | 达标 |
+| UUIDv8 | 3,328,708 | ± 235,680 | 无硬性目标 | — |
+| ULID | 5,173,384 | ± 422,448 | ≥ 500,000 | 达标 |
+| KSID | 2,532,802 | ± 445,671 | ≥ 1,000,000 | 达标 |
+| BIZ | 336,043 | ± 11,183 | ≥ 300,000 | 达标 |
 
-> 吞吐为单线程、返回对象被 JMH 消费后的结果。UUIDv7 的误差区间较宽，建议在固定硬件、
-> 关闭后台负载、增加 fork 数后复测。
-
-## 复现
-
-```bash
-mvn -pl knitid-benchmarks -am package -DskipTests
-java -jar knitid-benchmarks/target/knitid-benchmarks.jar -wi 3 -i 5 -f 1 \
-  -rf json -rff knitid-benchmarks/target/jmh-results.json
-```
+> 结果为单线程、结果被 JMH 消费后的吞吐。KSID/UUID8 处于时间序列高负载路径，短窗口等待在 Windows 上曾受约 15.6ms 定时器粒度影响；生成器已改为先短暂自旋再 park，表中为修复后的数据。
 
 ## 附加基准
 
-以下基准在新增后加入，不改变上面的正式单线程结果：
+以下基准不改变上面的正式单线程结果：
 
 - `ConcurrentSequenceBenchmark`：8 线程内存序列吞吐；
 - `RedisSequenceBenchmark`：内存 store 下的 RedisSequenceProvider 本地开销，不含真实网络 RTT。
 
 运行方式见 [基准测试](benchmarks.md)。
 
+## 复现
+
+```bash
+mvn -pl knitid-benchmarks -am package -DskipTests
+java -jar knitid-benchmarks/target/knitid-benchmarks.jar \
+  Uuid7Benchmark Uuid8Benchmark UlidBenchmark KsidBenchmark BizBenchmark \
+  -wi 5 -i 10 -f 3 -rf json -rff docs/benchmark-results.json
+```
+
 ## 结论与注意事项
 
-- 五个生成器均达到或超过需求目标（UUID8 无硬性目标）；
-- 本报告为开发机快速基准，不是严格的发布基准；正式 1.0 报告应固定硬件、增加 fork/迭代、
-  记录 GC 与 CPU 频率，并在 Java 21 上复测；
+- 五个生成器均达到或超过需求吞吐目标（UUID8 无硬性目标）；
 - KSID 基准使用固定 WorkerId 且无续约线程，实际部署需计入租约续约开销；
-- BIZ 使用内存序列，Redis 序列的额外网络开销需单独基准。
+- BIZ 使用内存序列，Redis 序列的额外网络开销需单独基准；
+- 开发机结果不构成生产 SLA，生产容量需结合目标硬件、JVM、线程数和 Redis/DB 延迟评估。

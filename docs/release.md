@@ -110,9 +110,10 @@ mvn -B -ntp -Prelease clean deploy
 
 ## 文档与 Javadoc 发布
 
-- `docs.yml` 在 `main` 推送时执行 `mvn -DskipTests javadoc:aggregate`，并发布到 GitHub Pages；
-- 聚合输出目录：`target/reports/apidocs`；
-- 仓库 Settings → Pages 的 Source 选择 **GitHub Actions**；
+- `docs.yml` 构建 MkDocs 站点、聚合 Javadoc，并使用 `mike` 发布版本化文档到 `gh-pages`；
+- 聚合 Javadoc 通过 `docs/site_hooks.py` 复制到站点 `apidocs/`；
+- 仓库 Settings → Pages 的 Source 选择 **Deploy from a branch**，分支选择 `gh-pages`；
+- `main` 发布 `dev` 版本，`v*` tag 发布对应版本并更新 `latest`；
 - 页面地址：https://unitseek.github.io/knitid （以实际仓库为准）。
 
 ## 发布检查清单

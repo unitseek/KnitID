@@ -145,7 +145,7 @@ knitid:
 
 ## 9. 容量
 
-开发机单线程 JMH（非正式）：UUIDv7 ≈ 17.6M、ULID ≈ 6.0M、KSID ≈ 2.8M ops/s。生产容量需考虑：
+开发机单线程 JMH（Java 21，固定开发机）：UUIDv7 ≈ 21.5M、ULID ≈ 5.2M、KSID ≈ 2.5M ops/s。生产容量需考虑：
 
 - 每实例线程数与锁竞争（KSID/ULID 同步）；
 - Redis 序列每次生成一次 RTT，批量接口可降低往返；

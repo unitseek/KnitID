@@ -325,6 +325,7 @@ public final class KsidGenerator implements NumericIdGenerator, IdGeneratorHealt
     private void awaitNextMillisecond() {
         long targetMillis = epochMillis + lastTimestamp + 1L;
         long deadline = System.nanoTime() + config.maxBackwardsWait().toNanos();
+        long spinDeadline = System.nanoTime() + 1_000_000L;
         while (clock.millis() < targetMillis) {
             if (System.nanoTime() >= deadline) {
                 throw new IdGenerationException(
@@ -332,7 +333,14 @@ public final class KsidGenerator implements NumericIdGenerator, IdGeneratorHealt
                         "KSID sequence exhausted and next millisecond did not arrive within "
                                 + config.maxBackwardsWait());
             }
-            LockSupport.parkNanos(LEASE_PAUSE_NANOS);
+            // Sequence overflow normally waits <1ms. On Windows a parked thread can
+            // sleep for the ~15.6ms timer tick, so spin briefly before parking.
+            if (System.nanoTime() < spinDeadline) {
+                Thread.onSpinWait();
+            }
+            else {
+                LockSupport.parkNanos(LEASE_PAUSE_NANOS);
+            }
         }
     }
 

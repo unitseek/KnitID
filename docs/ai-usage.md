@@ -1,20 +1,20 @@
 # AI 辅助使用指南
 
 本文说明如何让 AI 编码助手正确使用或修改 KnitID。它不是 API 文档，权威内容以
-[README](../README.md)、[配置参考](configuration.md) 和 [Javadoc](https://javadoc.io/doc/org.unitseek.knitid) 为准。
+[README](https://github.com/unitseek/knitid/blob/main/README.md)、[配置参考](configuration.md) 和 [Javadoc](https://javadoc.io/doc/org.unitseek.knitid) 为准。
 
 ## 给 AI 的上下文
 
 让助手先读：
 
-1. [README](../README.md)
+1. [README](https://github.com/unitseek/knitid/blob/main/README.md)
 2. [配置参考](configuration.md)
 3. [模块说明](modules.md)
 4. [ID 选型](id-selection.md)
 5. [兼容性](compatibility.md)
 6. 当前任务相关模块的源码
 
-仓库根目录的 [AGENTS.md](../AGENTS.md) 提供了构建、架构和修改约束；`llms.txt` 提供精简索引。
+仓库根目录的 [AGENTS.md](https://github.com/unitseek/knitid/blob/main/AGENTS.md) 提供了构建、架构和修改约束；`llms.txt` 提供精简索引。
 
 ## 推荐提示词
 
@@ -92,8 +92,8 @@ Java/Spring API，而不是猜测 CLI 参数。
 
 ## 相关文档
 
-- [AGENTS.md](../AGENTS.md)
-- [llms.txt](../llms.txt)
+- [AGENTS.md](https://github.com/unitseek/knitid/blob/main/AGENTS.md)
+- [llms.txt](https://github.com/unitseek/knitid/blob/main/llms.txt)
 - [CLI](cli.md)
 - [SPI](spi.md)
 - [排障](troubleshooting.md)

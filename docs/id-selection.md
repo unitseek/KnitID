@@ -71,7 +71,7 @@ KSUID 为 27 字符 Base62；TypeID 为 `prefix_` + 26 字符小写 Base32。
 
 ## 性能参考
 
-开发机单线程 JMH（非正式报告）：UUIDv7 ≈ 17.6M、ULID ≈ 6.0M、KSID ≈ 2.8M、UUIDv8 ≈ 2.7M、BIZ ≈ 0.63M ops/s。详见 [基准报告](benchmark-report.md)。
+开发机单线程 JMH（非正式报告）：UUIDv7 ≈ 21.5M、ULID ≈ 5.2M、KSID ≈ 2.5M、UUIDv8 ≈ 3.3M、BIZ ≈ 0.34M ops/s。详见 [基准报告](benchmark-report.md)。
 
 ## 迁移已有 ID
 

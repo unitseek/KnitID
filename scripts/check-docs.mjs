@@ -4,7 +4,7 @@ import path from 'node:path';
 
 const root = process.cwd();
 const errors = [];
-const skipDirs = new Set(['.git', 'target', 'node_modules', 'wiki', 'ocr-fix']);
+const skipDirs = new Set(['.git', 'target', 'node_modules', 'site', 'wiki', 'ocr-fix']);
 
 function walk(dir) {
   const result = [];

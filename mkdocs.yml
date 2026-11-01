@@ -1,0 +1,86 @@
+site_name: KnitID
+site_description: Java 21 统一 ID 生成工具库
+site_url: https://unitseek.github.io/knitid/
+repo_url: https://github.com/unitseek/knitid
+repo_name: unitseek/knitid
+edit_uri: edit/main/docs/
+docs_dir: docs
+site_dir: site
+
+theme:
+  name: material
+  language: zh
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - search.highlight
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: 切换深色模式
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: 切换浅色模式
+
+extra:
+  version:
+    provider: mike
+
+nav:
+  - 首页: index.md
+  - 快速开始: getting-started.md
+  - 配置参考: configuration.md
+  - 模块说明: modules.md
+  - ID 选型: id-selection.md
+  - 兼容性: compatibility.md
+  - 迁移指南: migration.md
+  - 非 Spring 用法: non-spring.md
+  - Native Image: native.md
+  - Kotlin: kotlin.md
+  - CLI: cli.md
+  - 运维: operations.md
+  - 排障: troubleshooting.md
+  - FAQ: faq.md
+  - SPI: spi.md
+  - 架构: architecture.md
+  - 基准测试: benchmarks.md
+  - 基准报告: benchmark-report.md
+  - 发布流程: release.md
+  - AI 使用: ai-usage.md
+  - 设计:
+      - 需求摘要: design/requirements.md
+      - ADR: design/adr/README.md
+      - ADR 0001: design/adr/0001-ksid-name.md
+      - ADR 0002: design/adr/0002-spring-boot-4-only.md
+      - ADR 0003: design/adr/0003-biz-defaults.md
+      - ADR 0004: design/adr/0004-core-zero-spring.md
+      - ADR 0005: design/adr/0005-uuid7-method2.md
+      - ADR 0006: design/adr/0006-cli.md
+  - 第三方许可证: third-party.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+plugins:
+  - search
+
+hooks:
+  - docs/site_hooks.py

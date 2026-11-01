@@ -35,3 +35,7 @@ Thumbs.db
 *.asc
 *.gpg
 *.key
+site/
+
+# Python/docs
+__pycache__/

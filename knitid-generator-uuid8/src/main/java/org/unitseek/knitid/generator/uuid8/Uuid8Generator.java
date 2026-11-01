@@ -119,13 +119,19 @@ public final class Uuid8Generator implements IdGenerator {
     private void waitNextMillisecond() {
         long target = lastTimestamp + 1;
         long deadline = System.nanoTime() + MAX_OVERFLOW_WAIT_NANOS;
+        long spinDeadline = System.nanoTime() + 1_000_000L;
         while (clock.millis() < target) {
             if (System.nanoTime() >= deadline) {
                 throw new IdGenerationException(
                         IdErrorCodes.GENERATION_FAILED,
                         "Clock did not advance after UUIDv8 counter overflow within timeout: " + lastTimestamp);
             }
-            LockSupport.parkNanos(100_000L);
+            if (System.nanoTime() < spinDeadline) {
+                Thread.onSpinWait();
+            }
+            else {
+                LockSupport.parkNanos(100_000L);
+            }
         }
     }
 

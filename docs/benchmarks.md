@@ -13,20 +13,20 @@ java -jar knitid-benchmarks/target/knitid-benchmarks.jar -wi 1 -i 1 -f 1 -w 1 -r
 
 ## 方法
 
-- JMH 1.37，单 fork、单线程、3×1s warmup、5×1s measurement；
+- JMH 1.37，3 forks、单线程、5×1s warmup、10×1s measurement；
 - 返回 `String`（KSID 返回 `long`），由 JMH 消费；
-- 环境：Intel Xeon W-10885M（8C/16T）、64 GB、Windows 11、OpenJDK 25.0.4.1；
-- 库基线 Java 21，正式报告应在 Java 21 固定硬件复测。
+- 环境：Intel Xeon W-10885M（8C/16T）、64 GB、Windows 11、OpenJDK 21.0.8；
+- 已在本机 Java 21 固定环境（3 forks、5×1s warmup、10×1s measurement）完成 1.0.0 基准复测。
 
 ## 结果摘要
 
 | 基准 | 吞吐（ops/s） | 99.9% 误差 | 目标 |
 | --- | --- | --- | --- |
-| UUIDv7 | 17,614,816 | ± 8,518,938 | ≥ 500k |
-| UUIDv8 | 2,743,475 | ± 236,242 | — |
-| ULID | 6,047,289 | ± 1,067,261 | ≥ 500k |
-| KSID | 2,798,557 | ± 434,633 | ≥ 1M |
-| BIZ | 627,569 | ± 279,210 | ≥ 300k |
+| UUIDv7 | 21,458,510 | ± 1,719,754 | ≥ 500k |
+| UUIDv8 | 3,328,708 | ± 235,680 | — |
+| ULID | 5,173,384 | ± 422,448 | ≥ 500k |
+| KSID | 2,532,802 | ± 445,671 | ≥ 1M |
+| BIZ | 336,043 | ± 11,183 | ≥ 300k |
 
 ## 解读
 
