@@ -95,7 +95,7 @@ public final class BizTemplateIdTypeParser implements IdTypeParser {
 
     @Override
     public Optional<IdInfo> tryParse(String raw) {
-        if (raw == null || raw.isBlank()) {
+        if (raw == null || raw.isBlank() || raw.length() > BizConfig.MAX_TEMPLATE_LENGTH) {
             return Optional.empty();
         }
         Matcher matcher = pattern.matcher(raw);

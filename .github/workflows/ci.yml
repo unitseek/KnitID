@@ -29,6 +29,8 @@ jobs:
       KNITID_TEST_ZOOKEEPER_IMAGE: zookeeper:3.9.6
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-java@v4
         with:
           distribution: temurin

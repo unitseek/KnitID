@@ -73,6 +73,13 @@ class RedisSequenceProviderTest {
     }
 
     @Test
+    void rejectsSubMillisecondTtl() {
+        assertThatThrownBy(() -> new RedisSequenceProvider(new InMemoryStore(), "knitid:seq", Duration.ofNanos(1)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("1ms");
+    }
+
+    @Test
     void rejectsInvalidArguments() {
         RedisSequenceProvider provider = new RedisSequenceProvider(new InMemoryStore(), "knitid:seq", TTL);
         assertThatThrownBy(() -> provider.next(null)).isInstanceOf(IllegalArgumentException.class);

@@ -23,7 +23,7 @@ import org.unitseek.knitid.sequence.jdbc.JdbcSequenceProvider;
  *
  * @since 1.0.0
  */
-@AutoConfiguration
+@AutoConfiguration(afterName = "org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration")
 @ConditionalOnClass({ JdbcTemplate.class, SequenceProvider.class })
 @ConditionalOnBean({ DataSource.class, PlatformTransactionManager.class })
 @ConditionalOnSingleCandidate(DataSource.class)

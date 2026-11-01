@@ -36,6 +36,15 @@ class BizTemplateIdTypeParserTest {
     }
 
     @Test
+    void rejectsOverlongInput() {
+        BizConfig config = new BizConfig(
+                "{prefix}-{yyyyMMdd}-{seq:6}", "SAMPLE", ZoneId.of("UTC"), null,
+                "memory", SequenceReset.DAILY, CheckAlgorithm.NONE);
+        String raw = "A".repeat(BizConfig.MAX_TEMPLATE_LENGTH + 1);
+        assertThat(new BizTemplateIdTypeParser(config).tryParse(raw)).isEmpty();
+    }
+
+    @Test
     void rejectsBrokenCheckDigit() {
         BizConfig config = new BizConfig(
                 "{prefix}-{yyyyMMdd}-{seq:6}-{check}", "SAMPLE", ZoneId.of("UTC"), null,

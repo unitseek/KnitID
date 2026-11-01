@@ -55,14 +55,14 @@ public final class RedisWorkerIdAssignerProvider implements WorkerIdAssignerProv
                     IdErrorCodes.CONFIG_INVALID, "knitid.worker.redis.key-prefix must not be blank");
         }
         if (properties.getLeaseTtl() == null || properties.getLeaseTtl().isNegative()
-                || properties.getLeaseTtl().isZero()) {
+                || properties.getLeaseTtl().isZero() || properties.getLeaseTtl().toMillis() < 1) {
             throw new IdConfigurationException(
-                    IdErrorCodes.CONFIG_INVALID, "knitid.worker.redis.lease-ttl must be positive");
+                    IdErrorCodes.CONFIG_INVALID, "knitid.worker.redis.lease-ttl must be at least 1ms");
         }
         if (properties.getRenewInterval() == null || properties.getRenewInterval().isNegative()
-                || properties.getRenewInterval().isZero()) {
+                || properties.getRenewInterval().isZero() || properties.getRenewInterval().toMillis() < 1) {
             throw new IdConfigurationException(
-                    IdErrorCodes.CONFIG_INVALID, "knitid.worker.redis.renew-interval must be positive");
+                    IdErrorCodes.CONFIG_INVALID, "knitid.worker.redis.renew-interval must be at least 1ms");
         }
         if (properties.getRenewInterval().compareTo(properties.getLeaseTtl()) >= 0) {
             throw new IdConfigurationException(

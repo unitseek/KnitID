@@ -39,6 +39,8 @@ public final class KsidGenerator implements NumericIdGenerator, IdGeneratorHealt
 
     private static final long LEASE_PAUSE_NANOS = 100_000L;
 
+    static final int MAX_BACKWARDS_EVENTS = 4_096;
+
     private final Clock clock;
 
     private final WorkerId workerId;
@@ -50,10 +52,6 @@ public final class KsidGenerator implements NumericIdGenerator, IdGeneratorHealt
     private final long maxTimestamp;
 
     private final long maxSequence;
-
-    private final long maxDatacenterId;
-
-    private final long maxWorkerId;
 
     private final int workerShift;
 
@@ -109,8 +107,8 @@ public final class KsidGenerator implements NumericIdGenerator, IdGeneratorHealt
         }
         this.maxTimestamp = (1L << config.timestampBits()) - 1L;
         this.maxSequence = (1L << config.sequenceBits()) - 1L;
-        this.maxDatacenterId = (1L << config.datacenterIdBits()) - 1L;
-        this.maxWorkerId = (1L << config.workerIdBits()) - 1L;
+        long maxDatacenterId = (1L << config.datacenterIdBits()) - 1L;
+        long maxWorkerId = (1L << config.workerIdBits()) - 1L;
         if (workerId.datacenterId() > maxDatacenterId) {
             throw new IdConfigurationException(
                     IdErrorCodes.CONFIG_INVALID,
@@ -341,6 +339,10 @@ public final class KsidGenerator implements NumericIdGenerator, IdGeneratorHealt
     private void recordBackwards(long nowMillis) {
         synchronized (backwardsEvents) {
             backwardsEvents.addLast(nowMillis);
+            // Bound history so a persistent backwards clock cannot exhaust heap.
+            while (backwardsEvents.size() > MAX_BACKWARDS_EVENTS) {
+                backwardsEvents.removeFirst();
+            }
         }
     }
 

@@ -34,8 +34,8 @@ public final class RedisSequenceProvider implements SequenceProvider {
         if (keyPrefix == null || keyPrefix.isBlank()) {
             throw new IllegalArgumentException("keyPrefix must not be blank");
         }
-        if (ttl == null || ttl.isNegative() || ttl.isZero()) {
-            throw new IllegalArgumentException("ttl must be positive");
+        if (ttl == null || ttl.isNegative() || ttl.isZero() || ttl.toMillis() < 1) {
+            throw new IllegalArgumentException("ttl must be at least 1ms");
         }
         this.store = Objects.requireNonNull(store, "store must not be null");
         this.keyPrefix = keyPrefix;

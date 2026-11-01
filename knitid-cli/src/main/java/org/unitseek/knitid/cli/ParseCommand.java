@@ -131,6 +131,9 @@ final class ParseCommand {
     }
 
     private static IdInfo fromUuid(String raw, IdType type, UUID uuid) {
+        if (uuid.variant() != 2) {
+            throw failure("Not an RFC 4122/9562 UUID");
+        }
         Long timestamp = null;
         if (uuid.version() == 7) {
             timestamp = uuid.getMostSignificantBits() >>> 16;

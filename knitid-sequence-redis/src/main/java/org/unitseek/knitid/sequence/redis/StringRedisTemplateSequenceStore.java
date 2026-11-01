@@ -15,6 +15,8 @@ final class StringRedisTemplateSequenceStore implements RedisSequenceStore {
             local value = redis.call('INCRBY', KEYS[1], ARGV[1])
             if tonumber(ARGV[2]) > 0 then
               redis.call('PEXPIRE', KEYS[1], ARGV[2])
+            else
+              redis.call('PERSIST', KEYS[1])
             end
             return value
             """;

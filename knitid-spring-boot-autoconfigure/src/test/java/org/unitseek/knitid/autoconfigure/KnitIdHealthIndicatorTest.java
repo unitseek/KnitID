@@ -79,6 +79,16 @@ class KnitIdHealthIndicatorTest {
     }
 
     @Test
+    void downWithoutLeakingHealthExceptionDetails() {
+        KnitIdHealthIndicator indicator = new KnitIdHealthIndicator(
+                new FakeRegistry(new FailingHealthGenerator()), properties);
+        var health = indicator.health();
+        assertThat(health.getStatus()).isEqualTo(Status.DOWN);
+        assertThat(health.getDetails()).doesNotContainKey("error");
+        assertThat(health.getDetails().toString()).doesNotContain("leak-me");
+    }
+
+    @Test
     void upForGeneratorWithoutHealthSupport() {
         KnitIdHealthIndicator indicator = new KnitIdHealthIndicator(
                 new FakeRegistry(new PlainGenerator()), properties);
@@ -116,6 +126,29 @@ class KnitIdHealthIndicatorTest {
             Map<String, Object> details = new LinkedHashMap<>();
             details.put("clockBackwardsCount", backwards);
             return new IdGeneratorHealthSnapshot(state, "test", details);
+        }
+    }
+
+    private static final class FailingHealthGenerator implements IdGenerator, IdGeneratorHealth {
+
+        @Override
+        public IdType type() {
+            return IdType.KSID;
+        }
+
+        @Override
+        public String generate() {
+            return "1";
+        }
+
+        @Override
+        public String generate(IdContext context) {
+            return generate();
+        }
+
+        @Override
+        public IdGeneratorHealthSnapshot health(Duration window) {
+            throw new IllegalStateException("redis://user:leak-me@host");
         }
     }
 

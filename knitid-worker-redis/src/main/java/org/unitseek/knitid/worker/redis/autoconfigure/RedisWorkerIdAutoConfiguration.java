@@ -17,7 +17,7 @@ import org.unitseek.knitid.worker.redis.RedisWorkerIdProperties;
 /**
  * Auto-configures the Redis WorkerId assigner provider.
  */
-@AutoConfiguration
+@AutoConfiguration(afterName = "org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfiguration")
 @ConditionalOnClass({ StringRedisTemplate.class, WorkerIdAssignerProvider.class })
 @ConditionalOnProperty(prefix = "knitid.worker.redis", name = "enabled", matchIfMissing = true)
 @EnableConfigurationProperties(RedisWorkerIdProperties.class)

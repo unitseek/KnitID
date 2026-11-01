@@ -15,6 +15,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class JdbcSequenceProviderTest {
 
@@ -27,6 +28,15 @@ class JdbcSequenceProviderTest {
         assertThat(provider.next("order")).isEqualTo(2);
         assertThat(provider.next("order")).isEqualTo(3);
         assertThat(provider.next("other")).isEqualTo(0);
+    }
+
+    @Test
+    void rejectsUnsafeTableName() {
+        JdbcDataSource dataSource = dataSource();
+        assertThatThrownBy(() -> new JdbcSequenceProvider(new JdbcTemplate(dataSource),
+                new DataSourceTransactionManager(dataSource), "knitid_sequence; DROP TABLE x", 3))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("SQL identifier");
     }
 
     @Test

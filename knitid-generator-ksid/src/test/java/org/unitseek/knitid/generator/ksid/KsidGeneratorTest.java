@@ -154,6 +154,23 @@ class KsidGeneratorTest {
     }
 
     @Test
+    void boundsBackwardsHistory() {
+        KsidConfig config = new KsidConfig(EPOCH, 41, 5, 5, 12,
+                ClockBackwardsStrategy.THROW, Duration.ofSeconds(5),
+                SequenceOverflowStrategy.WAIT, false, Duration.ofSeconds(20), 3);
+        MutableClock clock = new MutableClock(NOW);
+        KsidGenerator generator = new KsidGenerator(clock, new WorkerId(0, 3), config);
+        generator.generateLong();
+        clock.setInstant(NOW.minus(Duration.ofMillis(10)));
+        for (int i = 0; i < KsidGenerator.MAX_BACKWARDS_EVENTS + 100; i++) {
+            assertThatThrownBy(generator::generateLong).isInstanceOf(ClockBackwardsException.class);
+        }
+        var snapshot = generator.health(Duration.ofMinutes(1));
+        assertThat(snapshot.details().get("clockBackwardsCount"))
+                .isEqualTo(KsidGenerator.MAX_BACKWARDS_EVENTS);
+    }
+
+    @Test
     void healthReportsClockBackwardsCount() {
         KsidConfig config = new KsidConfig(EPOCH, 41, 5, 5, 12,
                 ClockBackwardsStrategy.THROW, Duration.ofSeconds(5),

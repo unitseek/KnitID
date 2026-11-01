@@ -64,7 +64,10 @@ public class KnitIdHealthIndicator implements HealthIndicator {
                     .build();
         }
         catch (RuntimeException ex) {
-            return Health.down().withException(ex).build();
+            // Do not expose exception messages: they may contain Redis/ZK endpoints or credentials.
+            return Health.down()
+                    .withDetail("reason", "Generator registry lookup failed")
+                    .build();
         }
         try {
             if (generator instanceof IdGeneratorHealth healthGenerator) {
@@ -94,7 +97,10 @@ public class KnitIdHealthIndicator implements HealthIndicator {
             return Health.up().withDetail("type", generator.type().value()).build();
         }
         catch (RuntimeException ex) {
-            return Health.down().withException(ex).build();
+            // Do not expose exception messages: they may contain infrastructure endpoints.
+            return Health.down()
+                    .withDetail("reason", "Generator health check failed")
+                    .build();
         }
     }
 }

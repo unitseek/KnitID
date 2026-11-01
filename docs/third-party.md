@@ -22,6 +22,7 @@ KnitID 自身以 Apache-2.0 发布。下表列出主要直接/可选依赖及其
 | Mockito | Mock | MIT |
 | Testcontainers | 集成测试 | MIT |
 | JMH | 基准 | GPL-2.0 with Classpath Exception |
+| Guava | Curator-test 测试依赖 | Apache-2.0 |
 | Maven plugins | 构建/发布 | Apache-2.0 |
 | Maven Assembly Plugin | CLI 可执行 JAR 打包 | Apache-2.0 |
 

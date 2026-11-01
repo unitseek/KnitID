@@ -28,7 +28,8 @@
 - KSID close 与生成/续约同步，避免关闭窗口重复；
 - BIZ memory provider 按工厂共享，隐式 `default` 不覆盖显式配置；
 - UUIDv7 非单调回拨使用当前时间戳；UUID 解析器校验 canonical form 与 RFC variant；
-- 批大小配置、配置解析、健康/指标边界和发布工作流权限均加入校验。
+- 批大小配置、配置解析、健康/指标边界和发布工作流权限均加入校验；
+- OSV 对 CycloneDX SBOM 扫描无已知漏洞，Curator test 的 Guava 升级到 33.7.2-jre。
 
 ### 变更
 
@@ -41,7 +42,7 @@
 
 ### 质量与兼容性
 
-- 220 个单元/属性/Testcontainers 测试通过；
+- 226 个单元/属性/Testcontainers 测试通过；
 - Spring Boot 4.0 兼容矩阵另加 1 个启动测试；
 - 支持 Java 21+，兼容 Spring Boot 4.0.x / 4.1.x；
 - 不支持 Spring Boot 3；

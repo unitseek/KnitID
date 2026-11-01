@@ -71,7 +71,7 @@
 
 ## 6. 验收与追溯
 
-- 单元/属性/Testcontainers 测试 220 个（Boot 4.0 矩阵另加 1 个）；
+- 单元/属性/Testcontainers 测试 226 个（Boot 4.0 矩阵另加 1 个）；
 - `mvn verify` 全绿；
 - `docs/` 覆盖配置、迁移、运维、排障、SPI；
 - 发布流水线见 [发布流程](../release.md)。

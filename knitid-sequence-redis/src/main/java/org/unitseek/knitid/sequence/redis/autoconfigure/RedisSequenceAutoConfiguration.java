@@ -19,7 +19,7 @@ import org.unitseek.knitid.sequence.redis.RedisSequenceProvider;
  * both {@code redis} and {@code redisSequenceProvider} bean names for use with
  * {@code knitid.generators.*.biz.sequence-provider}.
  */
-@AutoConfiguration
+@AutoConfiguration(afterName = "org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfiguration")
 @ConditionalOnClass({ StringRedisTemplate.class, SequenceProvider.class })
 @ConditionalOnProperty(prefix = "knitid.sequence.redis", name = "enabled", matchIfMissing = true)
 @EnableConfigurationProperties(RedisSequenceProperties.class)
