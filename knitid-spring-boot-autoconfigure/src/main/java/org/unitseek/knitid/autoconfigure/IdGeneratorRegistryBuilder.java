@@ -200,6 +200,10 @@ final class IdGeneratorRegistryBuilder {
         return builder.toString();
     }
 
+    static GeneratorConfig generatorConfig(String name, IdType type, Map<String, Object> raw) {
+        return new MapGeneratorConfig(name, type, flatten(raw));
+    }
+
     private static Map<String, Object> flatten(Map<String, Object> raw) {
         Map<String, Object> result = new LinkedHashMap<>();
         flatten("", raw, result);

@@ -59,6 +59,16 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.unitseek.knitid</groupId>
+      <artifactId>knitid-generator-biz</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.unitseek.knitid</groupId>
+      <artifactId>knitid-generator-ksid</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>

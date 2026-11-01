@@ -16,7 +16,7 @@ import org.unitseek.knitid.core.spi.GeneratorConfig;
  * worker bits + sequence bits = 64 bits, therefore the four configurable
  * fields must sum to 63.</p>
  *
- * @param epoch timestamp epoch; the default is 2024-01-01T00:00:00Z
+ * @param epoch timestamp epoch; the default is 2018-11-16T00:00:00Z
  * @param timestampBits timestamp width; must fit within 42 bits
  * @param datacenterIdBits datacenter id width
  * @param workerIdBits worker id width
@@ -43,8 +43,8 @@ public record KsidConfig(
         Duration leaseRenewInterval,
         int leaseMaxRenewFailures) {
 
-    /** Default KSID epoch: 2024-01-01T00:00:00Z. */
-    public static final Instant DEFAULT_EPOCH = Instant.parse("2024-01-01T00:00:00Z");
+    /** Default KSID epoch: 2018-11-16T00:00:00Z. */
+    public static final Instant DEFAULT_EPOCH = Instant.parse("2018-11-16T00:00:00Z");
 
     /** Default timestamp width: 41 bits. */
     public static final int DEFAULT_TIMESTAMP_BITS = 41;

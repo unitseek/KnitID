@@ -78,7 +78,7 @@ knitid:
 
 | 属性 | 默认 | 说明 |
 | --- | --- | --- |
-| `ksid.epoch` | `2024-01-01T00:00:00Z` | 纪元；修改属破坏性变更 |
+| `ksid.epoch` | `2018-11-16T00:00:00Z` | 纪元；修改属破坏性变更 |
 | `ksid.timestamp-bits` | `41` | 与其余位合计 63 |
 | `ksid.datacenter-id-bits` | `5` | — |
 | `ksid.worker-id-bits` | `5` | — |
@@ -133,21 +133,12 @@ TypeID 格式：`<prefix>_<26 位小写 Base32 UUIDv7>`，内部复用 KnitID UU
 
 ### BIZ/KSID 内置解析器
 
-需要解析 BIZ 模板或 KSID 位布局时，注册对应的 `IdTypeParser` Bean：
+当配置了 BIZ/KSID 生成器时，自动配置会根据默认/选中的 generator 自动注册：
 
-```java
-@Bean
-IdTypeParser ksidLayoutParser(KsidConfig config) {
-    return new KsidLayoutIdTypeParser(config);
-}
+- `KsidLayoutIdTypeParser`：解析时间戳、datacenter、worker、sequence；
+- `BizTemplateIdTypeParser`：解析前缀、日期、序列、worker、校验位。
 
-@Bean
-IdTypeParser bizTemplateParser(BizConfig config) {
-    return new BizTemplateIdTypeParser(config);
-}
-```
-
-未注册时，KSID 仍按纯数字类型识别，BIZ 不自动解析。
+同名自定义 `IdTypeParser` Bean 可以覆盖内置解析器。多个同类型但布局不同的 generator 无法同时被一个 parser 表达，建议使用默认 generator 或自定义 parser。
 
 ## 11. WorkerId 分配
 
@@ -219,7 +210,7 @@ knitid:
     order-id:
       type: KSID
       ksid:
-        epoch: 2024-01-01T00:00:00Z
+        epoch: 2018-11-16T00:00:00Z
         timestamp-bits: 41
         datacenter-id-bits: 5
         worker-id-bits: 5

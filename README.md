@@ -114,7 +114,7 @@ CI 工作流：`.github/workflows/native.yml`（workflow_dispatch / 每周计划
 
 ## 测试
 
-当前共 211 个测试（Boot 4.0 兼容矩阵另加 1 个），全部通过（`mvn verify`；Testcontainers 用例在无 Docker 时自动跳过）：
+当前共 213 个测试（Boot 4.0 兼容矩阵另加 1 个），全部通过（`mvn verify`；Testcontainers 用例在无 Docker 时自动跳过）：
 
 - `knitid-core`：IdType 规范化契约 + DurationParser 边界 + 异步/流式批量 API（9）；
 - `knitid-generator-uuid7`：RFC 9562 附录 A.6 向量、属性测试、边界、溢出与回拨策略（12）；
@@ -130,8 +130,8 @@ CI 工作流：`.github/workflows/native.yml`（workflow_dispatch / 每周计划
 - `knitid-worker-redis`：槽位占用/冲突、token fencing、租约续约失败、释放、provider 配置校验、自动配置（9），以及 Testcontainers 真实 Redis 的 SET NX/TTL/续约/释放/断连（8）；
 - `knitid-worker-zookeeper`：临时节点分配、重新占用、续约、配置校验、自动配置（6），以及 Testcontainers 真实 ZooKeeper 的分配/释放、foreign release 与断连（3）；
 - `knitid-worker-kubernetes`：StatefulSet ordinal、Downward API、越界/非法 pod 名、配置校验、自动配置（9）；
-- `knitid-spring-boot-autoconfigure`：启动矩阵/健康/解析/端点/指标/配置诊断/回拨指标/索引 Map（40）；
-- `knitid-spring-boot-starter`：依赖边界，确认不含生成器类（1）；
+- `knitid-spring-boot-autoconfigure`：启动矩阵/健康/解析/端点/指标/配置诊断/回拨指标/索引 Map/自动绑定解析器（41）；
+- `knitid-spring-boot-starter`：依赖边界，确认不含生成器类，且无生成器模块时可启动（2）；
 - `knitid-spring-boot-starter-all`：依赖边界，确认包含七类生成器（1）；
 - `knitid-samples`：七类 ID + Actuator + 多租户前缀示例启动测试（7）。
 
@@ -157,8 +157,8 @@ knitid:
 `knitid-spring-boot-autoconfigure` 提供 `IdParser` 自动配置：
 
 - 内置识别 UUIDv7、UUIDv8、ULID、纯数字 KSID；引入 KSUID/TypeID 模块后，其解析器 Bean 自动加入；
-- UUIDv7 提取时间戳/版本，ULID 提取时间戳；UUIDv8 仅暴露版本/变体；数字 KSID 仅暴露类型与原值（位布局由配置决定）；
-- BIZ 或需要解析 KSID 时间戳/节点/序列时，注册自己的 `IdTypeParser` Bean，用户 Bean 优先于内置解析器；
+- 配置 BIZ/KSID generator 时，自动绑定对应模板/位布局解析器；用户自定义 `IdTypeParser` Bean 优先；
+- UUIDv7 提取时间戳/版本，ULID 提取时间戳；UUIDv8 仅暴露版本/变体；BIZ/KSID 提取模板/布局可解析的元数据；
 - `parse` 失败抛 `IdParseException`，`tryParse` 返回 `Optional.empty()`。
 
 ## 示例工程

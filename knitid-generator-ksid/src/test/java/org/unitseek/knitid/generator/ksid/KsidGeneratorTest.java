@@ -27,7 +27,7 @@ class KsidGeneratorTest {
 
     private static final Instant NOW = Instant.parse("2026-01-01T00:00:00Z");
 
-    private static final Instant EPOCH = Instant.parse("2024-01-01T00:00:00Z");
+    private static final Instant EPOCH = KsidConfig.DEFAULT_EPOCH;
 
     private static final long EPOCH_MILLIS = EPOCH.toEpochMilli();
 
@@ -183,7 +183,7 @@ class KsidGeneratorTest {
     @Test
     void epochInTheFutureIsRejected() {
         assertThatThrownBy(() -> new KsidGenerator(
-                new MutableClock(Instant.parse("2023-01-01T00:00:00Z")),
+                new MutableClock(Instant.parse("2017-01-01T00:00:00Z")),
                 new WorkerId(0, 0), KsidConfig.defaults()))
                 .isInstanceOf(IdConfigurationException.class)
                 .hasMessageContaining("epoch");

@@ -26,7 +26,8 @@
 - Spring Boot 4 自动配置、严格配置校验、FailureAnalyzer；
 - Actuator 端点、健康检查、Micrometer 指标；
 - JMH 基准、示例工程、配置参考与发布流水线；
-- 211 个测试（含 Redis/ZooKeeper Testcontainers）。
+- 213 个测试（含 Redis/ZooKeeper Testcontainers）。
+- KSID 默认 epoch 调整为 2018-11-16T00:00:00Z；
 - Spring Boot 4.0 兼容测试模块与 CI 矩阵；
 - JDBC 号段 SequenceProvider、BIZ/KSID 内置解析器；
 - 回拨指标、OTel 风格指标 tags、异步/流式批量 API；
