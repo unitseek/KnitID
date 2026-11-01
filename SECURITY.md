@@ -6,9 +6,8 @@ KnitID 是 ID 生成基础库，安全问题的核心是**唯一性、可预测�
 
 | Version | Supported | Notes |
 | --- | --- | --- |
-| `1.0.x` | ✅ | 1.0 发布后 |
-| `0.3.x` | ✅ | 当前开发版本 |
-| `< 0.3` | ❌ | 不再维护 |
+| `1.0.x` | ✅ | 当前稳定版本；接收安全修复 |
+| `< 1.0` | ❌ | 1.0 之前的版本，不再支持 |
 
 ## Reporting a Vulnerability
 
@@ -16,7 +15,7 @@ KnitID 是 ID 生成基础库，安全问题的核心是**唯一性、可预测�
 
 请使用 GitHub Security Advisory 私密报告：
 
-- https://github.com/unitseek/knitid/security/advisories/new
+- https://github.com/unitseek/KnitID/security/advisories/new
 
 报告请包含：
 
@@ -43,6 +42,13 @@ KnitID 是 ID 生成基础库，安全问题的核心是**唯一性、可预测�
 - 第三方依赖自身漏洞（请同时报告上游，我们会跟进升级）；
 - 部署环境、网络、Redis/ZooKeeper 权限配置问题；
 - 仅影响测试代码、基准或示例的问题。
+
+## Optional Modules
+
+- KSUID `PERFORMANCE` random source 仅用于性能和基准测试，生产环境必须使用 `SECURE`；
+- KSUID 没有格式标记，解析器接受任意合法 27 位 Base62 串，解析成功不代表来源可信；
+- TypeID 前缀只是类型元数据，不是认证信息，不能作为权限或来源证明；
+- UUIDv7、ULID、TypeID 的时间前缀会泄露大致生成时间，不适合需要隐藏生成时间的场景。
 
 ## Security Best Practices
 

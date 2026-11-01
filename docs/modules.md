@@ -42,6 +42,8 @@ knitid-samples / knitid-benchmarks
 | `knitid-worker-zookeeper` | ZooKeeper WorkerId | Curator/ZooKeeper |
 | `knitid-worker-kubernetes` | K8s StatefulSet WorkerId | 无（读环境变量） |
 | `knitid-sequence-redis` | Redis 业务序列 | spring-data-redis |
+| `knitid-sequence-jdbc` | 数据库号段业务序列 | spring-jdbc / DataSource |
+| `knitid-boot-compat-4.0` | Spring Boot 4.0 兼容测试 | 仅 profile `boot-4.0` |
 | `knitid-benchmarks` | JMH | 仅开发 |
 | `knitid-samples` | 示例 | 仅开发 |
 
@@ -52,6 +54,8 @@ knitid-samples / knitid-benchmarks
 | UUIDv7 + Spring Boot | starter + generator-uuid7 |
 | KSID + Redis WorkerId | starter + generator-ksid + worker-redis + spring-data-redis |
 | BIZ + Redis 序列 | starter + generator-biz + sequence-redis + spring-data-redis |
+| BIZ + JDBC 序列 | starter + generator-biz + sequence-jdbc + DataSource |
+| Boot 4.0 兼容验证 | `mvn -Pboot-4.0 verify` |
 | KSUID | starter + generator-ksuid（或 starter-all） |
 | TypeID | starter + generator-typeid（会传递引入 UUIDv7） |
 | 全部七类 | starter-all |

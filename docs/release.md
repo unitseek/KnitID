@@ -10,32 +10,35 @@
 
 ```bash
 mvn -B -ntp clean verify
-mvn -B -ntp -Prelease -DskipTests package
+mvn -B -ntp -Prelease -DskipTests verify
 node scripts/check-docs.mjs
 ```
 
 需要 Docker（Testcontainers 的 Redis/ZooKeeper 用例）。
 
-## 本地与内部 Nexus（可选）
+首次执行 `-Prelease` 时需要可用的 GPG 发布密钥和 passphrase。若只想校验 POM/Central 配置而不签名：
+
+```bash
+mvn -B -ntp -Prelease -DskipTests -Dgpg.skip=true verify
+```
+
+## 内部 Nexus（仅本地开发可选）
 
 发布 POM 不再包含内部 Nexus 地址，也不会把内部仓库写入 Central 元数据。
 
-如需继续使用内部 Nexus，请在个人/CI 的 `settings.xml` 中配置镜像或 repository，而不是修改根 POM：
+如果需要内部镜像，请在个人 `settings.xml` 中配置 mirror/profile，不要修改项目 POM。例如：
 
 ```xml
-<servers>
-  <server>
-    <id>nexus-releases</id>
-    <username>YOUR_USER</username>
-    <password>YOUR_PASSWORD</password>
-  </server>
-  <server>
-    <id>nexus-snapshots</id>
-    <username>YOUR_USER</username>
-    <password>YOUR_PASSWORD</password>
-  </server>
-</servers>
+<mirrors>
+  <mirror>
+    <id>internal-nexus</id>
+    <mirrorOf>central</mirrorOf>
+    <url>https://nexus.example.com/repository/maven-public/</url>
+  </mirror>
+</mirrors>
 ```
+
+如需认证，再为该 mirror id 配置 `<server>` 用户名/密码。仅做 Central 发布时不需要内部 Nexus。
 
 本地安装模块供示例运行：
 
@@ -49,7 +52,7 @@ mvn -pl knitid-samples spring-boot:run
 首次发布前在本机准备独立的发布密钥：
 
 ```powershell
-pwsh -File scripts/setup-gpg-release.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\setup-gpg-release.ps1
 ```
 
 脚本会：
@@ -71,6 +74,12 @@ pwsh -File scripts/setup-gpg-release.ps1
 3. Secrets：`MAVEN_CENTRAL_USERNAME`、`MAVEN_CENTRAL_PASSWORD`、`GPG_PRIVATE_KEY`、`MAVEN_GPG_PASSPHRASE`；
 4. GPG 公钥已上传到 `keys.openpgp.org` / `keyserver.ubuntu.com`；
 5. tag 必须等于 `v${project.version}`，且版本不得为 `SNAPSHOT`。
+
+当前 `release` Environment 的实际配置：
+
+- required reviewer：`unitseek`；
+- 部署策略：仅 `v*` tag；
+- Environment secrets：`GPG_PRIVATE_KEY`、`MAVEN_GPG_PASSPHRASE`、`MAVEN_CENTRAL_USERNAME`、`MAVEN_CENTRAL_PASSWORD`。
 
 根 POM 已配置：
 
@@ -94,14 +103,14 @@ mvn -B -ntp -Prelease clean deploy
 - `.github/workflows/docs-check.yml`：PR/push 检查文档结构、链接与代码围栏；
 - `.github/workflows/release.yml`：推送 `v*` tag 时执行 `mvn -Prelease clean deploy`；
   - Secrets：`MAVEN_CENTRAL_USERNAME`、`MAVEN_CENTRAL_PASSWORD`、`GPG_PRIVATE_KEY`、`MAVEN_GPG_PASSPHRASE`；
-  - `release` job 使用 GitHub Environment（建议 required reviewers），并校验 tag/version。
+  - `release` job 使用 GitHub Environment `release`，并校验 tag/version。
 
 ## 文档与 Javadoc 发布
 
 - `docs.yml` 在 `main` 推送时执行 `mvn -DskipTests javadoc:aggregate`，并发布到 GitHub Pages；
 - 聚合输出目录：`target/reports/apidocs`；
 - 仓库 Settings → Pages 的 Source 选择 **GitHub Actions**；
-- 页面地址：https://unitseek.github.io/knitid/（以实际仓库为准）。
+- 页面地址：https://unitseek.github.io/knitid （以实际仓库为准）。
 
 ## 发布检查清单
 

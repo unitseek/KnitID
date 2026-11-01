@@ -15,7 +15,8 @@ import org.unitseek.knitid.core.api.IdGeneratorHealthSnapshot;
 import org.unitseek.knitid.core.api.IdGeneratorRegistry;
 
 /**
- * Registers KSID WorkerId gauges for generators that expose a worker id.
+ * Registers WorkerId and clock-backwards gauges for generators that expose
+ * health details.
  */
 public final class KnitIdGaugeBinder implements SmartInitializingSingleton {
 
@@ -52,21 +53,29 @@ public final class KnitIdGaugeBinder implements SmartInitializingSingleton {
                 }
             }
             if (register) {
-                Gauge.builder("knitid.id.worker.id", () -> workerId(health))
+                Gauge.builder("knitid.id.worker.id", () -> detail(health, "workerId"))
                         .tag("name", entry.getKey())
+                        .tag("id.type", generator.type().value().toLowerCase(java.util.Locale.ROOT))
+                        .tag("id.name", entry.getKey())
                         .description("Current KSID WorkerId")
                         .register(meterRegistry);
             }
+            Gauge.builder("knitid.id.clock.backwards", () -> detail(health, "clockBackwardsCount"))
+                    .tag("name", entry.getKey())
+                    .tag("id.type", generator.type().value().toLowerCase(java.util.Locale.ROOT))
+                    .tag("id.name", entry.getKey())
+                    .description("Clock-backwards events observed in the health window")
+                    .register(meterRegistry);
         }
     }
 
-    private double workerId(IdGeneratorHealth health) {
+    private double detail(IdGeneratorHealth health, String key) {
         try {
             IdGeneratorHealthSnapshot snapshot = health.health(window);
             if (snapshot == null) {
                 return Double.NaN;
             }
-            Object value = snapshot.details().get("workerId");
+            Object value = snapshot.details().get(key);
             return value instanceof Number number ? number.doubleValue() : Double.NaN;
         }
         catch (RuntimeException ex) {

@@ -15,7 +15,15 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Spring Boot 4.1
+            maven-args: ""
+          - name: Spring Boot 4.0
+            maven-args: "-Pboot-4.0"
     env:
       KNITID_TEST_REDIS_IMAGE: redis:8.10.3
       KNITID_TEST_ZOOKEEPER_IMAGE: zookeeper:3.9.6
@@ -26,5 +34,5 @@ jobs:
           distribution: temurin
           java-version: "21"
           cache: maven
-      - name: Verify
-        run: mvn -B -ntp verify
+      - name: Verify ${{ matrix.name }}
+        run: mvn -B -ntp ${{ matrix.maven-args }} verify

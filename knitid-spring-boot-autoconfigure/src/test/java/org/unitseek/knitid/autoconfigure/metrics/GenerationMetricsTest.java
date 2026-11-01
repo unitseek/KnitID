@@ -33,6 +33,7 @@ class GenerationMetricsTest {
         generator.generate();
         generator.generateBatch(5);
         assertThat(registry.find("knitid.id.generation.duration").timer().count()).isEqualTo(6);
+        assertThat(registry.find("knitid.id.generation.duration").tag("id.type", "uuid7").timer()).isNotNull();
         assertThat(registry.find("knitid.id.batch.size").summary().count()).isEqualTo(1);
         assertThat(registry.find("knitid.id.batch.size").summary().totalAmount()).isEqualTo(5);
     }
@@ -42,6 +43,8 @@ class GenerationMetricsTest {
         IdGenerator generator = IdGeneratorMetrics.wrap(new FailingGenerator(), "test", registry);
         assertThatThrownBy(generator::generate).isInstanceOf(ClockBackwardsException.class);
         assertThat(registry.find("knitid.id.generation.errors").tag("reason", "CLOCK_BACKWARDS").counter().count())
+                .isEqualTo(1);
+        assertThat(registry.find("knitid.id.generation.errors").tag("error.type", "CLOCK_BACKWARDS").counter().count())
                 .isEqualTo(1);
         assertThat(registry.find("knitid.id.generation.duration").timer().count()).isEqualTo(1);
     }

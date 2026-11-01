@@ -2,6 +2,11 @@ package org.unitseek.knitid.core.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Unified identifier generator contract.
@@ -78,5 +83,70 @@ public interface IdGenerator {
             result.add(context == null ? generate() : generate(context));
         }
         return result;
+    }
+
+    /**
+     * Generates a batch asynchronously on the common fork-join pool.
+     *
+     * @param size batch size; must be positive and within the configured limit
+     * @return future containing identifiers in generation order
+     * @since 1.0.0
+     */
+    default CompletableFuture<List<String>> generateBatchAsync(int size) {
+        return generateBatchAsync(size, null, java.util.concurrent.ForkJoinPool.commonPool());
+    }
+
+    /**
+     * Generates a batch asynchronously on the supplied executor.
+     *
+     * @param size batch size; must be positive and within the configured limit
+     * @param executor executor used to run the batch
+     * @return future containing identifiers in generation order
+     * @since 1.0.0
+     */
+    default CompletableFuture<List<String>> generateBatchAsync(int size, Executor executor) {
+        return generateBatchAsync(size, null, executor);
+    }
+
+    /**
+     * Generates a batch asynchronously with an optional context.
+     *
+     * @param size batch size; must be positive and within the configured limit
+     * @param context context, or {@code null}
+     * @param executor executor used to run the batch
+     * @return future containing identifiers in generation order
+     * @since 1.0.0
+     */
+    default CompletableFuture<List<String>> generateBatchAsync(int size, IdContext context, Executor executor) {
+        IdGeneratorConstants.checkBatchSize(size);
+        Objects.requireNonNull(executor, "executor must not be null");
+        return CompletableFuture.supplyAsync(() -> generateBatch(size, context), executor);
+    }
+
+    /**
+     * Returns a lazy sequential stream of identifiers.
+     *
+     * <p>The batch limit is checked before the stream is returned. Generation
+     * happens when the stream is consumed.</p>
+     *
+     * @param size number of identifiers
+     * @return lazy identifier stream
+     * @since 1.0.0
+     */
+    default Stream<String> generateStream(int size) {
+        return generateStream(size, null);
+    }
+
+    /**
+     * Returns a lazy sequential stream of identifiers with optional context.
+     *
+     * @param size number of identifiers
+     * @param context context, or {@code null}
+     * @return lazy identifier stream
+     * @since 1.0.0
+     */
+    default Stream<String> generateStream(int size, IdContext context) {
+        IdGeneratorConstants.checkBatchSize(size);
+        return IntStream.range(0, size).mapToObj(ignored -> context == null ? generate() : generate(context));
     }
 }

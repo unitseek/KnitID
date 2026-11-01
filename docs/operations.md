@@ -128,16 +128,18 @@ knitid:
 缓存 `knitid.health.cache-ttl` 默认 5s。端点：
 
 - `/actuator/knitid`：默认生成器与列表；
+- `/actuator/knitid-config`：脱敏配置诊断；
 - `/actuator/health/knitId`：健康详情（KSID 含 workerId/leaseValid/clockBackwardsCount）。
 
 指标：
 
 | 指标 | 用途 |
 | --- | --- |
-| `knitid.id.generation.duration` | 生成耗时，按 type/name |
-| `knitid.id.generation.errors` | 错误计数，reason 区分 |
+| `knitid.id.generation.duration` | 生成耗时，tags `type`/`name`/`id.type`/`id.name` |
+| `knitid.id.generation.errors` | 错误计数，tags `reason`/`error.type` 等 |
 | `knitid.id.batch.size` | 批量大小 |
 | `knitid.id.worker.id` | KSID 当前 WorkerId |
+| `knitid.id.clock.backwards` | 健康窗口内回拨次数 |
 
 告警建议：错误率、`KNITID-2002/2003/2007` 增长、`knitId` DOWN、WorkerId 接近容量、Redis/ZK 延迟。
 

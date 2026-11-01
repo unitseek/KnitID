@@ -41,11 +41,15 @@ final class GenerationMetrics {
         this.timer = Timer.builder("knitid.id.generation.duration")
                 .tag("type", this.type)
                 .tag("name", name)
+                .tag("id.type", this.type)
+                .tag("id.name", name)
                 .description("KnitID generation duration")
                 .register(registry);
         this.batchSize = DistributionSummary.builder("knitid.id.batch.size")
                 .tag("type", this.type)
                 .tag("name", name)
+                .tag("id.type", this.type)
+                .tag("id.name", name)
                 .description("KnitID batch sizes")
                 .register(registry);
     }
@@ -62,7 +66,8 @@ final class GenerationMetrics {
             elapsed = System.nanoTime() - start;
             String reason = reason(ex);
             errorCounters.computeIfAbsent(reason, key -> registry.counter("knitid.id.generation.errors",
-                    "type", type, "name", name, "reason", key)).increment();
+                    "type", type, "name", name, "reason", key,
+                    "id.type", type, "id.name", name, "error.type", key)).increment();
             throw ex;
         }
         finally {

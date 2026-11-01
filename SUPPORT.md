@@ -3,11 +3,12 @@
 ## Documentation
 
 - [README](README.md)
+- [文档索引](docs/index.md)
 - [配置参考](docs/configuration.md)
-- [快速开始](docs/getting-started.md)（骨架，1.0.x 补全）
-- [选型指南](docs/id-selection.md)（骨架）
-- [FAQ](docs/faq.md)（骨架）
-- [排障与错误码](docs/troubleshooting.md)（骨架）
+- [快速开始](docs/getting-started.md)
+- [选型指南](docs/id-selection.md)
+- [FAQ](docs/faq.md)
+- [排障与错误码](docs/troubleshooting.md)
 
 ## Where to Ask
 
@@ -31,7 +32,7 @@
 
 ## Supported Versions
 
-见 [SECURITY.md](SECURITY.md) 的 Supported Versions。0.3.x 为当前开发版本，1.0.x 发布后为稳定支持版本。
+当前支持 `1.0.x`；`< 1.0` 不再支持。详见 [SECURITY.md](SECURITY.md) 的 Supported Versions。
 
 ## Commercial Support
 

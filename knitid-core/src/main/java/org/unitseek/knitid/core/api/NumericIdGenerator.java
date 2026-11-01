@@ -1,5 +1,10 @@
 package org.unitseek.knitid.core.api;
 
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.stream.LongStream;
+
 /**
  * Identifier generator that can return numeric values.
  *
@@ -52,5 +57,55 @@ public interface NumericIdGenerator extends IdGenerator {
             result[i] = context == null ? generateLong() : generateLong(context);
         }
         return result;
+    }
+
+    /**
+     * Generates a numeric batch asynchronously on the common fork-join pool.
+     *
+     * @param size batch size
+     * @return future containing values in generation order
+     * @since 1.0.0
+     */
+    default CompletableFuture<long[]> generateLongBatchAsync(int size) {
+        return generateLongBatchAsync(size, null, java.util.concurrent.ForkJoinPool.commonPool());
+    }
+
+    /**
+     * Generates a numeric batch asynchronously.
+     *
+     * @param size batch size
+     * @param context context, or {@code null}
+     * @param executor executor used to run the batch
+     * @return future containing values in generation order
+     * @since 1.0.0
+     */
+    default CompletableFuture<long[]> generateLongBatchAsync(int size, IdContext context, Executor executor) {
+        IdGeneratorConstants.checkBatchSize(size);
+        Objects.requireNonNull(executor, "executor must not be null");
+        return CompletableFuture.supplyAsync(() -> generateLongBatch(size, context), executor);
+    }
+
+    /**
+     * Returns a lazy sequential stream of numeric identifiers.
+     *
+     * @param size number of identifiers
+     * @return lazy numeric stream
+     * @since 1.0.0
+     */
+    default LongStream generateLongStream(int size) {
+        return generateLongStream(size, null);
+    }
+
+    /**
+     * Returns a lazy sequential stream of numeric identifiers with context.
+     *
+     * @param size number of identifiers
+     * @param context context, or {@code null}
+     * @return lazy numeric stream
+     * @since 1.0.0
+     */
+    default LongStream generateLongStream(int size, IdContext context) {
+        IdGeneratorConstants.checkBatchSize(size);
+        return LongStream.range(0, size).map(ignored -> context == null ? generateLong() : generateLong(context));
     }
 }

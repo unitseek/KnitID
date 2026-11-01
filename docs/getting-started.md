@@ -117,14 +117,32 @@ knitid:
 - `default-type` 在没有匹配的命名生成器时会创建一个名为 `default` 的隐式生成器；
 - 未知属性、未知类型、缺少模块都会导致启动失败。
 
-## 6. 验证
+## 6. 多租户/业务类型示例
+
+通过 `IdContext` 覆盖 BIZ 前缀：
+
+```java
+String id = registry.get("biz").generate(
+        IdContext.builder()
+                .tenantId("tenant-a")
+                .prefix("TENANT_A")
+                .build());
+```
+
+适用场景：
+
+- 多租户共享同一 BIZ 生成器；
+- 不同业务类型使用不同前缀；
+- 不需要为每个租户单独创建生成器。
+
+## 7. 验证
 
 ```java
 String id = ids.generate();
 assert UUID.fromString(id).version() == 7;
 ```
 
-## 7. Actuator
+## 8. Actuator
 
 引入 `spring-boot-starter-actuator`，并暴露端点：
 
@@ -143,7 +161,7 @@ curl http://localhost:8080/actuator/health/knitId
 
 端点返回默认生成器与生成器列表；健康键为 `knitId`。详见 [配置参考](configuration.md) 的 Actuator 一节。
 
-## 8. 下一步
+## 9. 下一步
 
 - 选择算法：[ID 选型](id-selection.md)
 - 了解模块：[模块说明](modules.md)

@@ -20,7 +20,7 @@
 算法模块：`knitid-generator-uuid7`、`-uuid8`、`-ulid`、`-ksid`、`-biz`、`-ksuid`、`-typeid`。
 
 `knitid-spring-boot-starter-all` 会引入全部七类算法；普通 starter 不包含算法。
-集成模块：`knitid-worker-redis`、`-zookeeper`、`-kubernetes`、`knitid-sequence-redis`。
+集成模块：`knitid-worker-redis`、`-zookeeper`、`-kubernetes`、`knitid-sequence-redis`、`knitid-sequence-jdbc`。
 
 ## 2. 根属性
 
@@ -131,6 +131,24 @@ TypeID 格式：`<prefix>_<26 位小写 Base32 UUIDv7>`，内部复用 KnitID UU
 
 启用 `allow-empty-prefix=true` 后可生成无前缀 26 字符 ID，但内置解析器仍只识别带 `_` 的形式；需要自定义解析器才能解析该产物。
 
+### BIZ/KSID 内置解析器
+
+需要解析 BIZ 模板或 KSID 位布局时，注册对应的 `IdTypeParser` Bean：
+
+```java
+@Bean
+IdTypeParser ksidLayoutParser(KsidConfig config) {
+    return new KsidLayoutIdTypeParser(config);
+}
+
+@Bean
+IdTypeParser bizTemplateParser(BizConfig config) {
+    return new BizTemplateIdTypeParser(config);
+}
+```
+
+未注册时，KSID 仍按纯数字类型识别，BIZ 不自动解析。
+
 ## 11. WorkerId 分配
 
 - `fixed`：使用 `ksid.worker-id` / `ksid.datacenter-id`；
@@ -149,13 +167,48 @@ TypeID 格式：`<prefix>_<26 位小写 Base32 UUIDv7>`，内部复用 KnitID UU
 
 Bean 名称：`redis` 或 `redisSequenceProvider`。
 
-## 13. Actuator
+## 13. JDBC 序列（可选）
 
-- 端点：`/actuator/knitid`，暴露配置 `management.endpoints.web.exposure.include=knitid`；
+模块：`knitid-sequence-jdbc`，Bean 名称：`jdbc` / `jdbcSequenceProvider`。
+
+| 属性 | 默认 | 说明 |
+| --- | --- | --- |
+| `knitid.sequence.jdbc.enabled` | `true` | 开关 |
+| `knitid.sequence.jdbc.table-name` | `knitid_sequence` | 必须是简单 SQL 标识符 |
+| `knitid.sequence.jdbc.block-size` | `100` | 每个进程一次预留的号段大小 |
+
+表结构：
+
+```sql
+CREATE TABLE knitid_sequence (
+    scope      VARCHAR(255) PRIMARY KEY,
+    next_value BIGINT NOT NULL
+);
+```
+
+每个进程在事务内执行 `SELECT ... FOR UPDATE` 预留号段；进程崩溃可能留下空洞，不保证 BIZ 序列无空洞。
+
+## 14. Actuator
+
+- 端点：
+  - `/actuator/knitid`：生成器和默认生成器；
+  - `/actuator/knitid-config`：脱敏配置诊断（生成器名称/类型/enabled/默认标记、批量上限、健康窗口）；
+- 暴露配置示例：
+
+```yaml
+management:
+  endpoints:
+    web:
+      exposure:
+        include: knitid,knitid-config,health,metrics
+```
+
 - 健康键：`knitId`；开关 `management.health.knitid.enabled`；
-- 指标：`knitid.id.generation.duration`、`knitid.id.generation.errors`、`knitid.id.batch.size`、`knitid.id.worker.id`。
+- 指标：`knitid.id.generation.duration`、`knitid.id.generation.errors`、`knitid.id.batch.size`、`knitid.id.worker.id`、`knitid.id.clock.backwards`；
+- 指标同时包含 OTel 风格 tags `id.type`、`id.name`，错误指标包含 `error.type`；
+- `knitid-config` 不返回任意 generator 原始配置值，避免泄露 URL/凭据。
 
-## 14. 完整示例
+## 15. 完整示例
 
 ```yaml
 knitid:

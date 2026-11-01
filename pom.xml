@@ -75,6 +75,7 @@
     <module>knitid-spring-boot-starter</module>
     <module>knitid-spring-boot-starter-all</module>
     <module>knitid-sequence-redis</module>
+    <module>knitid-sequence-jdbc</module>
     <module>knitid-worker-redis</module>
     <module>knitid-worker-zookeeper</module>
     <module>knitid-worker-kubernetes</module>
@@ -152,6 +153,11 @@
       <dependency>
         <groupId>org.unitseek.knitid</groupId>
         <artifactId>knitid-sequence-redis</artifactId>
+        <version>1.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.unitseek.knitid</groupId>
+        <artifactId>knitid-sequence-jdbc</artifactId>
         <version>1.0.0</version>
       </dependency>
       <dependency>
@@ -244,6 +250,12 @@
   </build>
 
   <profiles>
+    <profile>
+      <id>boot-4.0</id>
+      <modules>
+        <module>knitid-boot-compat-4.0</module>
+      </modules>
+    </profile>
     <profile>
       <id>release</id>
       <build>

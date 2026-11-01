@@ -103,7 +103,7 @@ final class BizTemplate {
                 if (checkSeen) {
                     throw invalid("{check} must be the last template element");
                 }
-                if (literal.length() > 0) {
+                if (!literal.isEmpty()) {
                     parts.add(new Part(Kind.LITERAL, literal.toString(), 0));
                     literal.setLength(0);
                 }
@@ -128,7 +128,7 @@ final class BizTemplate {
                 index++;
             }
         }
-        if (literal.length() > 0) {
+        if (!literal.isEmpty()) {
             parts.add(new Part(Kind.LITERAL, literal.toString(), 0));
         }
         if (checkSeen && parts.get(parts.size() - 1).kind() != Kind.CHECK) {

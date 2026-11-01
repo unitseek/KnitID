@@ -45,6 +45,14 @@
       <artifactId>knitid-generator-biz</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.unitseek.knitid</groupId>
+      <artifactId>knitid-sequence-redis</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.data</groupId>
+      <artifactId>spring-data-redis</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.openjdk.jmh</groupId>
       <artifactId>jmh-core</artifactId>
       <version>${jmh.version}</version>

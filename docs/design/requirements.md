@@ -35,6 +35,13 @@
 | FR-KSUID-01 | 27 位 Base62 KSUID、可配置随机源 | 格式/时间戳/解析测试 |
 | FR-TYPEID-01 | TypeID v0.3.0、多前缀、UUIDv7 | 前缀/编解码/解析测试 |
 | FR-AUTO-01 | Spring Boot 4 自动配置、严格校验、默认选择 | 自动配置矩阵 |
+| FR-SEQ-JDBC-01 | 数据库号段 SequenceProvider、跨实例事务预留 | H2 并发/跨块测试 |
+| FR-PARSE-BIZ-01 | BIZ 模板内置解析器 | 模板/校验位/元数据测试 |
+| FR-PARSE-KSID-01 | KSID 位布局内置解析器 | 时间戳/节点/序列测试 |
+| FR-METRIC-01 | 回拨指标与 OTel 风格 tags | 指标测试 |
+| FR-BATCH-ASYNC-01 | 异步/流式批量 API | 批量/流测试 |
+| FR-ACTUATOR-01 | 脱敏配置诊断端点 | 端点测试 |
+| FR-BOOT-40-01 | Spring Boot 4.0/4.1 兼容矩阵 | 4.0.9 启动测试 |
 | FR-AUTO-02 | 普通 starter 不含算法；starter-all 含七类算法 | starter/starter-all 依赖级测试 + samples 七类启动验证 |
 | FR-OBS-01 | 健康/端点/指标 | 集成测试 |
 | FR-PARSE-01 | 类型识别与元数据解析 | 解析器测试 |
@@ -62,7 +69,7 @@
 
 ## 6. 验收与追溯
 
-- 单元/属性/Testcontainers 测试 197 个；
+- 单元/属性/Testcontainers 测试 211 个；
 - `mvn verify` 全绿；
 - `docs/` 覆盖配置、迁移、运维、排障、SPI；
 - 发布流水线见 [发布流程](../release.md)。

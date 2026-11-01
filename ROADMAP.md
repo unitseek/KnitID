@@ -4,33 +4,39 @@
 
 ## 1.0 — 稳定发布
 
+### 核心能力
+
 - [x] 七类生成器：UUIDv7、UUIDv8、ULID、KSID、BIZ、KSUID、TypeID
 - [x] WorkerId：fixed、environment、Redis、ZooKeeper、Kubernetes
 - [x] Redis 序列（BIZ 多实例）
 - [x] Spring Boot 4 自动配置、严格配置校验、FailureAnalyzer
 - [x] IdParser、Actuator 端点、健康检查、Micrometer 指标
 - [x] JMH 基准、示例工程、P0/P1 文档、发布流水线
-- [x] 197 个测试（含 Redis/ZooKeeper Testcontainers）
+- [x] 211 个测试（含 Redis/ZooKeeper Testcontainers）
 - [ ] 1.0.0 正式发布到 Maven Central
 - [ ] 在 Java 21 固定硬件复测正式基准报告
 
-## 1.1 — 用户成功与兼容性
+### 用户成功与兼容性（原 1.1，并入 1.0）
+
+以下条目原属 1.1，现并入 1.0 发布范围；完成前不正式发布 1.0.0。
 
 - [ ] 文档站点与版本化文档（当前只有 Javadoc Pages）
-- [ ] Spring Boot 4.0/4.1 CI 兼容矩阵
-- [ ] 数据库号段 `SequenceProvider` 内置实现
-- [ ] BIZ 模板/KSID 位布局的内置解析器
-- [ ] 回拨指标 `knitid.id.clock.backwards`
-- [ ] GraalVM Native 集成测试
+- [x] Spring Boot 4.0/4.1 CI 兼容矩阵
+- [x] 数据库号段 `SequenceProvider` 内置实现
+- [x] BIZ 模板/KSID 位布局的内置解析器
+- [x] 回拨指标 `knitid.id.clock.backwards`
+- [x] GraalVM Native 集成测试
 - [ ] Kotlin 使用示例与扩展
 
-## 1.2 — 生态与性能
+### 生态与性能（原 1.2，并入 1.0）
 
-- [ ] OpenTelemetry 指标命名对齐
-- [ ] 异步/流式批量 API
-- [ ] Actuator 配置诊断（不泄露敏感信息）
-- [ ] 多线程/Redis 序列基准
-- [ ] 多租户/业务类型扩展示例
+以下条目原属 1.2，现并入 1.0 发布范围。
+
+- [x] OpenTelemetry 指标命名对齐
+- [x] 异步/流式批量 API
+- [x] Actuator 配置诊断（不泄露敏感信息）
+- [x] 多线程/Redis 序列基准
+- [x] 多租户/业务类型扩展示例
 
 ## Backlog
 

@@ -90,6 +90,11 @@
       </dependency>
       <dependency>
         <groupId>org.unitseek.knitid</groupId>
+        <artifactId>knitid-sequence-jdbc</artifactId>
+        <version>1.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.unitseek.knitid</groupId>
         <artifactId>knitid-worker-redis</artifactId>
         <version>1.0.0</version>
       </dependency>
